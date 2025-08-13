@@ -176,7 +176,7 @@ function loadRecentActivity() {
         {
             icon: '✅',
             title: 'Başarılı Giriş',
-            description: 'Redmine kimlik doğrulama ile portal girişi yapıldı',
+            description: 'Portal kimlik doğrulama ile portal girişi yapıldı',
             time: 'Şimdi',
             type: 'success'
         },
@@ -190,7 +190,7 @@ function loadRecentActivity() {
         {
             icon: '🌐',
             title: 'Sistem Kontrolü',
-            description: 'Redmine bağlantısı ve API durumu kontrol edildi',
+            description: 'Portal bağlantısı ve API durumu kontrol edildi',
             time: 'Az önce',
             type: 'primary'
         }

@@ -1,0 +1,6 @@
+@AracTakip.Api_HostAddress = http://localhost:5094
+
+GET {{AracTakip.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

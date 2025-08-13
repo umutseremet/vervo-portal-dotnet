@@ -1,4 +1,4 @@
-// Authentication utilities for Vervo Portal
+// Authentication utilities for Aslan Group Portal
 class AuthService {
     constructor() {
         // API Configuration - Update this URL to match your backend
