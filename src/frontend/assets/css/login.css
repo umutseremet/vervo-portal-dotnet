@@ -1,0 +1,463 @@
+/* Login Page Specific Styles */
+
+/* Background and Layout */
+body.bg-light {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+}
+
+/* Animated background particles (optional) */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Login Card Styles */
+.card {
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 50px;
+    overflow: hidden;
+    animation: slideInUp 0.6s ease;
+    position: relative;
+    will-change: transform;
+}
+
+/* Hover efektini daha yumuşak yap */
+.card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.3);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card Header */
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 2.5rem 2rem 1.5rem 2rem;
+    text-align: center;
+}
+
+.card-header h3 {
+    color: #495057;
+    font-weight: 300;
+    margin-bottom: 0;
+}
+
+.card-header img {
+    filter: none;
+    transition: transform 0.3s ease;
+}
+
+.card-header img:hover {
+    transform: scale(1.05);
+}
+
+/* Card Body */
+.card-body {
+    padding: 2rem;
+}
+
+/* Form Styles */
+.form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating > .form-control {
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    padding: 1rem 0.75rem;
+    height: calc(3.5rem + 2px);
+    line-height: 1.25;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+.form-floating > .form-control:focus,
+.form-floating > .form-control:not(:placeholder-shown) {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+}
+
+.form-floating > label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    padding: 1rem 0.75rem;
+    pointer-events: none;
+    border: 2px solid transparent;
+    transform-origin: 0 0;
+    transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    opacity: 0.65;
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    color: #667eea;
+}
+
+/* Form Focus Effects */
+.form-floating.focused {
+    transform: scale(1.02);
+}
+
+/* Checkbox Styles */
+.form-check {
+    margin-bottom: 1.5rem;
+    padding-left: 1.8rem;
+}
+
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.2rem;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+.form-check-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+}
+
+.form-check-label {
+    color: #6c757d;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    will-change: transform, box-shadow;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:focus {
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.5);
+}
+
+/* Loading State */
+.btn-loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.btn-loading .btn-text {
+    opacity: 0.7;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+/* Card Footer */
+.card-footer {
+    background: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.5rem 2rem 2rem 2rem;
+    text-align: center;
+}
+
+.card-footer a {
+    color: #667eea;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.card-footer a:hover {
+    color: #5a6fd8;
+    transform: translateX(-3px);
+}
+
+/* Alert Styles (specific to login page) */
+#alertContainer .alert {
+    border-radius: 12px;
+    border: none;
+    font-weight: 500;
+    animation: slideInDown 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+/* Input Validation States */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    animation: shake 0.5s;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-valid {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+}
+
+/* Shake animation for invalid inputs */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+    20%, 40%, 60%, 80% { transform: translateX(8px); }
+}
+
+/* Password visibility toggle (if added later) */
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.1rem;
+    z-index: 5;
+}
+
+.password-toggle:hover {
+    color: #667eea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        margin: 20px;
+        margin-top: 30px;
+    }
+    
+    .container {
+        padding: 0;
+    }
+    
+    .card-header {
+        padding: 2rem 1.5rem 1rem 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-footer {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+    }
+    
+    .form-floating > .form-control {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding: 10px 0;
+    }
+    
+    .card {
+        margin: 10px;
+        margin-top: 20px;
+    }
+    
+    .card-header h3 {
+        font-size: 1.3rem;
+    }
+    
+    .card-header img {
+        height: 50px;
+    }
+    
+    .btn-primary {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Loading overlay (if needed) */
+.login-loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.login-loading-overlay.d-none {
+    display: none !important;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .card {
+        border: 2px solid #000;
+        background: #fff;
+    }
+    
+    .form-control {
+        border: 2px solid #000;
+    }
+    
+    .btn-primary {
+        background: #000;
+        border: 2px solid #000;
+    }
+}
+
+/* Dark mode support for login page */
+@media (prefers-color-scheme: dark) {
+    body.bg-light {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    }
+    
+    .card {
+        background: rgba(33, 37, 41, 0.95);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-header h3 {
+        color: #fff;
+    }
+    
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+    
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: #667eea;
+    }
+    
+    .form-floating > label {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .form-check-label {
+        color: rgba(255, 255, 255, 0.8);
+    }
+} {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+    background-color: #fff;
+    transform: translateY(-1px);
+}
+
+.form-floating > .form-control:not(:placeholder-shown) {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+}
+
+.form-floating > .form-control:focus

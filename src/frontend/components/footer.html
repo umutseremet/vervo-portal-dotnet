@@ -1,0 +1,232 @@
+<!-- Footer Component -->
+<footer class="bg-light border-top mt-5">
+    <div class="container-fluid">
+        <div class="row py-4">
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="footer-brand">
+                    <img src="../assets/images/logo.png" alt="Vervo" height="40" class="mb-2">
+                    <h6 class="fw-bold">Vervo Portal</h6>
+                    <p class="text-muted small">Redmine entegrasyonlu modern portal sistemi</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <h6 class="fw-bold mb-3">Hızlı Linkler</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="dashboard.html" class="text-decoration-none text-muted footer-link">
+                            <span class="me-2">🏠</span>Dashboard
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link">
+                            <span class="me-2">📁</span>Projeler
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link">
+                            <span class="me-2">📋</span>Konular
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link">
+                            <span class="me-2">📊</span>Raporlar
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <h6 class="fw-bold mb-3">Sistem Bilgileri</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <small class="text-muted">
+                            <span class="me-2">🔗</span>Redmine Durumu: 
+                            <span class="text-success fw-bold" id="footerRedmineStatus">Aktif</span>
+                        </small>
+                    </li>
+                    <li class="mb-2">
+                        <small class="text-muted">
+                            <span class="me-2">🔐</span>JWT Token: 
+                            <span class="text-success fw-bold" id="footerTokenStatus">Geçerli</span>
+                        </small>
+                    </li>
+                    <li class="mb-2">
+                        <small class="text-muted">
+                            <span class="me-2">📅</span>Son Güncelleme: 
+                            <span id="footerLastUpdate">2025-01-01</span>
+                        </small>
+                    </li>
+                    <li class="mb-2">
+                        <small class="text-muted">
+                            <span class="me-2">⚡</span>Versiyon: 
+                            <span class="fw-bold">v1.0.0</span>
+                        </small>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6 col-lg-3 mb-3">
+                <h6 class="fw-bold mb-3">Destek & Yardım</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link" id="footerHelp">
+                            <span class="me-2">❓</span>Yardım Merkezi
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link" id="footerSupport">
+                            <span class="me-2">💬</span>Teknik Destek
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link" id="footerDocs">
+                            <span class="me-2">📚</span>Dokümantasyon
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-decoration-none text-muted footer-link" id="footerContact">
+                            <span class="me-2">📧</span>İletişim
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <hr class="my-3">
+        
+        <div class="row py-3">
+            <div class="col-md-6">
+                <small class="text-muted">
+                    &copy; 2025 Vervo Portal. Tüm hakları saklıdır.
+                </small>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <small class="text-muted">
+                    Son giriş: <span id="footerLastLogin">Henüz giriş yapılmadı</span>
+                </small>
+            </div>
+        </div>
+        
+        <!-- System Status Indicator -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-center">
+                    <div class="system-status">
+                        <small class="text-muted me-3">
+                            <span class="status-dot bg-success me-1"></span>
+                            Sistem Durumu: Çevrimiçi
+                        </small>
+                        <small class="text-muted">
+                            <span class="me-1">🕒</span>
+                            <span id="footerCurrentTime">--:--</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* Footer specific styles */
+.footer-link {
+    transition: color 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.footer-link:hover {
+    color: var(--bs-primary) !important;
+}
+
+.footer-brand img {
+    filter: none;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.system-status {
+    padding: 0.5rem 1rem;
+    background-color: rgba(248, 249, 250, 0.8);
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<script>
+// Footer component functionality
+$(document).ready(function() {
+    initializeFooter();
+    startFooterClock();
+});
+
+function initializeFooter() {
+    // Update last login time
+    const user = authService.getUser();
+    if (user && user.LastLoginOn) {
+        const lastLogin = new Date(user.LastLoginOn);
+        $('#footerLastLogin').text(lastLogin.toLocaleString('tr-TR'));
+    } else {
+        $('#footerLastLogin').text('Bu oturum');
+    }
+    
+    // Update last update date
+    $('#footerLastUpdate').text(new Date().toLocaleDateString('tr-TR'));
+    
+    // Bind footer link events
+    bindFooterEvents();
+    
+    // Check system status
+    updateSystemStatus();
+}
+
+function startFooterClock() {
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('tr-TR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        $('#footerCurrentTime').text(timeString);
+    }
+    
+    updateClock();
+    setInterval(updateClock, 60000); // Update every minute
+}
+
+function bindFooterEvents() {
+    $('#footerHelp, #footerSupport, #footerDocs, #footerContact').on('click', function(e) {
+        e.preventDefault();
+        const linkText = $(this).text().trim();
+        showAlert(`${linkText} özelliği yakında eklenecek.`, 'info');
+    });
+}
+
+function updateSystemStatus() {
+    // Check if user is authenticated
+    const isAuthenticated = authService.isAuthenticated();
+    
+    if (isAuthenticated) {
+        $('#footerRedmineStatus').text('Aktif').removeClass('text-danger').addClass('text-success');
+        $('#footerTokenStatus').text('Geçerli').removeClass('text-danger').addClass('text-success');
+    } else {
+        $('#footerRedmineStatus').text('Bağlantı Yok').removeClass('text-success').addClass('text-danger');
+        $('#footerTokenStatus').text('Geçersiz').removeClass('text-success').addClass('text-danger');
+    }
+}
+
+// Export function to update system status from other components
+window.updateFooterSystemStatus = updateSystemStatus;
+</script>

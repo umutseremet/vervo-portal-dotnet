@@ -1,0 +1,182 @@
+<!-- Header Navigation Component -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="mainNavbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../index.html">
+            <img src="../assets/images/logo.png" alt="Vervo" height="30" class="me-2">
+            Vervo Portal
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html" id="navDashboard">
+                        <span class="nav-icon">🏠</span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navProjects">
+                        <span class="nav-icon">📁</span> Projeler
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navIssues">
+                        <span class="nav-icon">📋</span> Konular
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="navReports">
+                        <span class="nav-icon">📊</span> Raporlar
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- User Menu -->
+            <div class="navbar-nav">
+                <!-- Notifications -->
+                <div class="nav-item dropdown me-3">
+                    <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="nav-icon">🔔</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge">
+                            0
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                        <li><h6 class="dropdown-header">Bildirimler</h6></li>
+                        <li id="noNotifications">
+                            <span class="dropdown-item-text text-muted">Yeni bildirim yok</span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Tüm bildirimleri görüntüle</a></li>
+                    </ul>
+                </div>
+
+                <!-- User Profile -->
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar me-2">
+                            <span class="badge bg-light text-dark rounded-circle" id="userInitials">U</span>
+                        </div>
+                        <span id="navUserName">Kullanıcı</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><h6 class="dropdown-header" id="dropdownUserInfo">Kullanıcı Menüsü</h6></li>
+                        <li><a class="dropdown-item" href="#" id="navProfile">
+                            <span class="me-2">👤</span> Profil
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" id="navSettings">
+                            <span class="me-2">⚙️</span> Ayarlar
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" id="navHelp">
+                            <span class="me-2">❓</span> Yardım
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" id="navLogout">
+                            <span class="me-2">🚪</span> Çıkış Yap
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Header component functionality
+$(document).ready(function() {
+    initializeHeader();
+});
+
+function initializeHeader() {
+    const user = authService.getUser();
+    
+    if (user) {
+        // Update user display
+        const fullName = user.FullName || user.fullname || 'Kullanıcı';
+        const firstName = user.FirstName || user.firstName || fullName.split(' ')[0] || 'U';
+        
+        $('#navUserName').text(firstName);
+        $('#dropdownUserInfo').text(fullName);
+        
+        // Create user initials
+        const initials = getInitials(fullName);
+        $('#userInitials').text(initials);
+    }
+    
+    // Set active navigation item based on current page
+    setActiveNavItem();
+    
+    // Bind logout event
+    $('#navLogout').on('click', function(e) {
+        e.preventDefault();
+        handleLogout();
+    });
+    
+    // Bind other navigation events
+    bindNavigationEvents();
+}
+
+function getInitials(fullName) {
+    const names = fullName.split(' ');
+    if (names.length >= 2) {
+        return (names[0][0] + names[1][0]).toUpperCase();
+    } else {
+        return names[0].substring(0, 2).toUpperCase();
+    }
+}
+
+function setActiveNavItem() {
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    // Remove all active classes
+    $('.navbar-nav .nav-link').removeClass('active');
+    
+    // Add active class based on current page
+    switch(currentPage) {
+        case 'dashboard.html':
+            $('#navDashboard').addClass('active');
+            break;
+        // Add more cases as you create more pages
+    }
+}
+
+function bindNavigationEvents() {
+    $('#navProjects').on('click', function(e) {
+        e.preventDefault();
+        showAlert('Projeler sayfası henüz hazırlanmadı.', 'info');
+    });
+    
+    $('#navIssues').on('click', function(e) {
+        e.preventDefault();
+        showAlert('Konular sayfası henüz hazırlanmadı.', 'info');
+    });
+    
+    $('#navReports').on('click', function(e) {
+        e.preventDefault();
+        showAlert('Raporlar sayfası henüz hazırlanmadı.', 'info');
+    });
+    
+    $('#navProfile, #navSettings, #navHelp').on('click', function(e) {
+        e.preventDefault();
+        showAlert('Bu özellik henüz hazırlanmadı.', 'info');
+    });
+}
+
+function handleLogout() {
+    if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+        authService.logout();
+    }
+}
+
+function updateNotificationCount(count) {
+    const badge = $('#notificationBadge');
+    if (count > 0) {
+        badge.text(count).removeClass('d-none');
+    } else {
+        badge.addClass('d-none');
+    }
+}
+</script>

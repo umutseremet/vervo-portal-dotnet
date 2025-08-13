@@ -1,0 +1,236 @@
+/* Navbar Fix CSS - Navbar sorunlarını çözer */
+
+/* Navbar container düzenlemesi */
+.navbar .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    padding: 0 1rem;
+}
+
+/* Brand logo düzenlemesi */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    flex-shrink: 0;
+    text-decoration: none;
+    color: white !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    max-width: none;
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+    color: white !important;
+    text-decoration: none;
+}
+
+.navbar-brand img {
+    height: 30px;
+    width: auto;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1);
+}
+
+/* Navbar toggle button */
+.navbar-toggler {
+    border: none;
+    background: none;
+    padding: 0.25rem 0.5rem;
+    margin-left: 1rem;
+    order: 3;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+/* Navbar collapse */
+.navbar-collapse {
+    flex-basis: 100%;
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* Ana menü (sol taraf) */
+.navbar-nav.me-auto {
+    flex-direction: row;
+    margin-right: auto;
+    flex-grow: 1;
+}
+
+/* Kullanıcı menüsü (sağ taraf) */
+.navbar-nav.ms-auto {
+    flex-direction: row;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Nav link'ler */
+.navbar-nav .nav-link {
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.1rem;
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dropdown menü */
+.navbar-nav .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: auto;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    margin-top: 0.5rem;
+    z-index: 1000;
+}
+
+.navbar-nav .dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #495057;
+    transition: background-color 0.2s ease;
+}
+
+.navbar-nav .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+/* User dropdown özel stilleri */
+#userDropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+#userDropdown::after {
+    margin-left: 0.5rem;
+}
+
+/* Responsive düzenlemeler */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        margin-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+    }
+    
+    .navbar-nav.me-auto,
+    .navbar-nav.ms-auto {
+        flex-direction: column;
+        width: 100%;
+        margin: 0;
+    }
+    
+    .navbar-nav .nav-item {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem;
+        margin: 0.1rem 0;
+        border-radius: 6px;
+    }
+    
+    .navbar-nav .dropdown-menu {
+        position: static;
+        float: none;
+        width: 100%;
+        margin-top: 0;
+        border: none;
+        box-shadow: none;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .navbar-nav .dropdown-item {
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+    }
+    
+    .navbar-nav .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .navbar .container-fluid {
+        padding: 0 0.5rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand img {
+        height: 25px;
+        margin-right: 0.3rem;
+    }
+}
+
+/* Layout shift önleme */
+.navbar-nav .nav-item,
+.navbar-nav .nav-link {
+    transition: none;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: none !important;
+}
+
+/* Flexbox düzeltmeleri */
+.navbar > .container-fluid {
+    flex-wrap: nowrap;
+}
+
+.navbar-expand-lg .navbar-nav {
+    flex-direction: row;
+}
+
+.navbar-expand-lg .navbar-nav .dropdown-menu {
+    position: absolute;
+}
+
+/* Z-index düzenlemesi */
+.navbar {
+    z-index: 1030;
+}
+
+.dropdown-menu {
+    z-index: 1000;
+}
+
+/* Logo ve text alignment */
+.navbar-brand span {
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Navbar height consistency */
+.navbar {
+    min-height: 56px;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    line-height: 1.5;
+}
