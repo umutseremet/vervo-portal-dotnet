@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { margin: 5px; padding: 10px 15px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Auth Service Test Sayfası</h1>
+    
+    <div class="test-section info">
+        <h3>Mevcut Durum</h3>
+        <div id="currentStatus">Kontrol ediliyor...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test İşlemleri</h3>
+        <button onclick="testIsAuthenticated()">Auth Durumunu Kontrol Et</button>
+        <button onclick="testLogout()">Logout Test</button>
+        <button onclick="clearAllData()">Tüm Verileri Temizle</button>
+        <button onclick="createTestToken()">Test Token Oluştur</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Navigation Testleri</h3>
+        <button onclick="testRedirectToLogin()">Login'e Yönlendir</button>
+        <button onclick="testRedirectToDashboard()">Dashboard'a Yönlendir</button>
+    </div>
+
+    <div class="test-section">
+        <h3>LocalStorage İnceleme</h3>
+        <div id="storageInfo"></div>
+        <button onclick="showStorageInfo()">Storage Bilgilerini Göster</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Log</h3>
+        <div id="testLog" style="height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; font-family: monospace; font-size: 12px;"></div>
+        <button onclick="clearLog()">Log'u Temizle</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script>
+        // Test için sadeleştirilmiş auth service
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('testLog');
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'blue';
+            logDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+
+        function updateStatus() {
+            const statusDiv = document.getElementById('currentStatus');
+            
+            try {
+                if (typeof authService === 'undefined') {
+                    statusDiv.innerHTML = '<span style="color: red;">❌ AuthService yüklenmemiş</span>';
+                    return;
+                }
+                
+                const isAuth = authService.isAuthenticated();
+                const token = authService.getToken();
+                const user = authService.getUser();
+                
+                statusDiv.innerHTML = `
+                    <strong>Authenticated:</strong> ${isAuth ? '✅ Evet' : '❌ Hayır'}<br>
+                    <strong>Token:</strong> ${token ? '✅ Mevcut' : '❌ Yok'}<br>
+                    <strong>User:</strong> ${user ? '✅ Mevcut' : '❌ Yok'}<br>
+                    <strong>Current Path:</strong> ${window.location.pathname}
+                `;
+                
+                log(`Status updated - Auth: ${isAuth}, Token: ${!!token}, User: ${!!user}`);
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: red;">❌ Hata: ${error.message}</span>`;
+                log(`Status update error: ${error.message}`, 'error');
+            }
+        }
+
+        function testIsAuthenticated() {
+            try {
+                const result = authService.isAuthenticated();
+                log(`isAuthenticated() result: ${result}`, result ? 'success' : 'error');
+                updateStatus();
+            } catch (error) {
+                log(`isAuthenticated() error: ${error.message}`, 'error');
+            }
+        }
+
+        function testLogout() {
+            try {
+                log('Testing logout...', 'info');
+                authService.logout();
+                log('Logout completed', 'success');
+                updateStatus();
+            } catch (error) {
+                log(`Logout error: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllData() {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                log('All storage data cleared', 'success');
+                updateStatus();
+            } catch (error) {
+                log(`Clear data error: ${error.message}`, 'error');
+            }
+        }
+
+        function createTestToken() {
+            try {
+                const testData = {
+                    token: 'test.jwt.token',
+                    user: {
+                        id: 1,
+                        FullName: 'Test User',
+                        FirstName: 'Test'
+                    }
+                };
+                
+                localStorage.setItem('vervo_token', testData.token);
+                localStorage.setItem('vervo_user', JSON.stringify(testData.user));
+                localStorage.setItem('vervo_login_time', Date.now().toString());
+                
+                log('Test token and user created', 'success');
+                updateStatus();
+            } catch (error) {
+                log(`Create test token error: ${error.message}`, 'error');
+            }
+        }
+
+        function testRedirectToLogin() {
+            try {
+                log('Testing redirect to login...', 'info');
+                authService.redirectToLogin();
+            } catch (error) {
+                log(`Redirect to login error: ${error.message}`, 'error');
+            }
+        }
+
+        function testRedirectToDashboard() {
+            try {
+                log('Testing redirect to dashboard...', 'info');
+                authService.redirectAfterLogin();
+            } catch (error) {
+                log(`Redirect to dashboard error: ${error.message}`, 'error');
+            }
+        }
+
+        function showStorageInfo() {
+            const storageDiv = document.getElementById('storageInfo');
+            let info = '<h4>LocalStorage:</h4>';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                info += `<strong>${key}:</strong> ${value}<br>`;
+            }
+            
+            storageDiv.innerHTML = info;
+        }
+
+        function clearLog() {
+            document.getElementById('testLog').innerHTML = '';
+        }
+
+        // Dinamik script yükleme
+        function loadAuthService() {
+            const script = document.createElement('script');
+            script.src = './assets/js/auth.js';
+            script.onload = function() {
+                log('Auth service loaded successfully', 'success');
+                updateStatus();
+            };
+            script.onerror = function() {
+                log('Failed to load auth service', 'error');
+            };
+            document.head.appendChild(script);
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Test page loaded', 'info');
+            
+            // Auth service'i yüklemeye çalış
+            loadAuthService();
+            
+            // İlk status güncellemesi
+            setTimeout(updateStatus, 1000);
+        });
+    </script>
+</body>
+</html>

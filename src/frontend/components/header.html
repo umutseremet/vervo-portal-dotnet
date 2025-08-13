@@ -18,13 +18,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" id="navProjects">
-                        <span class="nav-icon">📁</span> Projeler
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="navIssues">
-                        <span class="nav-icon">📋</span> Konular
+                    <a class="nav-link" href="aractakip.html" id="navAracTakip">
+                        <span class="nav-icon">🚗</span> Araç Takip Sistemi
                     </a>
                 </li>
                 <li class="nav-item">
@@ -57,25 +52,26 @@
                 <!-- User Profile -->
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar me-2">
-                            <span class="badge bg-light text-dark rounded-circle" id="userInitials">U</span>
+                        <div class="user-avatar bg-white text-primary me-2" id="userInitials">
+                            U
                         </div>
                         <span id="navUserName">Kullanıcı</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><h6 class="dropdown-header" id="dropdownUserInfo">Kullanıcı Menüsü</h6></li>
+                        <li><h6 class="dropdown-header" id="dropdownUserInfo">Kullanıcı Bilgileri</h6></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#" id="navProfile">
-                            <span class="me-2">👤</span> Profil
+                            <span class="nav-icon">👤</span> Profil
                         </a></li>
                         <li><a class="dropdown-item" href="#" id="navSettings">
-                            <span class="me-2">⚙️</span> Ayarlar
+                            <span class="nav-icon">⚙️</span> Ayarlar
                         </a></li>
                         <li><a class="dropdown-item" href="#" id="navHelp">
-                            <span class="me-2">❓</span> Yardım
+                            <span class="nav-icon">❓</span> Yardım
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="#" id="navLogout">
-                            <span class="me-2">🚪</span> Çıkış Yap
+                            <span class="nav-icon">🚪</span> Çıkış Yap
                         </a></li>
                     </ul>
                 </div>
@@ -84,99 +80,4 @@
     </div>
 </nav>
 
-<script>
-// Header component functionality
-$(document).ready(function() {
-    initializeHeader();
-});
-
-function initializeHeader() {
-    const user = authService.getUser();
-    
-    if (user) {
-        // Update user display
-        const fullName = user.FullName || user.fullname || 'Kullanıcı';
-        const firstName = user.FirstName || user.firstName || fullName.split(' ')[0] || 'U';
-        
-        $('#navUserName').text(firstName);
-        $('#dropdownUserInfo').text(fullName);
-        
-        // Create user initials
-        const initials = getInitials(fullName);
-        $('#userInitials').text(initials);
-    }
-    
-    // Set active navigation item based on current page
-    setActiveNavItem();
-    
-    // Bind logout event
-    $('#navLogout').on('click', function(e) {
-        e.preventDefault();
-        handleLogout();
-    });
-    
-    // Bind other navigation events
-    bindNavigationEvents();
-}
-
-function getInitials(fullName) {
-    const names = fullName.split(' ');
-    if (names.length >= 2) {
-        return (names[0][0] + names[1][0]).toUpperCase();
-    } else {
-        return names[0].substring(0, 2).toUpperCase();
-    }
-}
-
-function setActiveNavItem() {
-    const currentPage = window.location.pathname.split('/').pop();
-    
-    // Remove all active classes
-    $('.navbar-nav .nav-link').removeClass('active');
-    
-    // Add active class based on current page
-    switch(currentPage) {
-        case 'dashboard.html':
-            $('#navDashboard').addClass('active');
-            break;
-        // Add more cases as you create more pages
-    }
-}
-
-function bindNavigationEvents() {
-    $('#navProjects').on('click', function(e) {
-        e.preventDefault();
-        showAlert('Projeler sayfası henüz hazırlanmadı.', 'info');
-    });
-    
-    $('#navIssues').on('click', function(e) {
-        e.preventDefault();
-        showAlert('Konular sayfası henüz hazırlanmadı.', 'info');
-    });
-    
-    $('#navReports').on('click', function(e) {
-        e.preventDefault();
-        showAlert('Raporlar sayfası henüz hazırlanmadı.', 'info');
-    });
-    
-    $('#navProfile, #navSettings, #navHelp').on('click', function(e) {
-        e.preventDefault();
-        showAlert('Bu özellik henüz hazırlanmadı.', 'info');
-    });
-}
-
-function handleLogout() {
-    if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        authService.logout();
-    }
-}
-
-function updateNotificationCount(count) {
-    const badge = $('#notificationBadge');
-    if (count > 0) {
-        badge.text(count).removeClass('d-none');
-    } else {
-        badge.addClass('d-none');
-    }
-}
-</script>
+<!-- Header JavaScript ayrı dosyada: assets/js/header.js -->
