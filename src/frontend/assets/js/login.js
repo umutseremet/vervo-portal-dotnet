@@ -1,5 +1,6 @@
-// Login page functionality
+// Login page functionality - FIXED VERSION
 $(document).ready(function() {
+    console.log('Login page loading...');
     initializeLoginPage();
     setupFormValidation();
     setupEventHandlers();
@@ -9,6 +10,8 @@ $(document).ready(function() {
  * Initialize login page
  */
 function initializeLoginPage() {
+    console.log('Initializing login page...');
+    
     // Load remembered username if exists
     loadRememberedUser();
     
@@ -22,6 +25,34 @@ function initializeLoginPage() {
     checkForUrlMessages();
     
     console.log('Login page initialized');
+}
+
+/**
+ * Load remembered username
+ */
+function loadRememberedUser() {
+    try {
+        if (authService && typeof authService.getRememberedUsername === 'function') {
+            const rememberedUsername = authService.getRememberedUsername();
+            if (rememberedUsername) {
+                $('#username').val(rememberedUsername);
+                $('#rememberMe').prop('checked', true);
+                $('#password').focus(); // Focus to password if username is filled
+                console.log('Remembered username loaded:', rememberedUsername);
+            }
+        } else {
+            // Fallback: direct localStorage access
+            const rememberedUsername = localStorage.getItem('vervo_remember_username');
+            if (rememberedUsername) {
+                $('#username').val(rememberedUsername);
+                $('#rememberMe').prop('checked', true);
+                $('#password').focus();
+                console.log('Remembered username loaded (fallback):', rememberedUsername);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading remembered user:', error);
+    }
 }
 
 /**
@@ -64,9 +95,6 @@ function setupEventHandlers() {
     
     // Input field focus effects
     setupInputFocusEffects();
-    
-    // Password visibility toggle (if needed in future)
-    // setupPasswordToggle();
 }
 
 /**
@@ -75,11 +103,15 @@ function setupEventHandlers() {
 async function handleLoginSubmit(e) {
     e.preventDefault();
     
+    console.log('Login form submitted');
+    
     // Get form data
     const formData = getFormData();
+    console.log('Form data:', { username: formData.username, rememberMe: formData.rememberMe });
     
     // Validate form
     if (!validateForm(formData)) {
+        console.log('Form validation failed');
         return;
     }
     
@@ -87,32 +119,163 @@ async function handleLoginSubmit(e) {
     setLoadingState(true);
     
     try {
+        console.log('Attempting login...');
+        
         // Attempt login
         const response = await authService.login(formData.username, formData.password);
+        console.log('Login response:', response);
         
         // Handle remember me
         if (formData.rememberMe) {
-            authService.rememberUser(formData.username);
+            if (authService.rememberUser) {
+                authService.rememberUser(formData.username);
+            } else {
+                localStorage.setItem('vervo_remember_username', formData.username);
+            }
         } else {
-            authService.clearRememberedUser();
+            if (authService.clearRememberedUser) {
+                authService.clearRememberedUser();
+            } else {
+                localStorage.removeItem('vervo_remember_username');
+            }
         }
         
         // Show success message
         showSuccessMessage('Giriş başarılı! Yönlendiriliyorsunuz...');
         
         // Store login analytics (optional)
-        storeLoginAnalytics(response.user);
+        storeLoginAnalytics(response.user || {});
+        
+/**
+ * Handle login form submission
+ */
+async function handleLoginSubmit(e) {
+    e.preventDefault();
+    
+    console.log('Login form submitted');
+    
+    // Get form data
+    const formData = getFormData();
+    console.log('Form data:', { username: formData.username, rememberMe: formData.rememberMe });
+    
+    // Validate form
+    if (!validateForm(formData)) {
+        console.log('Form validation failed');
+        return;
+    }
+    
+    // Show loading state
+    setLoadingState(true);
+    
+    try {
+        console.log('Attempting login...');
+        
+        // Attempt login
+        const response = await authService.login(formData.username, formData.password);
+        console.log('Login response:', response);
+        
+        // Handle remember me
+        if (formData.rememberMe) {
+            if (authService.rememberUser) {
+                authService.rememberUser(formData.username);
+            } else {
+                localStorage.setItem('vervo_remember_username', formData.username);
+            }
+        } else {
+            if (authService.clearRememberedUser) {
+                authService.clearRememberedUser();
+            } else {
+                localStorage.removeItem('vervo_remember_username');
+            }
+        }
+        
+        // Show success message
+        showSuccessMessage('Giriş başarılı! Yönlendiriliyorsunuz...');
+        
+        // Store login analytics (optional)
+        storeLoginAnalytics(response.user || {});
         
         // Redirect after short delay
         setTimeout(() => {
-            authService.redirectAfterLogin();
-        }, 1500);
+            console.log('=== LOGIN SUCCESS REDIRECT ===');
+            console.log('Current location:', window.location.href);
+            
+            const dashboardPath = './dashboard.html';
+            console.log('Target dashboard:', dashboardPath);
+            
+            // Multiple redirect attempt
+            performRedirect(dashboardPath);
+            
+        }, 500);
         
     } catch (error) {
         console.error('Login failed:', error);
         
         // Show error message
-        showErrorMessage(error.message || 'Giriş işlemi başarısız oldu.');
+        const errorMessage = error.message || 'Giriş işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.';
+        showErrorMessage(errorMessage);
+        
+        // Add visual feedback
+        addFormShakeEffect();
+        
+        // Focus back to username field for retry
+        setTimeout(() => {
+            $('#username').focus().select();
+        }, 500);
+        
+    } finally {
+        // Reset loading state after delay
+        setTimeout(() => {
+            setLoadingState(false);
+        }, 1000);
+    }
+}
+
+// Redirect fonksiyonu
+function performRedirect(targetPath) {
+    console.log('performRedirect called with:', targetPath);
+    
+    try {
+        // Auth service dene
+        if (authService && authService.redirectAfterLogin) {
+            console.log('Trying authService redirect...');
+            authService.redirectAfterLogin();
+        }
+        
+        // Direct redirects
+        setTimeout(() => {
+            console.log('Direct href redirect...');
+            window.location.href = targetPath;
+        }, 100);
+        
+        setTimeout(() => {
+            console.log('Assign redirect...');
+            window.location.assign(targetPath);
+        }, 200);
+        
+        setTimeout(() => {
+            console.log('Replace redirect...');
+            window.location.replace(targetPath);
+        }, 300);
+        
+        // Final fallback
+        setTimeout(() => {
+            console.log('Final fallback - setting window.location...');
+            window.location = targetPath;
+        }, 500);
+        
+    } catch (error) {
+        console.error('Redirect error:', error);
+        alert('Yönlendirme başarısız! Dashboard linkine manuel olarak tıklayın.');
+    }
+}
+        
+    } catch (error) {
+        console.error('Login failed:', error);
+        
+        // Show error message
+        const errorMessage = error.message || 'Giriş işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.';
+        showErrorMessage(errorMessage);
         
         // Add visual feedback
         addFormShakeEffect();
@@ -177,80 +340,87 @@ function validateForm(data) {
 }
 
 /**
- * Validate username field
+ * Individual field validations
  */
 function validateUsername() {
     const username = $('#username').val().trim();
     const field = $('#username');
     
     if (!username) {
-        setFieldValidation(field, false, 'Kullanıcı adı gereklidir');
+        showFieldError('username', 'Kullanıcı adı gereklidir');
         return false;
     } else if (username.length < 2) {
-        setFieldValidation(field, false, 'Kullanıcı adı en az 2 karakter olmalıdır');
+        showFieldError('username', 'Kullanıcı adı en az 2 karakter olmalıdır');
         return false;
     } else {
-        setFieldValidation(field, true);
+        clearFieldValidation(field);
         return true;
     }
 }
 
-/**
- * Validate password field
- */
 function validatePassword() {
     const password = $('#password').val();
     const field = $('#password');
     
     if (!password) {
-        setFieldValidation(field, false, 'Şifre gereklidir');
+        showFieldError('password', 'Şifre gereklidir');
         return false;
     } else if (password.length < 3) {
-        setFieldValidation(field, false, 'Şifre en az 3 karakter olmalıdır');
+        showFieldError('password', 'Şifre en az 3 karakter olmalıdır');
         return false;
     } else {
-        setFieldValidation(field, true);
+        clearFieldValidation(field);
         return true;
     }
 }
 
 /**
- * Set field validation state
- */
-function setFieldValidation(field, isValid, message = '') {
-    field.removeClass('is-valid is-invalid');
-    
-    if (isValid) {
-        field.addClass('is-valid');
-    } else {
-        field.addClass('is-invalid');
-        if (message) {
-            // You can add invalid feedback div here if needed
-            console.warn('Validation error:', message);
-        }
-    }
-}
-
-/**
- * Show field-specific error
+ * Show field error
  */
 function showFieldError(fieldId, message) {
-    const field = $(`#${fieldId}`);
-    setFieldValidation(field, false, message);
+    const field = $('#' + fieldId);
+    field.addClass('is-invalid');
+    
+    // Remove existing error message
+    field.siblings('.invalid-feedback').remove();
+    
+    // Add error message
+    field.after(`<div class="invalid-feedback">${message}</div>`);
 }
 
 /**
  * Clear field validation
  */
 function clearFieldValidation(field) {
-    field.removeClass('is-valid is-invalid');
+    field.removeClass('is-invalid is-valid');
+    field.siblings('.invalid-feedback').remove();
 }
 
 /**
- * Clear all validation states
+ * Clear all validation
  */
 function clearAllValidation() {
-    $('#username, #password').removeClass('is-valid is-invalid');
+    $('.form-control').removeClass('is-invalid is-valid');
+    $('.invalid-feedback').remove();
+}
+
+/**
+ * Set loading state
+ */
+function setLoadingState(loading) {
+    const btn = $('#loginBtn');
+    const spinner = btn.find('.spinner-border');
+    const btnText = btn.find('.btn-text');
+    
+    if (loading) {
+        btn.prop('disabled', true);
+        spinner.removeClass('d-none');
+        btnText.text('Giriş yapılıyor...');
+    } else {
+        btn.prop('disabled', false);
+        spinner.addClass('d-none');
+        btnText.text('Giriş Yap');
+    }
 }
 
 /**
@@ -258,68 +428,22 @@ function clearAllValidation() {
  */
 function handleRememberMeChange() {
     const isChecked = $('#rememberMe').is(':checked');
-    const username = $('#username').val().trim();
-    
-    if (isChecked && username) {
-        authService.rememberUser(username);
-    } else if (!isChecked) {
-        authService.clearRememberedUser();
-    }
-}
-
-/**
- * Load remembered user
- */
-function loadRememberedUser() {
-    const rememberedUser = authService.getRememberedUser();
-    if (rememberedUser) {
-        $('#username').val(rememberedUser);
-        $('#rememberMe').prop('checked', true);
-        $('#password').focus(); // Focus password field if username is pre-filled
-    }
+    console.log('Remember me changed:', isChecked);
 }
 
 /**
  * Setup input focus effects
  */
 function setupInputFocusEffects() {
-    $('.form-floating .form-control').on('focus', function() {
-        $(this).closest('.form-floating').addClass('focused');
+    $('.form-control').on('focus', function() {
+        $(this).parent().addClass('focused');
     }).on('blur', function() {
-        $(this).closest('.form-floating').removeClass('focused');
+        $(this).parent().removeClass('focused');
     });
 }
 
 /**
- * Set loading state for form
- */
-function setLoadingState(isLoading) {
-    const loginBtn = $('#loginBtn');
-    const spinner = loginBtn.find('.spinner-border');
-    const btnText = loginBtn.find('.btn-text');
-    const form = $('#loginForm');
-    
-    if (isLoading) {
-        loginBtn.addClass('btn-loading').prop('disabled', true);
-        spinner.removeClass('d-none');
-        btnText.text('Giriş yapılıyor...');
-        form.addClass('loading');
-        
-        // Disable form inputs
-        $('#username, #password, #rememberMe').prop('disabled', true);
-    } else {
-        loginBtn.removeClass('btn-loading').prop('disabled', false);
-        spinner.addClass('d-none');
-        btnText.text('Giriş Yap');
-        form.removeClass('loading');
-        
-        // Re-enable form inputs
-        $('#username, #password, #rememberMe').prop('disabled', false);
-    }
-}
-
-/**
- * Add shake effect to form for errors
+ * Add form shake effect for errors
  */
 function addFormShakeEffect() {
     const form = $('#loginForm');
@@ -352,10 +476,10 @@ function showErrorMessage(message) {
     
     $('#alertContainer').html(alertHtml);
     
-    // Auto hide after 5 seconds
+    // Auto hide after 8 seconds
     setTimeout(() => {
         hideAllMessages();
-    }, 5000);
+    }, 8000);
     
     // Scroll to top to ensure alert is visible
     $('html, body').animate({ scrollTop: 0 }, 300);
@@ -431,7 +555,7 @@ function storeLoginAnalytics(user) {
     try {
         const analytics = {
             loginTime: new Date().toISOString(),
-            userId: user.id,
+            userId: user.id || 'unknown',
             userAgent: navigator.userAgent,
             platform: navigator.platform,
             language: navigator.language
@@ -445,115 +569,3 @@ function storeLoginAnalytics(user) {
         console.warn('Could not store login analytics:', error);
     }
 }
-
-/**
- * Setup password visibility toggle (future enhancement)
- */
-function setupPasswordToggle() {
-    const passwordField = $('#password');
-    const toggleButton = $('<button type="button" class="password-toggle">👁️</button>');
-    
-    // Add toggle button to password field container
-    passwordField.parent().append(toggleButton);
-    
-    toggleButton.on('click', function() {
-        const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-        passwordField.attr('type', type);
-        $(this).text(type === 'password' ? '👁️' : '🙈');
-    });
-}
-
-/**
- * Handle keyboard shortcuts
- */
-$(document).on('keydown', function(e) {
-    // Ctrl+Enter or Cmd+Enter to submit form
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        e.preventDefault();
-        $('#loginForm').submit();
-    }
-    
-    // Escape key to clear form
-    if (e.key === 'Escape') {
-        clearForm();
-        hideAllMessages();
-    }
-});
-
-/**
- * Clear form data
- */
-function clearForm() {
-    $('#username, #password').val('');
-    $('#rememberMe').prop('checked', false);
-    clearAllValidation();
-    $('#username').focus();
-}
-
-/**
- * Detect caps lock status
- */
-$('#password').on('keypress', function(e) {
-    // Simple caps lock detection
-    const char = String.fromCharCode(e.which);
-    if (char.toUpperCase() === char && char.toLowerCase() !== char && !e.shiftKey) {
-        // Caps lock might be on
-        if (!$('#capsLockWarning').length) {
-            const warning = $('<small id="capsLockWarning" class="text-warning">⚠️ Caps Lock açık olabilir</small>');
-            $(this).parent().append(warning);
-            
-            setTimeout(() => {
-                warning.fadeOut(() => warning.remove());
-            }, 3000);
-        }
-    }
-});
-
-/**
- * Auto-save form data (except password) for user convenience
- */
-function autoSaveFormData() {
-    $('#username').on('input', function() {
-        const username = $(this).val().trim();
-        if (username) {
-            sessionStorage.setItem('vervo_temp_username', username);
-        } else {
-            sessionStorage.removeItem('vervo_temp_username');
-        }
-    });
-}
-
-/**
- * Restore temporary form data
- */
-function restoreTemporaryData() {
-    const tempUsername = sessionStorage.getItem('vervo_temp_username');
-    if (tempUsername && !$('#username').val()) {
-        $('#username').val(tempUsername);
-    }
-}
-
-// Initialize auto-save and restore functionality
-$(document).ready(function() {
-    autoSaveFormData();
-    restoreTemporaryData();
-});
-
-// Clean up temporary data on successful login
-$(window).on('beforeunload', function() {
-    // Clean up temporary data when leaving page
-    sessionStorage.removeItem('vervo_temp_username');
-});
-
-// Export functions for testing or external use
-window.loginPageUtils = {
-    validateForm,
-    validateUsername,
-    validatePassword,
-    showErrorMessage,
-    showSuccessMessage,
-    showInfoMessage,
-    hideAllMessages,
-    clearForm,
-    setLoadingState
-};

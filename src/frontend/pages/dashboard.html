@@ -281,15 +281,100 @@
             loadStatistics();
         });
 
+        // Debug logout function
+        function debugLogout() {
+            console.log('=== DEBUG LOGOUT ===');
+            console.log('1. Checking logout button existence...');
+            
+            const logoutBtn = $('#navLogout');
+            console.log('Logout button found:', logoutBtn.length > 0);
+            console.log('Logout button element:', logoutBtn[0]);
+            
+            if (logoutBtn.length > 0) {
+                console.log('2. Checking click events...');
+                const events = $._data(logoutBtn[0], 'events');
+                console.log('Events attached:', events);
+                
+                console.log('3. Manually triggering logout...');
+                performLogout();
+            } else {
+                console.log('❌ Logout button not found!');
+                console.log('Available elements with nav prefix:');
+                $('[id^="nav"]').each(function() {
+                    console.log('- ' + this.id);
+                });
+            }
+        }
+
         // Header component'ini yükle
         async function loadHeader() {
             try {
                 await loadHeaderComponent();
                 // Header yüklendikten sonra kullanıcı bilgilerini güncelle
                 loadUserInfo();
+                
+                // Logout event'ini manuel olarak bağla
+                setupLogoutEvent();
             } catch (error) {
                 console.error('Header yüklenirken hata:', error);
             }
+        }
+
+        // Logout event'ini manuel olarak kurulum
+        function setupLogoutEvent() {
+            console.log('Setting up logout event...');
+            
+            // Logout butonunu bul ve event ekle
+            $(document).on('click', '#navLogout', function(e) {
+                e.preventDefault();
+                console.log('Logout button clicked!');
+                
+                if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                    console.log('Logout confirmed');
+                    performLogout();
+                } else {
+                    console.log('Logout cancelled');
+                }
+            });
+            
+            console.log('Logout event setup completed');
+        }
+
+        // Logout işlemini gerçekleştir
+        function performLogout() {
+            console.log('Performing logout...');
+            
+            try {
+                // Auth service ile logout
+                if (authService && authService.logout) {
+                    console.log('Using auth service logout...');
+                    authService.logout();
+                } else {
+                    console.log('Auth service not available, manual logout...');
+                    manualLogout();
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                manualLogout();
+            }
+        }
+
+        // Manuel logout
+        function manualLogout() {
+            console.log('Manual logout started...');
+            
+            // Clear localStorage
+            localStorage.removeItem('vervo_token');
+            localStorage.removeItem('vervo_user');
+            localStorage.removeItem('vervo_refresh_token');
+            localStorage.removeItem('vervo_login_time');
+            localStorage.removeItem('vervo_remember_username');
+            
+            console.log('localStorage cleared');
+            
+            // Redirect to index
+            console.log('Redirecting to index...');
+            window.location.href = '../index.html';
         }
 
         // Kullanıcı bilgilerini yükle (Dashboard özel - welcome message için)
@@ -362,6 +447,31 @@
             } catch (error) {
                 showAlert('API bağlantısı başarısız! ❌', 'danger');
                 $('#apiStatus').removeClass('bg-success').addClass('bg-danger').text('Çevrimdışı');
+            }
+        }
+
+        // Debug logout function
+        function debugLogout() {
+            console.log('=== DEBUG LOGOUT ===');
+            console.log('1. Checking logout button existence...');
+            
+            const logoutBtn = $('#navLogout');
+            console.log('Logout button found:', logoutBtn.length > 0);
+            console.log('Logout button element:', logoutBtn[0]);
+            
+            if (logoutBtn.length > 0) {
+                console.log('2. Checking click events...');
+                const events = $._data(logoutBtn[0], 'events');
+                console.log('Events attached:', events);
+                
+                console.log('3. Manually triggering logout...');
+                performLogout();
+            } else {
+                console.log('❌ Logout button not found!');
+                console.log('Available elements with nav prefix:');
+                $('[id^="nav"]').each(function() {
+                    console.log('- ' + this.id);
+                });
             }
         }
 

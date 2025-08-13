@@ -8,6 +8,26 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="../assets/css/login.css">
     <link rel="stylesheet" href="../assets/css/layout-fix.css">
+    <style>
+        /* Login page specific styles */
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .btn-loading {
+            position: relative;
+        }
+        
+        .form-floating.focused label {
+            color: #0d6efd;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <!-- Alert Container -->
@@ -52,15 +72,86 @@
                         <div class="small text-muted mt-2">
                             Portal kullanıcı bilgileriniz ile giriş yapın
                         </div>
+                        <!-- Test butonu -->
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="testRedirect()">
+                                🚀 Dashboard Test
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success" onclick="forceRedirect()">
+                                ⚡ Force Redirect
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="resetPage()">
+                                🔄 Reset
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../assets/js/utils.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/login.js"></script>
+    
+    <script>
+        // Login sayfası için auth kontrolü
+        $(document).ready(function() {
+            console.log('Login page loaded, checking if already authenticated...');
+            
+            // Eğer kullanıcı zaten giriş yapmışsa dashboard'a yönlendir
+            if (authService && authService.isAuthenticated()) {
+                console.log('User already authenticated, redirecting to dashboard...');
+                window.location.href = './dashboard.html';
+                return;
+            }
+            
+            console.log('User not authenticated, login page ready');
+        });
+        
+        // Test redirect function
+        function testRedirect() {
+            console.log('Testing manual redirect...');
+            console.log('Current path:', window.location.pathname);
+            
+            const dashboardPath = './dashboard.html';
+            console.log('Target path:', dashboardPath);
+            
+            alert(`Test redirect to: ${dashboardPath}\nCheck console for details.`);
+            
+            setTimeout(() => {
+                window.location.href = dashboardPath;
+            }, 1000);
+        }
+        
+        // Force redirect function
+        function forceRedirect() {
+            console.log('FORCE REDIRECT - bypassing all checks...');
+            const dashboardPath = './dashboard.html';
+            console.log('Force redirecting to:', dashboardPath);
+            
+            // Try all methods immediately
+            try {
+                window.location.href = dashboardPath;
+            } catch (e) {
+                console.log('href failed, trying assign...');
+                window.location.assign(dashboardPath);
+            }
+            
+            setTimeout(() => {
+                window.location.replace(dashboardPath);
+            }, 100);
+        }
+        
+        // Sıfırlama fonksiyonu
+        function resetPage() {
+            console.log('Resetting page...');
+            localStorage.clear();
+            location.reload();
+        }
+    </script>
 </body>
 </html>

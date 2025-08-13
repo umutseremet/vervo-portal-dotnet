@@ -67,6 +67,8 @@ function setActiveNavItem() {
 }
 
 function bindNavigationEvents() {
+    console.log('Binding navigation events...');
+    
     // Araç Takip Sistemi linki
     $('#navAracTakip').on('click', function(e) {
         if ($(this).attr('href') === '#') {
@@ -78,20 +80,81 @@ function bindNavigationEvents() {
     // Raporlar linki
     $('#navReports').on('click', function(e) {
         e.preventDefault();
-        showAlert('Raporlar sayfası henüz hazırlanmadı.', 'info');
+        if (typeof showAlert === 'function') {
+            showAlert('Raporlar sayfası henüz hazırlanmadı.', 'info');
+        } else {
+            alert('Raporlar sayfası henüz hazırlanmadı.');
+        }
     });
     
     // Diğer navigation linklerini güncelle
     $('#navProfile, #navSettings, #navHelp').on('click', function(e) {
         e.preventDefault();
-        showAlert('Bu özellik henüz hazırlanmadı.', 'info');
+        if (typeof showAlert === 'function') {
+            showAlert('Bu özellik henüz hazırlanmadı.', 'info');
+        } else {
+            alert('Bu özellik henüz hazırlanmadı.');
+        }
     });
+    
+    // Logout event'ini özel olarak handle et
+    console.log('Setting up logout event in header...');
+    $('#navLogout').off('click').on('click', function(e) {
+        e.preventDefault();
+        console.log('Header logout clicked!');
+        handleLogout();
+    });
+    
+    console.log('Navigation events bound');
 }
 
 function handleLogout() {
+    console.log('handleLogout called from header');
+    
     if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        authService.logout();
+        console.log('Logout confirmed in header');
+        
+        try {
+            if (authService && authService.logout) {
+                console.log('Using authService.logout()');
+                authService.logout();
+            } else {
+                console.log('AuthService not available, manual logout');
+                performManualLogout();
+            }
+        } catch (error) {
+            console.error('Logout error in header:', error);
+            performManualLogout();
+        }
+    } else {
+        console.log('Logout cancelled in header');
     }
+}
+
+function performManualLogout() {
+    console.log('Performing manual logout from header...');
+    
+    // Clear all auth data
+    localStorage.removeItem('vervo_token');
+    localStorage.removeItem('vervo_user');
+    localStorage.removeItem('vervo_refresh_token');
+    localStorage.removeItem('vervo_login_time');
+    localStorage.removeItem('vervo_remember_username');
+    
+    console.log('Auth data cleared from localStorage');
+    
+    // Redirect to index
+    const currentPath = window.location.pathname;
+    let indexPath;
+    
+    if (currentPath.includes('/pages/')) {
+        indexPath = '../index.html';
+    } else {
+        indexPath = './index.html';
+    }
+    
+    console.log('Redirecting to:', indexPath);
+    window.location.href = indexPath;
 }
 
 function updateNotificationCount(count) {

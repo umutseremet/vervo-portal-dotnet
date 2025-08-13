@@ -1,7 +1,8 @@
 // Authentication Service - Fixed Version
 class AuthService {
     constructor() {
-        this.apiBaseUrl = 'https://localhost:7443/api'; // Redmine API URL
+        // API URL'ini backend projenizin çalıştığı porta göre ayarlayın
+        this.apiBaseUrl = 'http://localhost:5154/api'; // AracTakip.Api projesi
         this.tokenKey = 'vervo_token';
         this.userKey = 'vervo_user';
         this.refreshKey = 'vervo_refresh_token';
@@ -13,7 +14,27 @@ class AuthService {
      * Login method
      */
     async login(username, password) {
+        console.log('Login attempt:', { username, apiUrl: this.apiBaseUrl });
+        
         try {
+            // Test mode - API çalışmıyorsa test kullanıcısı ile giriş yap
+            if (username === 'test' && password === 'test') {
+                console.log('Test mode login');
+                const testData = {
+                    token: 'test.jwt.token.' + Date.now(),
+                    user: {
+                        id: 1,
+                        FullName: 'Test Kullanıcı',
+                        FirstName: 'Test',
+                        LastName: 'Kullanıcı',
+                        Username: 'test'
+                    }
+                };
+                
+                this.storeAuthData(testData);
+                return testData;
+            }
+            
             const response = await fetch(`${this.apiBaseUrl}/auth/login`, {
                 method: 'POST',
                 headers: {
@@ -26,12 +47,16 @@ class AuthService {
                 })
             });
 
+            console.log('API Response status:', response.status);
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+                console.error('API Error:', errorData);
                 throw new Error(errorData.message || this.getErrorMessage(response.status));
             }
 
             const data = await response.json();
+            console.log('Login success:', data);
             
             // Store authentication data
             this.storeAuthData(data);
@@ -42,7 +67,7 @@ class AuthService {
             console.error('Login error:', error);
             
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                throw new Error('Sunucuya bağlanılamıyor. Lütfen ağ bağlantınızı kontrol edin.');
+                throw new Error('Sunucuya bağlanılamıyor. Test kullanıcısı: test/test');
             }
             
             throw error;
