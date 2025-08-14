@@ -1,73 +1,63 @@
-// Authentication Service - Fixed Version
+// Authentication Service
+// src/frontend/assets/js/auth.js
+
 class AuthService {
     constructor() {
-        // API URL'ini backend projenizin çalıştığı porta göre ayarlayın
-        this.apiBaseUrl = 'http://localhost:5154/api'; // AracTakip.Api projesi
+        this.apiBaseUrl = 'http://localhost:5154/api';
         this.tokenKey = 'vervo_token';
         this.userKey = 'vervo_user';
-        this.refreshKey = 'vervo_refresh_token';
+        this.refreshTokenKey = 'vervo_refresh_token';
         this.loginTimeKey = 'vervo_login_time';
-        this.refreshTimer = null;
+        this.rememberUsernameKey = 'vervo_remember_username';
+        
+        console.log('AuthService initialized');
+        
+        // Setup token refresh if authenticated
+        if (this.isAuthenticated()) {
+            this.setupTokenRefresh();
+        }
     }
 
     /**
-     * Login method
+     * Login user
      */
-    async login(username, password) {
-        console.log('Login attempt:', { username, apiUrl: this.apiBaseUrl });
+    async login(username, password, rememberMe = false) {
+        console.log('AuthService.login called');
         
         try {
-            // Test mode - API çalışmıyorsa test kullanıcısı ile giriş yap
-            if (username === 'test' && password === 'test') {
-                console.log('Test mode login');
-                const testData = {
-                    token: 'test.jwt.token.' + Date.now(),
-                    user: {
-                        id: 1,
-                        FullName: 'Test Kullanıcı',
-                        FirstName: 'Test',
-                        LastName: 'Kullanıcı',
-                        Username: 'test'
-                    }
-                };
-                
-                this.storeAuthData(testData);
-                return testData;
-            }
-            
             const response = await fetch(`${this.apiBaseUrl}/auth/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     username: username,
-                    password: password
+                    password: password,
+                    rememberMe: rememberMe
                 })
             });
 
-            console.log('API Response status:', response.status);
+            console.log('Login response status:', response.status);
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                console.error('API Error:', errorData);
-                throw new Error(errorData.message || this.getErrorMessage(response.status));
+                const errorText = await response.text();
+                console.error('Login error response:', errorText);
+                throw new Error(this.getErrorMessage(response.status));
             }
 
             const data = await response.json();
-            console.log('Login success:', data);
-            
+            console.log('Login response data:', data);
+
             // Store authentication data
             this.storeAuthData(data);
-            
+
             return data;
-            
+
         } catch (error) {
             console.error('Login error:', error);
             
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                throw new Error('Sunucuya bağlanılamıyor. Test kullanıcısı: test/test');
+                throw new Error('Sunucu bağlantısı kurulamadı. Lütfen sunucunun çalıştığından emin olun.');
             }
             
             throw error;
@@ -75,90 +65,91 @@ class AuthService {
     }
 
     /**
-     * Logout method - FIXED VERSION
+     * Store authentication data
      */
-    logout() {
-        console.log('Logout başlatılıyor...');
+    storeAuthData(data) {
+        console.log('Storing auth data:', data);
         
-        try {
-            // Clear local authentication data
-            this.clearAuthData();
-            
-            // Clear token refresh timer
-            this.clearTokenRefresh();
-            
-            console.log('Auth data temizlendi, login sayfasına yönlendiriliyor...');
-            
-            // Redirect to login page
-            this.redirectToLogin();
-            
-        } catch (error) {
-            console.error('Logout error:', error);
-            // Force redirect even if there's an error
-            this.forceRedirectToLogin();
+        // Store token
+        if (data.token) {
+            localStorage.setItem(this.tokenKey, data.token);
         }
+        
+        // Store refresh token
+        if (data.refreshToken) {
+            localStorage.setItem(this.refreshTokenKey, data.refreshToken);
+        }
+        
+        // Store user info
+        if (data.user) {
+            localStorage.setItem(this.userKey, JSON.stringify(data.user));
+        }
+        
+        // Store login time
+        localStorage.setItem(this.loginTimeKey, Date.now().toString());
+        
+        console.log('Auth data stored successfully');
     }
 
     /**
-     * Clear authentication data
+     * Logout user
      */
-    clearAuthData() {
-        console.log('Clearing auth data...');
+    logout() {
+        console.log('Logging out user...');
+        
+        // Clear all auth data
         localStorage.removeItem(this.tokenKey);
         localStorage.removeItem(this.userKey);
-        localStorage.removeItem(this.refreshKey);
+        localStorage.removeItem(this.refreshTokenKey);
         localStorage.removeItem(this.loginTimeKey);
-        localStorage.removeItem('vervo_remember_username');
+        
+        // Optionally clear remember me
+        // localStorage.removeItem(this.rememberUsernameKey);
+        
+        console.log('User logged out, redirecting to login...');
+        
+        // Redirect to login
+        this.redirectToLogin();
     }
 
     /**
      * Check if user is authenticated
      */
     isAuthenticated() {
-        const token = this.getToken();
-        console.log('isAuthenticated check - token:', token ? 'exists' : 'not found');
+        const token = localStorage.getItem(this.tokenKey);
+        const user = localStorage.getItem(this.userKey);
         
-        if (!token) {
+        if (!token || !user) {
             return false;
         }
-
+        
+        // Check token expiration
         try {
-            // Parse and validate JWT token
             const payload = this.parseJwtPayload(token);
-            const currentTime = Math.floor(Date.now() / 1000);
+            const now = Math.floor(Date.now() / 1000);
             
-            // Check if token is expired
-            if (payload.exp && payload.exp < currentTime) {
-                console.warn('Token expired');
-                this.clearAuthData();
+            if (payload.exp && payload.exp < now) {
+                console.log('Token expired');
+                this.logout();
                 return false;
             }
             
             return true;
-            
         } catch (error) {
             console.error('Token validation error:', error);
-            this.clearAuthData();
             return false;
         }
     }
 
     /**
-     * Get stored authentication token
+     * Get current user
      */
-    getToken() {
-        return localStorage.getItem(this.tokenKey);
-    }
-
-    /**
-     * Get stored user information
-     */
-    getUser() {
-        const userStr = localStorage.getItem(this.userKey);
-        if (!userStr) return null;
+    getCurrentUser() {
+        const userJson = localStorage.getItem(this.userKey);
+        if (!userJson) return null;
         
         try {
-            return JSON.parse(userStr);
+            return JSON.parse(userJson);
         } catch (error) {
             console.error('Error parsing user data:', error);
             return null;
@@ -166,26 +157,54 @@ class AuthService {
     }
 
     /**
-     * Store authentication data
+     * Get auth token
      */
-    storeAuthData(data) {
-        if (data.token) {
-            localStorage.setItem(this.tokenKey, data.token);
+    getToken() {
+        return localStorage.getItem(this.tokenKey);
+    }
+
+    /**
+     * Get auth headers for API requests
+     */
+    getAuthHeaders() {
+        const token = this.getToken();
+        if (!token) return {};
+        
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    /**
+     * Make authenticated API request
+     */
+    async apiRequest(endpoint, options = {}) {
+        const url = `${this.apiBaseUrl}${endpoint}`;
+        const authHeaders = this.getAuthHeaders();
+        
+        const requestOptions = {
+            ...options,
+            headers: {
+                ...authHeaders,
+                ...options.headers
+            }
+        };
+        
+        try {
+            const response = await fetch(url, requestOptions);
+            
+            if (response.status === 401) {
+                console.log('Unauthorized request, logging out...');
+                this.logout();
+                throw new Error('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+            }
+            
+            return response;
+        } catch (error) {
+            console.error('API request error:', error);
+            throw error;
         }
-        
-        if (data.user) {
-            localStorage.setItem(this.userKey, JSON.stringify(data.user));
-        }
-        
-        if (data.refreshToken) {
-            localStorage.setItem(this.refreshKey, data.refreshToken);
-        }
-        
-        // Store login time
-        localStorage.setItem(this.loginTimeKey, Date.now().toString());
-        
-        // Setup token refresh
-        this.setupTokenRefresh();
     }
 
     /**
@@ -235,6 +254,49 @@ class AuthService {
     }
 
     /**
+     * Redirect after successful login - FIXED VERSION
+     */
+    redirectAfterLogin() {
+        console.log('redirectAfterLogin called');
+        console.log('Current path:', window.location.pathname);
+        console.log('Current href:', window.location.href);
+        
+        // Path'e göre doğru dashboard yolunu belirle
+        const currentPath = window.location.pathname;
+        let dashboardPath;
+        
+        // login.html'den dashboard.html'e yönlendirme
+        if (currentPath.includes('/pages/') || currentPath.includes('login.html')) {
+            // pages klasöründen pages klasörüne
+            dashboardPath = './dashboard.html';
+        } else if (currentPath.includes('/frontend/')) {
+            // frontend ana dizininden pages klasörüne
+            dashboardPath = './pages/dashboard.html';
+        } else {
+            // Ana dizinden pages klasörüne
+            dashboardPath = './pages/dashboard.html';
+        }
+        
+        console.log('Calculated dashboard path:', dashboardPath);
+        
+        try {
+            // Doğrudan yönlendirme yap
+            window.location.href = dashboardPath;
+            
+        } catch (error) {
+            console.error('Redirect error:', error);
+            
+            // Fallback yöntemleri dene
+            try {
+                window.location.assign(dashboardPath);
+            } catch (e) {
+                console.error('Assign failed, trying replace:', e);
+                window.location.replace(dashboardPath);
+            }
+        }
+    }
+
+    /**
      * Force redirect to login (fallback)
      */
     forceRedirectToLogin() {
@@ -263,35 +325,6 @@ class AuthService {
     }
 
     /**
-     * Redirect after successful login
-     */
-    redirectAfterLogin() {
-        console.log('redirectAfterLogin called');
-        
-        // Check if we're on login page
-        const currentPath = window.location.pathname;
-        const isOnLogin = currentPath.includes('index.html') || 
-                         currentPath === '/' || 
-                         currentPath.endsWith('/');
-        
-        if (!isOnLogin) {
-            console.log('Not on login page, not redirecting');
-            return;
-        }
-        
-        // Redirect to dashboard
-        let dashboardPath;
-        if (currentPath.includes('/frontend/')) {
-            dashboardPath = './pages/dashboard.html';
-        } else {
-            dashboardPath = './pages/dashboard.html';
-        }
-        
-        console.log('Redirecting to dashboard:', dashboardPath);
-        window.location.href = dashboardPath;
-    }
-
-    /**
      * Setup token refresh
      */
     setupTokenRefresh() {
@@ -300,58 +333,87 @@ class AuthService {
         
         try {
             const payload = this.parseJwtPayload(token);
-            if (payload.exp) {
-                const expirationTime = payload.exp * 1000; // Convert to milliseconds
-                const currentTime = Date.now();
-                const timeUntilExpiry = expirationTime - currentTime;
+            const now = Math.floor(Date.now() / 1000);
+            const timeToExpire = (payload.exp - now) * 1000; // Convert to milliseconds
+            
+            // Refresh token 5 minutes before expiration
+            const refreshTime = timeToExpire - (5 * 60 * 1000);
+            
+            if (refreshTime > 0) {
+                setTimeout(() => {
+                    this.refreshToken();
+                }, refreshTime);
                 
-                // Refresh token 5 minutes before expiry
-                const refreshTime = Math.max(timeUntilExpiry - (5 * 60 * 1000), 0);
-                
-                if (refreshTime > 0) {
-                    this.refreshTimer = setTimeout(() => {
-                        this.refreshToken();
-                    }, refreshTime);
-                }
+                console.log(`Token refresh scheduled in ${refreshTime / 1000} seconds`);
             }
         } catch (error) {
-            console.error('Token refresh setup failed:', error);
+            console.error('Token refresh setup error:', error);
         }
     }
 
     /**
-     * Clear token refresh timer
+     * Refresh authentication token
      */
-    clearTokenRefresh() {
-        if (this.refreshTimer) {
-            clearTimeout(this.refreshTimer);
-            this.refreshTimer = null;
+    async refreshToken() {
+        const refreshToken = localStorage.getItem(this.refreshTokenKey);
+        if (!refreshToken) {
+            console.log('No refresh token available');
+            this.logout();
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${this.apiBaseUrl}/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    refreshToken: refreshToken
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Token refresh failed');
+            }
+            
+            const data = await response.json();
+            this.storeAuthData(data);
+            
+            console.log('Token refreshed successfully');
+            
+            // Setup next refresh
+            this.setupTokenRefresh();
+            
+        } catch (error) {
+            console.error('Token refresh error:', error);
+            this.logout();
         }
     }
 
     /**
-     * Remember user functionality
+     * Remember username functionality
      */
     rememberUser(username) {
-        localStorage.setItem('vervo_remember_username', username);
-    }
-
-    /**
-     * Clear remembered user
-     */
-    clearRememberedUser() {
-        localStorage.removeItem('vervo_remember_username');
+        localStorage.setItem(this.rememberUsernameKey, username);
     }
 
     /**
      * Get remembered username
      */
     getRememberedUsername() {
-        return localStorage.getItem('vervo_remember_username');
+        return localStorage.getItem(this.rememberUsernameKey);
     }
 
     /**
-     * Get error message by status code
+     * Clear remembered username
+     */
+    clearRememberedUser() {
+        localStorage.removeItem(this.rememberUsernameKey);
+    }
+
+    /**
+     * Get error message for status code
      */
     getErrorMessage(status) {
         const messages = {
@@ -389,9 +451,6 @@ class AuthService {
 
 // Create global auth service instance
 window.authService = new AuthService();
-
-// REMOVED auto-redirect logic that was causing loops
-// Each page now handles its own auth check
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {

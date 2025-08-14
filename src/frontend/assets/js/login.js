@@ -1,9 +1,20 @@
-// Login page functionality - FIXED VERSION
+// Login Page JavaScript
+// src/frontend/assets/js/login.js
+
 $(document).ready(function() {
-    console.log('Login page loading...');
+    console.log('Login script loaded');
+    
+    // Initialize login page
     initializeLoginPage();
-    setupFormValidation();
-    setupEventHandlers();
+    
+    // Check for URL messages
+    checkForUrlMessages();
+    
+    // Setup form handlers
+    setupFormHandlers();
+    
+    // Setup input effects
+    setupInputFocusEffects();
 });
 
 /**
@@ -12,434 +23,177 @@ $(document).ready(function() {
 function initializeLoginPage() {
     console.log('Initializing login page...');
     
-    // Load remembered username if exists
-    loadRememberedUser();
-    
-    // Set focus to username field
+    // Focus on username field
     $('#username').focus();
     
-    // Clear any existing alerts
-    hideAllMessages();
+    // Load remembered username
+    loadRememberedUsername();
     
-    // Check if there's an error message in URL params
-    checkForUrlMessages();
+    // Setup keyboard shortcuts
+    setupKeyboardShortcuts();
+}
+
+/**
+ * Setup form event handlers
+ */
+function setupFormHandlers() {
+    // Login form submission
+    $('#loginForm').on('submit', handleLogin);
     
-    console.log('Login page initialized');
+    // Enter key handling
+    $('.form-control').on('keypress', function(e) {
+        if (e.which === 13) { // Enter key
+            e.preventDefault();
+            handleLogin(e);
+        }
+    });
+    
+    // Show/hide password toggle
+    $('#togglePassword').on('click', function() {
+        const passwordField = $('#password');
+        const passwordFieldType = passwordField.attr('type');
+        
+        if (passwordFieldType === 'password') {
+            passwordField.attr('type', 'text');
+            $(this).html('<i class="fas fa-eye-slash"></i>');
+        } else {
+            passwordField.attr('type', 'password');
+            $(this).html('<i class="fas fa-eye"></i>');
+        }
+    });
+}
+
+/**
+ * Handle login form submission - FIXED VERSION
+ */
+async function handleLogin(event) {
+    event.preventDefault();
+    console.log('=== LOGIN ATTEMPT ===');
+    
+    // Form verilerini al
+    const username = $('#username').val()?.trim();
+    const password = $('#password').val();
+    const rememberMe = $('#rememberMe').is(':checked');
+    
+    // Validation
+    if (!username || !password) {
+        showErrorMessage('Kullanıcı adı ve şifre gereklidir.');
+        return;
+    }
+    
+    try {
+        // Loading state
+        setLoadingState(true);
+        hideAllMessages();
+        
+        console.log('Attempting login with username:', username);
+        
+        // API call
+        const response = await authService.login(username, password, rememberMe);
+        console.log('Login successful:', response);
+        
+        // Handle remember me
+        if (rememberMe) {
+            localStorage.setItem('vervo_remember_username', username);
+        } else {
+            localStorage.removeItem('vervo_remember_username');
+        }
+        
+        // Success message
+        showSuccessMessage('Giriş başarılı! Yönlendiriliyorsunuz...');
+        
+        // Store login analytics (optional)
+        storeLoginAnalytics(response.user || {});
+        
+        // Basit ve doğrudan yönlendirme - FIXED
+        setTimeout(() => {
+            console.log('=== LOGIN SUCCESS REDIRECT ===');
+            console.log('Current location:', window.location.href);
+            
+            // Doğrudan dashboard'a yönlendir
+            window.location.href = './dashboard.html';
+            
+        }, 1000); // 1 saniye bekle ki kullanıcı mesajı görsün
+        
+    } catch (error) {
+        console.error('Login failed:', error);
+        
+        // Show error message
+        const errorMessage = error.message || 'Giriş işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.';
+        showErrorMessage(errorMessage);
+        
+        // Add visual feedback
+        addFormShakeEffect();
+        
+        // Focus back to username field for retry
+        setTimeout(() => {
+            $('#username').focus().select();
+        }, 500);
+        
+    } finally {
+        // Reset loading state after delay
+        setTimeout(() => {
+            setLoadingState(false);
+        }, 1000);
+    }
 }
 
 /**
  * Load remembered username
  */
-function loadRememberedUser() {
-    try {
-        if (authService && typeof authService.getRememberedUsername === 'function') {
-            const rememberedUsername = authService.getRememberedUsername();
-            if (rememberedUsername) {
-                $('#username').val(rememberedUsername);
-                $('#rememberMe').prop('checked', true);
-                $('#password').focus(); // Focus to password if username is filled
-                console.log('Remembered username loaded:', rememberedUsername);
-            }
-        } else {
-            // Fallback: direct localStorage access
-            const rememberedUsername = localStorage.getItem('vervo_remember_username');
-            if (rememberedUsername) {
-                $('#username').val(rememberedUsername);
-                $('#rememberMe').prop('checked', true);
-                $('#password').focus();
-                console.log('Remembered username loaded (fallback):', rememberedUsername);
-            }
-        }
-    } catch (error) {
-        console.error('Error loading remembered user:', error);
+function loadRememberedUsername() {
+    const rememberedUsername = localStorage.getItem('vervo_remember_username');
+    if (rememberedUsername) {
+        $('#username').val(rememberedUsername);
+        $('#rememberMe').prop('checked', true);
+        $('#password').focus();
     }
 }
 
 /**
- * Setup form validation
+ * Setup keyboard shortcuts
  */
-function setupFormValidation() {
-    // Real-time validation for username
-    $('#username').on('blur', function() {
-        validateUsername();
-    });
-    
-    // Real-time validation for password
-    $('#password').on('blur', function() {
-        validatePassword();
-    });
-    
-    // Clear validation states on input
-    $('#username, #password').on('input', function() {
-        clearFieldValidation($(this));
-    });
-}
-
-/**
- * Setup event handlers
- */
-function setupEventHandlers() {
-    // Login form submission
-    $('#loginForm').on('submit', handleLoginSubmit);
-    
-    // Enter key handlers
-    $('#username, #password').on('keypress', function(e) {
-        if (e.which === 13) { // Enter key
+function setupKeyboardShortcuts() {
+    $(document).on('keydown', function(e) {
+        // Ctrl+L or Cmd+L to focus username
+        if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
             e.preventDefault();
-            $('#loginForm').submit();
+            $('#username').focus().select();
+        }
+        
+        // Escape to clear form
+        if (e.key === 'Escape') {
+            clearForm();
         }
     });
-    
-    // Remember me functionality
-    $('#rememberMe').on('change', handleRememberMeChange);
-    
-    // Input field focus effects
-    setupInputFocusEffects();
 }
 
 /**
- * Handle login form submission
+ * Clear login form
  */
-async function handleLoginSubmit(e) {
-    e.preventDefault();
-    
-    console.log('Login form submitted');
-    
-    // Get form data
-    const formData = getFormData();
-    console.log('Form data:', { username: formData.username, rememberMe: formData.rememberMe });
-    
-    // Validate form
-    if (!validateForm(formData)) {
-        console.log('Form validation failed');
-        return;
-    }
-    
-    // Show loading state
-    setLoadingState(true);
-    
-    try {
-        console.log('Attempting login...');
-        
-        // Attempt login
-        const response = await authService.login(formData.username, formData.password);
-        console.log('Login response:', response);
-        
-        // Handle remember me
-        if (formData.rememberMe) {
-            if (authService.rememberUser) {
-                authService.rememberUser(formData.username);
-            } else {
-                localStorage.setItem('vervo_remember_username', formData.username);
-            }
-        } else {
-            if (authService.clearRememberedUser) {
-                authService.clearRememberedUser();
-            } else {
-                localStorage.removeItem('vervo_remember_username');
-            }
-        }
-        
-        // Show success message
-        showSuccessMessage('Giriş başarılı! Yönlendiriliyorsunuz...');
-        
-        // Store login analytics (optional)
-        storeLoginAnalytics(response.user || {});
-        
-/**
- * Handle login form submission
- */
-async function handleLoginSubmit(e) {
-    e.preventDefault();
-    
-    console.log('Login form submitted');
-    
-    // Get form data
-    const formData = getFormData();
-    console.log('Form data:', { username: formData.username, rememberMe: formData.rememberMe });
-    
-    // Validate form
-    if (!validateForm(formData)) {
-        console.log('Form validation failed');
-        return;
-    }
-    
-    // Show loading state
-    setLoadingState(true);
-    
-    try {
-        console.log('Attempting login...');
-        
-        // Attempt login
-        const response = await authService.login(formData.username, formData.password);
-        console.log('Login response:', response);
-        
-        // Handle remember me
-        if (formData.rememberMe) {
-            if (authService.rememberUser) {
-                authService.rememberUser(formData.username);
-            } else {
-                localStorage.setItem('vervo_remember_username', formData.username);
-            }
-        } else {
-            if (authService.clearRememberedUser) {
-                authService.clearRememberedUser();
-            } else {
-                localStorage.removeItem('vervo_remember_username');
-            }
-        }
-        
-        // Show success message
-        showSuccessMessage('Giriş başarılı! Yönlendiriliyorsunuz...');
-        
-        // Store login analytics (optional)
-        storeLoginAnalytics(response.user || {});
-        
-        // Redirect after short delay
-        setTimeout(() => {
-            console.log('=== LOGIN SUCCESS REDIRECT ===');
-            console.log('Current location:', window.location.href);
-            
-            const dashboardPath = './dashboard.html';
-            console.log('Target dashboard:', dashboardPath);
-            
-            // Multiple redirect attempt
-            performRedirect(dashboardPath);
-            
-        }, 500);
-        
-    } catch (error) {
-        console.error('Login failed:', error);
-        
-        // Show error message
-        const errorMessage = error.message || 'Giriş işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.';
-        showErrorMessage(errorMessage);
-        
-        // Add visual feedback
-        addFormShakeEffect();
-        
-        // Focus back to username field for retry
-        setTimeout(() => {
-            $('#username').focus().select();
-        }, 500);
-        
-    } finally {
-        // Reset loading state after delay
-        setTimeout(() => {
-            setLoadingState(false);
-        }, 1000);
-    }
-}
-
-// Redirect fonksiyonu
-function performRedirect(targetPath) {
-    console.log('performRedirect called with:', targetPath);
-    
-    try {
-        // Auth service dene
-        if (authService && authService.redirectAfterLogin) {
-            console.log('Trying authService redirect...');
-            authService.redirectAfterLogin();
-        }
-        
-        // Direct redirects
-        setTimeout(() => {
-            console.log('Direct href redirect...');
-            window.location.href = targetPath;
-        }, 100);
-        
-        setTimeout(() => {
-            console.log('Assign redirect...');
-            window.location.assign(targetPath);
-        }, 200);
-        
-        setTimeout(() => {
-            console.log('Replace redirect...');
-            window.location.replace(targetPath);
-        }, 300);
-        
-        // Final fallback
-        setTimeout(() => {
-            console.log('Final fallback - setting window.location...');
-            window.location = targetPath;
-        }, 500);
-        
-    } catch (error) {
-        console.error('Redirect error:', error);
-        alert('Yönlendirme başarısız! Dashboard linkine manuel olarak tıklayın.');
-    }
-}
-        
-    } catch (error) {
-        console.error('Login failed:', error);
-        
-        // Show error message
-        const errorMessage = error.message || 'Giriş işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.';
-        showErrorMessage(errorMessage);
-        
-        // Add visual feedback
-        addFormShakeEffect();
-        
-        // Focus back to username field for retry
-        setTimeout(() => {
-            $('#username').focus().select();
-        }, 500);
-        
-    } finally {
-        // Reset loading state after delay
-        setTimeout(() => {
-            setLoadingState(false);
-        }, 1000);
-    }
-}
-
-/**
- * Get form data
- */
-function getFormData() {
-    return {
-        username: $('#username').val().trim(),
-        password: $('#password').val(),
-        rememberMe: $('#rememberMe').is(':checked')
-    };
-}
-
-/**
- * Validate entire form
- */
-function validateForm(data) {
-    let isValid = true;
-    
-    // Clear previous validation states
-    clearAllValidation();
-    
-    // Validate username
-    if (!data.username) {
-        showFieldError('username', 'Kullanıcı adı gereklidir');
-        isValid = false;
-    } else if (data.username.length < 2) {
-        showFieldError('username', 'Kullanıcı adı en az 2 karakter olmalıdır');
-        isValid = false;
-    }
-    
-    // Validate password
-    if (!data.password) {
-        showFieldError('password', 'Şifre gereklidir');
-        isValid = false;
-    } else if (data.password.length < 3) {
-        showFieldError('password', 'Şifre en az 3 karakter olmalıdır');
-        isValid = false;
-    }
-    
-    // Show general error if validation fails
-    if (!isValid) {
-        showErrorMessage('Lütfen form bilgilerini kontrol edin.');
-    }
-    
-    return isValid;
-}
-
-/**
- * Individual field validations
- */
-function validateUsername() {
-    const username = $('#username').val().trim();
-    const field = $('#username');
-    
-    if (!username) {
-        showFieldError('username', 'Kullanıcı adı gereklidir');
-        return false;
-    } else if (username.length < 2) {
-        showFieldError('username', 'Kullanıcı adı en az 2 karakter olmalıdır');
-        return false;
-    } else {
-        clearFieldValidation(field);
-        return true;
-    }
-}
-
-function validatePassword() {
-    const password = $('#password').val();
-    const field = $('#password');
-    
-    if (!password) {
-        showFieldError('password', 'Şifre gereklidir');
-        return false;
-    } else if (password.length < 3) {
-        showFieldError('password', 'Şifre en az 3 karakter olmalıdır');
-        return false;
-    } else {
-        clearFieldValidation(field);
-        return true;
-    }
-}
-
-/**
- * Show field error
- */
-function showFieldError(fieldId, message) {
-    const field = $('#' + fieldId);
-    field.addClass('is-invalid');
-    
-    // Remove existing error message
-    field.siblings('.invalid-feedback').remove();
-    
-    // Add error message
-    field.after(`<div class="invalid-feedback">${message}</div>`);
-}
-
-/**
- * Clear field validation
- */
-function clearFieldValidation(field) {
-    field.removeClass('is-invalid is-valid');
-    field.siblings('.invalid-feedback').remove();
-}
-
-/**
- * Clear all validation
- */
-function clearAllValidation() {
-    $('.form-control').removeClass('is-invalid is-valid');
-    $('.invalid-feedback').remove();
+function clearForm() {
+    $('#username, #password').val('');
+    $('#rememberMe').prop('checked', false);
+    hideAllMessages();
+    $('#username').focus();
 }
 
 /**
  * Set loading state
  */
 function setLoadingState(loading) {
-    const btn = $('#loginBtn');
-    const spinner = btn.find('.spinner-border');
-    const btnText = btn.find('.btn-text');
+    const loginBtn = $('#loginBtn');
+    const form = $('#loginForm');
     
     if (loading) {
-        btn.prop('disabled', true);
-        spinner.removeClass('d-none');
-        btnText.text('Giriş yapılıyor...');
+        loginBtn.prop('disabled', true)
+               .html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Giriş yapılıyor...');
+        form.addClass('loading');
     } else {
-        btn.prop('disabled', false);
-        spinner.addClass('d-none');
-        btnText.text('Giriş Yap');
+        loginBtn.prop('disabled', false)
+               .html('<i class="fas fa-sign-in-alt me-2"></i>Giriş Yap');
+        form.removeClass('loading');
     }
-}
-
-/**
- * Handle remember me change
- */
-function handleRememberMeChange() {
-    const isChecked = $('#rememberMe').is(':checked');
-    console.log('Remember me changed:', isChecked);
-}
-
-/**
- * Setup input focus effects
- */
-function setupInputFocusEffects() {
-    $('.form-control').on('focus', function() {
-        $(this).parent().addClass('focused');
-    }).on('blur', function() {
-        $(this).parent().removeClass('focused');
-    });
 }
 
 /**
@@ -449,40 +203,22 @@ function addFormShakeEffect() {
     const form = $('#loginForm');
     form.addClass('shake');
     
-    // Add invalid class to fields for visual feedback
-    $('#username, #password').addClass('is-invalid');
-    
     setTimeout(() => {
         form.removeClass('shake');
-        // Keep invalid class briefly then remove
-        setTimeout(() => {
-            $('#username, #password').removeClass('is-invalid');
-        }, 1000);
-    }, 500);
+    }, 600);
 }
 
 /**
- * Show error message
+ * Setup input focus effects
  */
-function showErrorMessage(message) {
-    hideAllMessages();
-    
-    const alertHtml = `
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Hata!</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    `;
-    
-    $('#alertContainer').html(alertHtml);
-    
-    // Auto hide after 8 seconds
-    setTimeout(() => {
-        hideAllMessages();
-    }, 8000);
-    
-    // Scroll to top to ensure alert is visible
-    $('html, body').animate({ scrollTop: 0 }, 300);
+function setupInputFocusEffects() {
+    $('.form-control').on('focus', function() {
+        $(this).closest('.form-floating').addClass('focused');
+    }).on('blur', function() {
+        if (!$(this).val()) {
+            $(this).closest('.form-floating').removeClass('focused');
+        }
+    });
 }
 
 /**
@@ -493,7 +229,23 @@ function showSuccessMessage(message) {
     
     const alertHtml = `
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Başarılı!</strong> ${message}
+            <strong>✅ Başarılı:</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    $('#alertContainer').html(alertHtml);
+}
+
+/**
+ * Show error message
+ */
+function showErrorMessage(message) {
+    hideAllMessages();
+    
+    const alertHtml = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>❌ Hata:</strong> ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
@@ -509,7 +261,7 @@ function showInfoMessage(message) {
     
     const alertHtml = `
         <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <strong>Bilgi:</strong> ${message}
+            <strong>ℹ️ Bilgi:</strong> ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;

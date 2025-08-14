@@ -39,38 +39,66 @@
                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                     <div class="card-header">
                         <h3 class="text-center font-weight-light my-4">
-                            <img src="../assets/images/logo.png" alt="Vervo" class="mb-3" style="height: 60px;">
+                            <img src="../assets/images/logo.png" alt="Logo" class="mb-3" style="height: 60px;">
                             <br>Aslan Group Portal
                         </h3>
                     </div>
                     <div class="card-body">
-                        <form id="loginForm">
+                        <!-- Alert Container for forms -->
+                        <div id="formAlertContainer"></div>
+                        
+                        <!-- Login Form -->
+                        <form id="loginForm" novalidate>
+                            <!-- Username -->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="username" name="username" type="text" placeholder="Kullanıcı Adı" required>
+                                <input class="form-control" 
+                                       id="username" 
+                                       name="username"
+                                       type="text" 
+                                       placeholder="Kullanıcı Adı"
+                                       required
+                                       autocomplete="username" />
                                 <label for="username">Kullanıcı Adı</label>
                             </div>
+                            
+                            <!-- Password -->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="password" name="password" type="password" placeholder="Şifre" required>
+                                <input class="form-control" 
+                                       id="password" 
+                                       name="password"
+                                       type="password" 
+                                       placeholder="Şifre"
+                                       required
+                                       autocomplete="current-password" />
                                 <label for="password">Şifre</label>
                             </div>
+                            
+                            <!-- Remember Me -->
                             <div class="form-check mb-3">
-                                <input class="form-check-input" id="rememberMe" type="checkbox" value="">
+                                <input class="form-check-input" 
+                                       id="rememberMe" 
+                                       name="rememberMe"
+                                       type="checkbox" 
+                                       value="" />
                                 <label class="form-check-label" for="rememberMe">Beni Hatırla</label>
                             </div>
+                            
+                            <!-- Submit Button -->
                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                <button class="btn btn-primary w-100" type="submit" id="loginBtn">
-                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                    <span class="btn-text">Giriş Yap</span>
+                                <button class="btn btn-primary w-100" 
+                                        type="submit"
+                                        id="loginBtn">
+                                    Giriş Yap
                                 </button>
                             </div>
                         </form>
                     </div>
                     <div class="card-footer text-center py-3">
                         <div class="small">
-                            <a href="../index.html" class="text-decoration-none">← Ana Sayfaya Dön</a>
+                            <a href="../index.html">← Ana Sayfaya Dön</a>
                         </div>
                         <div class="small text-muted mt-2">
-                            Portal kullanıcı bilgileriniz ile giriş yapın
+                            Aslan Group Portal kullanıcı bilgileriniz ile giriş yapın
                         </div>
                         <!-- Test butonu -->
                         <div class="mt-2">
@@ -133,17 +161,8 @@
             const dashboardPath = './dashboard.html';
             console.log('Force redirecting to:', dashboardPath);
             
-            // Try all methods immediately
-            try {
-                window.location.href = dashboardPath;
-            } catch (e) {
-                console.log('href failed, trying assign...');
-                window.location.assign(dashboardPath);
-            }
-            
-            setTimeout(() => {
-                window.location.replace(dashboardPath);
-            }, 100);
+            // Doğrudan yönlendirme yap
+            window.location.href = dashboardPath;
         }
         
         // Sıfırlama fonksiyonu
