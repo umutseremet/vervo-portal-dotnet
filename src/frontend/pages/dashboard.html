@@ -3,246 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aslan Group Portal - Dashboard</title>
+    <title>Dashboard - Aslan Group Portal</title>
+    
+    <!-- EMERGENCY AUTH CHECK - Must be first script -->
+    <script>
+    (function() {
+        console.log('🚨 EMERGENCY AUTH CHECK - Dashboard');
+        
+        // Check for any valid auth tokens
+        const token = localStorage.getItem('token') || 
+                      localStorage.getItem('vervo_token') || 
+                      localStorage.getItem('vervo_auth_token');
+        
+        const user = localStorage.getItem('user') || 
+                     localStorage.getItem('vervo_user') || 
+                     localStorage.getItem('vervo_user_data');
+        
+        console.log('Auth check:', {
+            hasToken: !!token,
+            hasUser: !!user,
+            tokenPreview: token ? token.substring(0, 20) + '...' : 'null',
+            userPreview: user ? 'exists' : 'null'
+        });
+        
+        if (!token || !user) {
+            console.log('❌ No auth tokens found - BLOCKING PAGE');
+            
+            // Clear all possible auth data
+            const authKeys = [
+                'token', 'user', 'vervo_token', 'vervo_user', 
+                'vervo_auth_token', 'vervo_user_data', 'vervo_login_time'
+            ];
+            
+            authKeys.forEach(key => {
+                localStorage.removeItem(key);
+            });
+            
+            sessionStorage.clear();
+            
+            console.log('🔄 Redirecting to login...');
+            
+            // Immediate redirect
+            const redirectUrl = './login.html?message=' + encodeURIComponent('Oturum gerekli. Lütfen giriş yapın.');
+            
+            try {
+                window.location.replace(redirectUrl);
+            } catch (e) {
+                window.location.href = redirectUrl;
+            }
+            
+            // Block page execution
+            throw new Error('AUTH_FAILURE_REDIRECT');
+        }
+        
+        // JWT validation
+        try {
+            if (token.includes('.')) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const now = Math.floor(Date.now() / 1000);
+                
+                if (payload.exp && payload.exp < now) {
+                    console.log('⏰ Token expired - BLOCKING PAGE');
+                    localStorage.clear();
+                    window.location.replace('./login.html?message=' + encodeURIComponent('Oturum süreniz dolmuş.'));
+                    throw new Error('TOKEN_EXPIRED');
+                }
+            }
+        } catch (error) {
+            console.warn('Token validation error:', error);
+        }
+        
+        console.log('✅ Emergency auth check passed');
+    })();
+    </script>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/navbar-fix.css">
-    <link rel="stylesheet" href="../assets/css/layout-fix.css">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link href="../assets/css/styles.css" rel="stylesheet">
+    
+    <style>
+        /* Dashboard specific styles */
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 0;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        
+        .stat-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .activity-item {
+            padding: 1rem;
+            border-left: 3px solid #007bff;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .quick-action-btn {
+            padding: 1rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+        
+        /* Loading animation */
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <!-- Alert Container -->
-    <div id="alertContainer" class="container mt-3" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 1050; width: 90%; max-width: 500px;"></div>
-
-    <!-- Navigation - Header Component Container -->
+    <!-- Header Component -->
     <div id="headerContainer"></div>
-
+    
     <!-- Main Content -->
-    <main class="container-fluid py-4" style="margin-top: 20px;">
+    <main class="container-fluid px-4 py-3">
         <!-- Welcome Section -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card border-0 shadow-sm bg-gradient-primary text-white">
-                    <div class="card-body p-4">
+                <div class="card welcome-card fade-in">
+                    <div class="card-body">
                         <div class="row align-items-center">
-                            <div class="col-lg-8">
-                                <h1 class="h3 mb-3">Hoş Geldiniz! 👋</h1>
-                                <p class="mb-0 opacity-90" id="welcomeMessage">
-                                    Aslan Group Portal'a hoş geldiniz. Buradan projelerinizi yönetebilir, raporlarınızı görüntüleyebilir ve araç takip sisteminizi kullanabilirsiniz.
+                            <div class="col-md-8">
+                                <h2 class="mb-3">
+                                    <i class="fas fa-hand-wave me-2"></i>
+                                    Hoş Geldiniz, <span id="welcomeUserName">Kullanıcı</span>!
+                                </h2>
+                                <p class="mb-0 fs-5">
+                                    Aslan Group Portal'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, 
+                                    raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.
                                 </p>
                             </div>
-                            <div class="col-lg-4 text-end">
-                                <div class="d-none d-lg-block">
-                                    <i class="display-1 opacity-25">🏢</i>
-                                </div>
+                            <div class="col-md-4 text-center">
+                                <i class="fas fa-tachometer-alt" style="font-size: 4rem; opacity: 0.3;"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Quick Actions -->
+        
+        <!-- Statistics Cards -->
         <div class="row mb-4">
-            <div class="col-12">
-                <h5 class="mb-3">Hızlı Erişim</h5>
-            </div>
-            <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100 border-0 shadow-sm hover-lift">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-icon mb-3">
-                            <i class="display-4">🚗</i>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stat-card fade-in" style="animation-delay: 0.1s;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-primary text-white mx-auto">
+                            <i class="fas fa-car"></i>
                         </div>
-                        <h6 class="card-title">Araç Takip Sistemi</h6>
-                        <p class="card-text text-muted mb-3">Araç filosunu takip edin, bakım bilgilerini yönetin</p>
-                        <a href="aractakip.html" class="btn btn-primary btn-sm">
-                            <i class="me-1">🚀</i> Sisteme Git
-                        </a>
+                        <h3 class="mb-2">24</h3>
+                        <p class="text-muted mb-0">Toplam Araç</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100 border-0 shadow-sm hover-lift">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-icon mb-3">
-                            <i class="display-4">📊</i>
+            
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stat-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-success text-white mx-auto">
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                        <h6 class="card-title">Raporlar</h6>
-                        <p class="card-text text-muted mb-3">Detaylı raporları görüntüleyin ve analiz edin</p>
-                        <button class="btn btn-outline-primary btn-sm" onclick="showAlert('Raporlar sayfası henüz hazırlanmadı.', 'info')">
-                            <i class="me-1">📈</i> Yakında
-                        </button>
+                        <h3 class="mb-2">18</h3>
+                        <p class="text-muted mb-0">Aktif Araç</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100 border-0 shadow-sm hover-lift">
-                    <div class="card-body text-center p-4">
-                        <div class="feature-icon mb-3">
-                            <i class="display-4">⚙️</i>
+            
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stat-card fade-in" style="animation-delay: 0.3s;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-warning text-white mx-auto">
+                            <i class="fas fa-route"></i>
                         </div>
-                        <h6 class="card-title">Sistem Ayarları</h6>
-                        <p class="card-text text-muted mb-3">Portal ayarlarını yapılandırın</p>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="showAlert('Ayarlar sayfası henüz hazırlanmadı.', 'info')">
-                            <i class="me-1">🔧</i> Yakında
-                        </button>
+                        <h3 class="mb-2">1,247</h3>
+                        <p class="text-muted mb-0">Günlük KM</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stat-card fade-in" style="animation-delay: 0.4s;">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-info text-white mx-auto">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="mb-2">12</h3>
+                        <p class="text-muted mb-0">Aktif Kullanıcı</p>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Statistics Row -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h5 class="mb-3">Sistem İstatistikleri</h5>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="text-primary mb-2">
-                            <i class="display-6">🚗</i>
-                        </div>
-                        <h4 class="card-title mb-1" id="totalVehicles">-</h4>
-                        <p class="card-text text-muted small">Toplam Araç</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="text-success mb-2">
-                            <i class="display-6">✅</i>
-                        </div>
-                        <h4 class="card-title mb-1" id="activeVehicles">-</h4>
-                        <p class="card-text text-muted small">Aktif Araç</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="text-warning mb-2">
-                            <i class="display-6">⚠️</i>
-                        </div>
-                        <h4 class="card-title mb-1" id="maintenanceNeeded">-</h4>
-                        <p class="card-text text-muted small">Bakım Gerekli</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="text-info mb-2">
-                            <i class="display-6">👤</i>
-                        </div>
-                        <h4 class="card-title mb-1" id="totalUsers">1</h4>
-                        <p class="card-text text-muted small">Aktif Kullanıcı</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
+        
+        <!-- Main Dashboard Content -->
         <div class="row">
-            <div class="col-lg-8 mb-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom">
-                        <h6 class="card-title mb-0">
-                            <i class="me-2">📈</i>Son Aktiviteler
-                        </h6>
+            <!-- Left Column -->
+            <div class="col-lg-8">
+                <!-- Recent Activity -->
+                <div class="card mb-4 fade-in" style="animation-delay: 0.5s;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Son Aktiviteler
+                        </h5>
+                        <small class="text-muted" id="lastUpdate">Son güncelleme: --:--</small>
                     </div>
                     <div class="card-body">
-                        <div id="recentActivity">
-                            <div class="d-flex align-items-center py-3 border-bottom">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        <i class="small">🚗</i>
+                        <div id="activityList">
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-check text-success me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Başarılı Giriş</h6>
+                                        <p class="mb-0 text-muted">Portal kimlik doğrulama ile giriş yapıldı</p>
                                     </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Araç Takip Sistemi Aktif</h6>
-                                    <p class="mb-0 text-muted small">Sistem başarıyla başlatıldı</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <small class="text-muted">Bugün</small>
+                                    <small class="text-muted">Şimdi</small>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center py-3 border-bottom">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        <i class="small">👤</i>
+                            
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-key text-primary me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Token Yenilendi</h6>
+                                        <p class="mb-0 text-muted">Güvenlik token'ı otomatik olarak yenilendi</p>
                                     </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Kullanıcı Girişi</h6>
-                                    <p class="mb-0 text-muted small">Sisteme başarıyla giriş yapıldı</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <small class="text-muted">Bugün</small>
+                                    <small class="text-muted">5 dk önce</small>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center py-3">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                        <i class="small">🔧</i>
+                            
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-car text-warning me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">Araç Takip Güncellemesi</h6>
+                                        <p class="mb-0 text-muted">34 ABC 123 plaka numaralı araç konumu güncellendi</p>
                                     </div>
+                                    <small class="text-muted">10 dk önce</small>
                                 </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Portal Kurulumu</h6>
-                                    <p class="mb-0 text-muted small">Aslan Group Portal başarıyla kuruldu</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <small class="text-muted">Bugün</small>
-                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chart Section -->
+                <div class="card fade-in" style="animation-delay: 0.6s;">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>Araç Kullanım İstatistikleri
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line fa-3x mb-3"></i>
+                                <p>Grafik Alanı</p>
+                                <small class="text-muted">Araç kullanım verileriniz burada görüntülenecek</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-lg-4 mb-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom">
-                        <h6 class="card-title mb-0">
-                            <i class="me-2">💡</i>Sistem Durumu
-                        </h6>
+            <!-- Right Column -->
+            <div class="col-lg-4">
+                <!-- Quick Actions -->
+                <div class="card mb-4 fade-in" style="animation-delay: 0.7s;">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>Hızlı İşlemler
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span>Araç Takip API</span>
-                            <span class="badge bg-success" id="apiStatus">Çevrimiçi</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span>Veritabanı</span>
-                            <span class="badge bg-success">Bağlı</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span>Redmine Entegrasyonu</span>
-                            <span class="badge bg-warning">Kurulum Aşamasında</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span>Sistem Sağlığı</span>
-                            <span class="badge bg-success">Mükemmel</span>
-                        </div>
+                        <button class="quick-action-btn btn btn-primary" onclick="goToAracTakip()">
+                            <i class="fas fa-car me-2"></i>Araç Takip Sistemi
+                        </button>
+                        
+                        <button class="quick-action-btn btn btn-success" onclick="showAlert('Rapor hazırlanıyor...', 'info')">
+                            <i class="fas fa-chart-bar me-2"></i>Rapor Oluştur
+                        </button>
+                        
+                        <button class="quick-action-btn btn btn-info" onclick="refreshUserData()">
+                            <i class="fas fa-sync me-2"></i>Verileri Yenile
+                        </button>
+                        
+                        <button class="quick-action-btn btn btn-warning" onclick="validateToken()">
+                            <i class="fas fa-shield-alt me-2"></i>Token Doğrula
+                        </button>
+                        
+                        <button class="quick-action-btn btn btn-secondary" onclick="showAlert('Ayarlar sayfası hazırlanıyor...', 'info')">
+                            <i class="fas fa-cog me-2"></i>Sistem Ayarları
+                        </button>
                     </div>
                 </div>
                 
-                <div class="card border-0 shadow-sm mt-3">
-                    <div class="card-header bg-white border-bottom">
-                        <h6 class="card-title mb-0">
-                            <i class="me-2">🎯</i>Hızlı Eylemler
-                        </h6>
+                <!-- System Status -->
+                <div class="card fade-in" style="animation-delay: 0.8s;">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-server me-2"></i>Sistem Durumu
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <a href="aractakip.html" class="btn btn-primary btn-sm">
-                                <i class="me-2">🚗</i>Araç Takip Sistemi
-                            </a>
-                            <button class="btn btn-outline-primary btn-sm" onclick="checkApiConnection()">
-                                <i class="me-2">🔍</i>API Durumunu Kontrol Et
-                            </button>
-                            <button class="btn btn-outline-secondary btn-sm" onclick="showAlert('Yedekleme özelliği yakında eklenecek.', 'info')">
-                                <i class="me-2">💾</i>Veri Yedekleme
-                            </button>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>API Bağlantısı</span>
+                            <span class="badge bg-success" id="apiStatus">Aktif</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Veritabanı</span>
+                            <span class="badge bg-success" id="dbStatus">Bağlı</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Araç Takip Servisi</span>
+                            <span class="badge bg-success" id="trackingStatus">Çalışıyor</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Son Sağlık Kontrolü</span>
+                            <small class="text-muted" id="lastHealthCheck">--:--</small>
                         </div>
                     </div>
                 </div>
@@ -253,246 +400,279 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/auth.js"></script>
-    <script src="../assets/js/utils.js"></script>
-    <script src="../assets/js/header.js"></script>
     
     <script>
-        // API Base URL - AracTakip.Api projesinin URL'i
+        // API Base URL
         const API_BASE_URL = 'http://localhost:5094/api';
 
-        // Sayfa yüklendiğinde çalışacak kodlar
+        // Dashboard initialization
         $(document).ready(function() {
-            console.log('Dashboard loaded, checking auth...');
+            console.log('📊 Dashboard loading...');
             
-            // Basit auth kontrolü
-            if (!authService || !authService.isAuthenticated()) {
-                console.log('Not authenticated, redirecting to login...');
-                window.location.href = '../index.html';
+            // SECONDARY AUTH CHECK
+            if (!isAuthenticated()) {
+                console.log('❌ Secondary auth check failed');
+                localStorage.clear();
+                window.location.href = './login.html?message=' + encodeURIComponent('Kimlik doğrulama başarısız.');
                 return;
             }
 
-            console.log('Authenticated, loading dashboard...');
+            console.log('✅ Dashboard auth validated, loading components...');
             
-            // Header'ı yükle
+            // Load header component
             loadHeader();
             
-            // İstatistikleri yükle
-            loadStatistics();
+            // Initialize dashboard
+            initializeDashboard();
+            
+            // Start periodic updates
+            startPeriodicUpdates();
         });
 
-        // Debug logout function
-        function debugLogout() {
-            console.log('=== DEBUG LOGOUT ===');
-            console.log('1. Checking logout button existence...');
+        // Auth check function
+        function isAuthenticated() {
+            const token = localStorage.getItem('token') || localStorage.getItem('vervo_token');
+            const user = localStorage.getItem('user') || localStorage.getItem('vervo_user');
             
-            const logoutBtn = $('#navLogout');
-            console.log('Logout button found:', logoutBtn.length > 0);
-            console.log('Logout button element:', logoutBtn[0]);
+            if (!token || !user) {
+                return false;
+            }
             
-            if (logoutBtn.length > 0) {
-                console.log('2. Checking click events...');
-                const events = $._data(logoutBtn[0], 'events');
-                console.log('Events attached:', events);
-                
-                console.log('3. Manually triggering logout...');
-                performLogout();
-            } else {
-                console.log('❌ Logout button not found!');
-                console.log('Available elements with nav prefix:');
-                $('[id^="nav"]').each(function() {
-                    console.log('- ' + this.id);
+            // JWT validation
+            try {
+                if (token.includes('.')) {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const now = Math.floor(Date.now() / 1000);
+                    
+                    if (payload.exp && payload.exp < now) {
+                        return false;
+                    }
+                }
+            } catch (error) {
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Load header component
+        function loadHeader() {
+            console.log('📄 Loading header component...');
+            
+            fetch('../components/header.html')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    document.getElementById('headerContainer').innerHTML = html;
+                    console.log('✅ Header component loaded successfully');
+                })
+                .catch(error => {
+                    console.error('❌ Error loading header:', error);
+                    // Fallback: Create basic header
+                    document.getElementById('headerContainer').innerHTML = `
+                        <nav class="navbar navbar-dark bg-primary">
+                            <div class="container-fluid">
+                                <span class="navbar-brand">Aslan Group Portal</span>
+                                <button class="btn btn-outline-light btn-sm" onclick="logout()">Çıkış</button>
+                            </div>
+                        </nav>
+                    `;
                 });
-            }
         }
 
-        // Header component'ini yükle
-        async function loadHeader() {
-            try {
-                await loadHeaderComponent();
-                // Header yüklendikten sonra kullanıcı bilgilerini güncelle
-                loadUserInfo();
-                
-                // Logout event'ini manuel olarak bağla
-                setupLogoutEvent();
-            } catch (error) {
-                console.error('Header yüklenirken hata:', error);
-            }
+        // Initialize dashboard
+        function initializeDashboard() {
+            console.log('🚀 Initializing dashboard...');
+            
+            // Load user info
+            loadUserInfo();
+            
+            // Update time displays
+            updateTimeDisplays();
+            
+            // Load statistics
+            loadStatistics();
+            
+            // Apply animations
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in').forEach((el, index) => {
+                    el.style.animationDelay = (index * 0.1) + 's';
+                });
+            }, 100);
+            
+            console.log('✅ Dashboard initialized');
         }
 
-        // Logout event'ini manuel olarak kurulum
-        function setupLogoutEvent() {
-            console.log('Setting up logout event...');
-            
-            // Logout butonunu bul ve event ekle
-            $(document).on('click', '#navLogout', function(e) {
-                e.preventDefault();
-                console.log('Logout button clicked!');
-                
-                if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-                    console.log('Logout confirmed');
-                    performLogout();
-                } else {
-                    console.log('Logout cancelled');
-                }
-            });
-            
-            console.log('Logout event setup completed');
-        }
-
-        // Logout işlemini gerçekleştir
-        function performLogout() {
-            console.log('Performing logout...');
-            
-            try {
-                // Auth service ile logout
-                if (authService && authService.logout) {
-                    console.log('Using auth service logout...');
-                    authService.logout();
-                } else {
-                    console.log('Auth service not available, manual logout...');
-                    manualLogout();
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-                manualLogout();
-            }
-        }
-
-        // Manuel logout
-        function manualLogout() {
-            console.log('Manual logout started...');
-            
-            // Clear localStorage
-            localStorage.removeItem('vervo_token');
-            localStorage.removeItem('vervo_user');
-            localStorage.removeItem('vervo_refresh_token');
-            localStorage.removeItem('vervo_login_time');
-            localStorage.removeItem('vervo_remember_username');
-            
-            console.log('localStorage cleared');
-            
-            // Redirect to index
-            console.log('Redirecting to index...');
-            window.location.href = '../index.html';
-        }
-
-        // Kullanıcı bilgilerini yükle (Dashboard özel - welcome message için)
+        // Load user information
         function loadUserInfo() {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            
-            if (user) {
-                const fullName = user.FullName || user.fullname || 'Kullanıcı';
-                
-                // Hoş geldin mesajını güncelle
-                $('#welcomeMessage').text(`${fullName}, Aslan Group Portal'a hoş geldiniz. Buradan projelerinizi yönetebilir, raporlarınızı görüntüleyebilir ve araç takip sisteminizi kullanabilirsiniz.`);
-            }
-        }
-
-
-
-        // İstatistikleri yükle
-        async function loadStatistics() {
             try {
-                // Araç istatistiklerini al
-                const response = await fetch(`${API_BASE_URL}/araclar`);
-                if (response.ok) {
-                    const vehicles = await response.json();
+                const userJson = localStorage.getItem('user') || localStorage.getItem('vervo_user');
+                if (userJson) {
+                    const user = JSON.parse(userJson);
+                    const userName = user.name || user.username || user.FullName || 'Kullanıcı';
                     
-                    const totalVehicles = vehicles.length;
-                    const activeVehicles = vehicles.filter(v => v.aktif).length;
-                    
-                    // Bakım gereksinimi kontrolü (örnek: son bakımdan 6 ay geçmişse)
-                    const sixMonthsAgo = new Date();
-                    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-                    
-                    const maintenanceNeeded = vehicles.filter(v => {
-                        if (!v.sonBakimTarihi) return true;
-                        const lastMaintenance = new Date(v.sonBakimTarihi);
-                        return lastMaintenance < sixMonthsAgo;
-                    }).length;
-                    
-                    // İstatistikleri güncelle
-                    $('#totalVehicles').text(totalVehicles);
-                    $('#activeVehicles').text(activeVehicles);
-                    $('#maintenanceNeeded').text(maintenanceNeeded);
-                    
-                    // API durumunu güncelle
-                    $('#apiStatus').removeClass('bg-danger').addClass('bg-success').text('Çevrimiçi');
+                    document.getElementById('welcomeUserName').textContent = userName.split(' ')[0];
+                    console.log('👤 User info loaded:', userName);
                 }
             } catch (error) {
-                console.error('İstatistikler yüklenirken hata:', error);
-                $('#apiStatus').removeClass('bg-success').addClass('bg-danger').text('Çevrimdışı');
+                console.error('Error loading user info:', error);
+                document.getElementById('welcomeUserName').textContent = 'Kullanıcı';
             }
         }
 
-        // Navigation event'lerini bağla
-        function bindNavigationEvents() {
-            // Raporlar linki - header.js'deki navigation events zaten bu işi yapıyor
-            // Sadece dashboard'a özel event'ler burada tanımlanır
+        // Update time displays
+        function updateTimeDisplays() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('tr-TR');
+            
+            document.getElementById('lastUpdate').textContent = `Son güncelleme: ${timeString}`;
+            document.getElementById('lastHealthCheck').textContent = timeString;
         }
 
-        // API bağlantı durumunu kontrol et
-        async function checkApiConnection() {
-            showAlert('API bağlantısı kontrol ediliyor...', 'info');
+        // Load statistics (placeholder)
+        function loadStatistics() {
+            console.log('📊 Loading statistics...');
+            // Bu fonksiyon gerçek API'den veri çekecek
+            // Şimdilik placeholder veriler gösteriliyor
+        }
+
+        // Start periodic updates
+        function startPeriodicUpdates() {
+            // Update time every minute
+            setInterval(updateTimeDisplays, 60000);
             
-            try {
-                const response = await fetch(`${API_BASE_URL}/araclar`);
-                if (response.ok) {
-                    showAlert('API bağlantısı başarılı! ✅', 'success');
-                    $('#apiStatus').removeClass('bg-danger').addClass('bg-success').text('Çevrimiçi');
-                } else {
-                    throw new Error('API yanıt vermedi');
+            // Check auth every 5 minutes
+            setInterval(() => {
+                if (!isAuthenticated()) {
+                    console.log('⚠️ Auth check failed during periodic update');
+                    localStorage.clear();
+                    window.location.href = './login.html?message=' + encodeURIComponent('Oturum süreniz doldu.');
                 }
-            } catch (error) {
-                showAlert('API bağlantısı başarısız! ❌', 'danger');
-                $('#apiStatus').removeClass('bg-success').addClass('bg-danger').text('Çevrimdışı');
-            }
+            }, 300000); // 5 minutes
         }
 
-        // Debug logout function
-        function debugLogout() {
-            console.log('=== DEBUG LOGOUT ===');
-            console.log('1. Checking logout button existence...');
+        // Quick action functions
+        function goToAracTakip() {
+            console.log('🚗 Navigating to Araç Takip...');
+            window.location.href = './aractakip.html';
+        }
+
+        function refreshUserData() {
+            console.log('🔄 Refreshing user data...');
+            showAlert('Kullanıcı verileri yenileniyor...', 'info');
             
-            const logoutBtn = $('#navLogout');
-            console.log('Logout button found:', logoutBtn.length > 0);
-            console.log('Logout button element:', logoutBtn[0]);
+            setTimeout(() => {
+                loadUserInfo();
+                updateTimeDisplays();
+                showAlert('Veriler başarıyla yenilendi!', 'success');
+            }, 1500);
+        }
+
+        function validateToken() {
+            console.log('🔐 Validating token...');
             
-            if (logoutBtn.length > 0) {
-                console.log('2. Checking click events...');
-                const events = $._data(logoutBtn[0], 'events');
-                console.log('Events attached:', events);
-                
-                console.log('3. Manually triggering logout...');
-                performLogout();
+            if (isAuthenticated()) {
+                showAlert('Token geçerli ve aktif!', 'success');
             } else {
-                console.log('❌ Logout button not found!');
-                console.log('Available elements with nav prefix:');
-                $('[id^="nav"]').each(function() {
-                    console.log('- ' + this.id);
-                });
+                showAlert('Token geçersiz! Yeniden giriş yapmanız gerekiyor.', 'danger');
+                setTimeout(() => {
+                    logout();
+                }, 2000);
             }
         }
 
-        // Hover efektleri için CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            .hover-lift {
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
+        // Alert system
+        function showAlert(message, type = 'info') {
+            // Create alert container if it doesn't exist
+            let alertContainer = document.getElementById('alertContainer');
+            if (!alertContainer) {
+                alertContainer = document.createElement('div');
+                alertContainer.id = 'alertContainer';
+                alertContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1050;
+                    width: 300px;
+                `;
+                document.body.appendChild(alertContainer);
             }
-            .hover-lift:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+            
+            const alertId = 'alert_' + Date.now();
+            const alertHtml = `
+                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert" style="margin-bottom: 10px;">
+                    <strong>${getAlertIcon(type)}</strong> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            
+            alertContainer.insertAdjacentHTML('beforeend', alertHtml);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                const alertElement = document.getElementById(alertId);
+                if (alertElement) {
+                    alertElement.remove();
+                }
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                success: '✅',
+                danger: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            return icons[type] || 'ℹ️';
+        }
+
+        // Global logout function (if not loaded from header)
+        function logout() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = './login.html?message=' + encodeURIComponent('Başarıyla çıkış yapıldı.');
             }
-            .bg-gradient-primary {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        // Handle page visibility change for security
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page became visible - check auth
+                if (!isAuthenticated()) {
+                    console.log('⚠️ Auth check failed on page focus');
+                    localStorage.clear();
+                    window.location.href = './login.html?message=' + encodeURIComponent('Güvenlik nedeniyle oturum sonlandırıldı.');
+                }
             }
-            .nav-icon {
-                margin-right: 0.5rem;
+        });
+
+        // Handle window focus for real-time updates
+        window.addEventListener('focus', function() {
+            if (isAuthenticated()) {
+                updateTimeDisplays();
+                console.log('👁️ Window focused - data refreshed');
             }
-        `;
-        document.head.appendChild(style);
+        });
+
+        // Error handling for uncaught errors
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            if (e.error && e.error.message && e.error.message.includes('AUTH')) {
+                // Auth related error - redirect to login
+                localStorage.clear();
+                window.location.href = './login.html?message=' + encodeURIComponent('Bir hata oluştu. Lütfen tekrar giriş yapın.');
+            }
+        });
+
+        // Console welcome message
+        console.log('%c🎉 Aslan Group Portal Dashboard', 'color: #007bff; font-size: 16px; font-weight: bold;');
+        console.log('%cDashboard başarıyla yüklendi!', 'color: #28a745; font-size: 14px;');
     </script>
 </body>
 </html>
