@@ -1,30 +1,19 @@
-<!-- Header Navigation Component -->
+<!-- Header Navigation Component - Hamburger Only on Mobile -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="mainNavbar">
     <div class="container-fluid">
-        <!-- Mobile Toggle Button - SOL TARAF -->
-        <button class="navbar-toggler order-first" type="button" id="sidebarToggle"
-                aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation"
-                onclick="console.log('INLINE ONCLICK TRIGGERED!'); 
-                         if(window.toggleSidebar) { 
-                             console.log('Calling window.toggleSidebar'); 
-                             window.toggleSidebar(); 
-                         } else { 
-                             console.log('toggleSidebar not available, calling direct'); 
-                             document.getElementById('mobileSidebar').classList.add('show');
-                             document.getElementById('sidebarOverlay').classList.add('show');
-                             document.body.classList.add('sidebar-open');
-                         }"
-                style="position: relative; z-index: 9999; pointer-events: auto;">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
         <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center" href="../index.html">
             <img src="../assets/images/logo.png" alt="Vervo" height="30" class="me-2">
             <span>Aslan Group Portal</span>
         </a>
         
-        <!-- Desktop Navigation -->
+        <!-- Mobile Toggle Button - Only visible on mobile -->
+        <button class="navbar-toggler d-lg-none" type="button" id="sidebarToggle"
+                aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Desktop Navigation - Visible on large screens -->
         <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
             <!-- Main Navigation -->
             <ul class="navbar-nav me-auto">
@@ -52,31 +41,33 @@
                     <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationDropdown" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge">
-                            0
-                        </span>
+                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill d-none" 
+                              id="notificationBadge">0</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
                         <li><h6 class="dropdown-header">Bildirimler</h6></li>
-                        <li id="noNotifications">
-                            <span class="dropdown-item-text text-muted">Yeni bildirim yok</span>
-                        </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Tüm bildirimleri görüntüle</a></li>
+                        <li><a class="dropdown-item" href="#">
+                            <small class="text-muted">Henüz bildirim yok</small>
+                        </a></li>
                     </ul>
                 </li>
-
-                <!-- User Profile -->
+                
+                <!-- User Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar bg-light text-primary me-2 rounded-circle d-flex align-items-center justify-content-center">
                             <span class="fw-bold">U</span>
                         </div>
-                        <span class="d-none d-lg-inline">Kullanıcı</span>
+                        <span class="d-none d-md-inline">Kullanıcı</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><h6 class="dropdown-header">Hesap</h6></li>
+                        <li><h6 class="dropdown-header">
+                            <span id="userDisplayName">Kullanıcı</span><br>
+                            <small class="text-muted" id="userEmail">user@example.com</small>
+                        </h6></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#">
                             <i class="fas fa-user me-2"></i>Profil
                         </a></li>
@@ -94,11 +85,11 @@
     </div>
 </nav>
 
-<!-- Mobile Sidebar Overlay -->
-<div class="mobile-sidebar-overlay" id="sidebarOverlay"></div>
+<!-- Mobile Sidebar Overlay - Only for mobile -->
+<div class="mobile-sidebar-overlay d-lg-none" id="sidebarOverlay"></div>
 
-<!-- Mobile Sidebar -->
-<div class="mobile-sidebar" id="mobileSidebar">
+<!-- Mobile Sidebar - Only for mobile -->
+<div class="mobile-sidebar d-lg-none" id="mobileSidebar">
     <!-- Sidebar Header -->
     <div class="sidebar-header">
         <div class="d-flex align-items-center">
@@ -117,8 +108,8 @@
                 <span class="fw-bold">U</span>
             </div>
             <div>
-                <h6 class="mb-0 text-white">Kullanıcı</h6>
-                <small class="text-white-50">user@example.com</small>
+                <h6 class="mb-0 text-white" id="mobileUserName">Kullanıcı</h6>
+                <small class="text-white-50" id="mobileUserEmail">user@example.com</small>
             </div>
         </div>
     </div>
@@ -189,7 +180,7 @@
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<!-- Modern Sidebar Navigation CSS -->
+<!-- Navigation Styles -->
 <style>
 /* Base navbar styles */
 .navbar {
@@ -209,8 +200,6 @@
     font-size: 1.25rem;
     color: white !important;
     text-decoration: none;
-    flex-grow: 1;
-    justify-content: center;
 }
 
 .navbar-brand:hover {
@@ -223,7 +212,7 @@
     filter: brightness(0) invert(1);
 }
 
-/* Mobile toggle button - SOL TARAF */
+/* Mobile toggle button - Only visible on mobile (< lg) */
 .navbar-toggler {
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 6px !important;
@@ -231,13 +220,6 @@
     background: rgba(255, 255, 255, 0.1) !important;
     backdrop-filter: blur(10px);
     transition: all 0.2s ease;
-    order: -1;
-    margin-right: 1rem !important;
-    position: relative !important;
-    z-index: 9999 !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    display: block !important;
 }
 
 .navbar-toggler:hover {
@@ -254,49 +236,58 @@
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
     width: 1.2em !important;
     height: 1.2em !important;
-    pointer-events: none;
 }
 
-/* Desktop navigation */
-@media (min-width: 992px) {
-    .navbar-toggler {
-        display: none;
-    }
-    
-    .navbar-brand {
-        justify-content: flex-start;
-        flex-grow: 0;
-    }
-    
-    .navbar-nav .nav-link {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-weight: 500;
-        padding: 0.5rem 0.75rem;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-        margin: 0 0.2rem;
-    }
+/* Desktop navigation - Only visible on lg+ screens */
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    margin: 0 0.2rem;
+}
 
-    .navbar-nav .nav-link:hover,
-    .navbar-nav .nav-link.active {
-        color: white !important;
-        background-color: rgba(255, 255, 255, 0.15);
-        transform: translateY(-1px);
-    }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
 
-    .dropdown-menu {
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        margin-top: 0.5rem;
-        min-width: 200px;
-    }
+/* Dropdown styles */
+.dropdown-menu {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    margin-top: 0.5rem;
+    min-width: 200px;
+}
 
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
-    }
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* User avatar */
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+}
+
+/* Notification badge */
+.badge {
+    font-size: 0.7rem;
+    min-width: 1.2em;
+    height: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Mobile sidebar overlay */
@@ -307,7 +298,6 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
     z-index: 1050;
     opacity: 0;
     visibility: hidden;
@@ -326,15 +316,12 @@
     left: 0;
     width: 300px;
     height: 100%;
-    background: linear-gradient(180deg, #0d6efd 0%, #0056b3 100%);
-    backdrop-filter: blur(20px);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     z-index: 1060;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
 }
 
 .mobile-sidebar.show {
@@ -343,31 +330,27 @@
 
 /* Sidebar header */
 .sidebar-header {
-    padding: 1.5rem 1.25rem;
+    padding: 1.25rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 70px;
-}
-
-.sidebar-header img {
-    filter: brightness(0) invert(1);
 }
 
 .sidebar-close {
     background: none;
     border: none;
     color: white;
-    font-size: 1.2rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    font-size: 1.5rem;
     cursor: pointer;
+    padding: 0.25rem;
+    transition: all 0.2s ease;
 }
 
 .sidebar-close:hover {
+    transform: rotate(90deg);
     background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
 }
 
 /* Sidebar user info */
@@ -376,31 +359,25 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-user .user-avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-}
-
 /* Sidebar menu */
 .sidebar-menu {
     flex: 1;
-    padding: 1rem 0;
     overflow-y: auto;
+    padding: 1rem 0;
 }
 
 .menu-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .menu-title {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    padding: 0 1.25rem;
     margin-bottom: 0.75rem;
+    padding: 0 1.25rem;
 }
 
 .menu-list {
@@ -410,13 +387,13 @@
 }
 
 .menu-item {
-    margin: 0.25rem 0;
+    margin-bottom: 0.25rem;
 }
 
 .menu-link {
     display: flex;
     align-items: center;
-    padding: 0.875rem 1.25rem;
+    padding: 0.75rem 1.25rem;
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     transition: all 0.2s ease;
@@ -451,18 +428,12 @@
     margin-top: auto;
 }
 
-/* Mobile specific adjustments */
-@media (max-width: 991.98px) {
-    .navbar-brand {
-        font-size: 1.1rem;
-        order: 0;
-    }
-    
-    .navbar-brand img {
-        height: 25px;
-    }
+/* Prevent body scroll when sidebar is open */
+body.sidebar-open {
+    overflow: hidden;
 }
 
+/* Responsive adjustments */
 @media (max-width: 575.98px) {
     .navbar .container-fluid {
         padding: 0 0.75rem;
@@ -481,9 +452,12 @@
     }
 }
 
-/* Prevent body scroll when sidebar is open */
-body.sidebar-open {
-    overflow: hidden;
+/* Large screens - Hide mobile elements */
+@media (min-width: 992px) {
+    .mobile-sidebar,
+    .mobile-sidebar-overlay {
+        display: none !important;
+    }
 }
 
 /* Animation states */
@@ -505,361 +479,307 @@ body.sidebar-open {
 
 /* Accessibility improvements */
 .sidebar-close:focus,
-.menu-link:focus {
+.menu-link:focus,
+.nav-link:focus,
+.dropdown-toggle:focus {
     outline: 2px solid rgba(255, 255, 255, 0.5);
     outline-offset: 2px;
 }
 
-/* Loading states */
-.menu-link.loading {
+/* Animation for dropdowns */
+.dropdown-menu {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
     pointer-events: none;
-    opacity: 0.6;
 }
 
-.menu-link.loading::after {
-    content: '';
-    width: 16px;
-    height: 16px;
-    border: 2px solid transparent;
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-left: auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.dropdown-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 </style>
 
-<!-- Fixed Navigation Script -->
+<!-- Navigation Script -->
 <script>
-// Global functions - immediately available
-window.toggleSidebar = function() {
-    console.log('🌍 GLOBAL TOGGLE SIDEBAR CALLED!');
-    const sidebar = document.getElementById('mobileSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        sidebar.classList.add('show');
-        overlay.classList.add('show');
-        document.body.classList.add('sidebar-open');
-        console.log('✅ Sidebar opened via global function');
-    } else {
-        console.error('❌ Sidebar elements not found in global function');
-    }
-};
+// Namespace to prevent conflicts
+window.NavigationModule = window.NavigationModule || {};
 
-window.closeSidebar = function() {
-    console.log('🔒 GLOBAL CLOSE SIDEBAR CALLED!');
-    const sidebar = document.getElementById('mobileSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        sidebar.classList.remove('show');
-        overlay.classList.remove('show');
-        document.body.classList.remove('sidebar-open');
-        console.log('✅ Sidebar closed via global function');
-    }
-};
-
-// AUTH CHECK - Critical for preventing redirect loops
-function checkAuthenticationStatus() {
-    console.log('🔐 Checking authentication status...');
-    
-    const currentPath = window.location.pathname;
-    const isProtectedPage = currentPath.includes('dashboard.html') || 
-                           currentPath.includes('aractakip.html') || 
-                           (currentPath.includes('/pages/') && !currentPath.includes('login.html'));
-    
-    if (!isProtectedPage) {
-        console.log('📄 Not on protected page, skipping auth check');
-        return true;
-    }
-    
-    // Check for auth tokens
-    const token = localStorage.getItem('token') || 
-                  localStorage.getItem('vervo_token') || 
-                  localStorage.getItem('vervo_auth_token');
-    
-    const user = localStorage.getItem('user') || 
-                 localStorage.getItem('vervo_user') || 
-                 localStorage.getItem('vervo_user_data');
-    
-    console.log('🔍 Auth tokens check:', {
-        hasToken: !!token,
-        hasUser: !!user,
-        currentPage: currentPath
-    });
-    
-    if (!token || !user) {
-        console.log('❌ No valid auth tokens found');
-        return false;
-    }
-    
-    // Additional token validation
-    try {
-        if (token.includes('.')) {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            const now = Math.floor(Date.now() / 1000);
-            
-            if (payload.exp && payload.exp < now) {
-                console.log('⏰ Token expired');
-                return false;
-            }
-        }
-    } catch (error) {
-        console.warn('⚠️ Token validation error:', error);
-        return false;
-    }
-    
-    console.log('✅ Authentication valid');
-    return true;
-}
-
-// Force logout and redirect
-function forceLogoutAndRedirect(reason = 'Authentication failed') {
-    console.log('🚨 FORCE LOGOUT:', reason);
-    
-    // Clear everything
-    try {
-        localStorage.clear();
-        sessionStorage.clear();
-    } catch (e) {
-        console.warn('Storage clear error:', e);
-    }
-    
-    const currentPath = window.location.pathname;
-    let loginPath;
-    
-    if (currentPath.includes('/pages/')) {
-        loginPath = './login.html';
-    } else {
-        loginPath = './pages/login.html';
-    }
-    
-    const message = encodeURIComponent(reason);
-    const redirectUrl = `${loginPath}?message=${message}`;
-    
-    console.log('🔄 Force redirecting to:', redirectUrl);
-    
-    try {
-        window.location.replace(redirectUrl);
-    } catch (e) {
-        window.location.href = redirectUrl;
-    }
-}
-
-// Immediate execution
+// Immediate function definition - before DOM load
 (function() {
-    console.log('🚀 Immediate script execution');
+    'use strict';
     
-    // Critical: Check auth before anything else
-    setTimeout(() => {
-        const isAuthenticated = checkAuthenticationStatus();
-        const currentPath = window.location.pathname;
-        const isProtectedPage = currentPath.includes('dashboard.html') || 
-                               currentPath.includes('aractakip.html') || 
-                               (currentPath.includes('/pages/') && !currentPath.includes('login.html'));
+    console.log('🌍 NavigationModule initializing...');
+    
+    // Safe toggle sidebar function
+    window.NavigationModule.toggleSidebar = function() {
+        console.log('🔄 NavigationModule.toggleSidebar called');
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
         
-        if (isProtectedPage && !isAuthenticated) {
-            console.log('🚨 Protected page access without auth - redirecting to login');
-            forceLogoutAndRedirect('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
-            return;
+        if (!sidebar || !overlay) {
+            console.error('❌ Sidebar elements not found');
+            return false;
         }
-    }, 50);
-    
-    // Try to initialize sidebar
-    function tryInitialize() {
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        if (sidebarToggle) {
-            console.log('🎯 Found toggle button, adding immediate listeners');
-            
-            sidebarToggle.addEventListener('click', function(e) {
-                console.log('🖱️ IMMEDIATE CLICK HANDLER!');
-                e.preventDefault();
-                e.stopPropagation();
-                window.toggleSidebar();
-            });
-            
-            return true;
-        }
-        return false;
-    }
-    
-    // Try immediately
-    if (!tryInitialize()) {
-        let attempts = 0;
-        const maxAttempts = 30;
         
-        const interval = setInterval(() => {
-            attempts++;
-            if (tryInitialize() || attempts >= maxAttempts) {
-                clearInterval(interval);
-            }
-        }, 100);
-    }
-})();
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📄 DOM Content Loaded - Modern sidebar navigation');
-    
-    // Re-check auth after DOM load
-    const isAuthenticated = checkAuthenticationStatus();
-    const currentPath = window.location.pathname;
-    const isProtectedPage = currentPath.includes('dashboard.html') || 
-                           currentPath.includes('aractakip.html') || 
-                           (currentPath.includes('/pages/') && !currentPath.includes('login.html'));
-    
-    if (isProtectedPage && !isAuthenticated) {
-        console.log('🚨 DOM loaded but still not authenticated - blocking execution');
-        forceLogoutAndRedirect('Authentication check failed on DOM load');
-        return;
-    }
-    
-    // Initialize sidebar
-    setTimeout(() => {
-        initializeSidebar();
-    }, 100);
-    
-    // Set active navigation
-    setActiveNavigation();
-    
-    // Update user info
-    updateUserInfo();
-    
-    // Update notifications
-    updateNotificationBadge();
-    
-    // Initialize desktop dropdowns
-    initializeDropdowns();
-});
-
-function initializeSidebar() {
-    console.log('🔄 Initializing sidebar...');
-    
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebarClose = document.getElementById('sidebarClose');
-    const sidebar = document.getElementById('mobileSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const body = document.body;
-    
-    // Enhanced open sidebar function
-    function openSidebar() {
-        console.log('🚀 Opening sidebar...');
-        if (sidebar && overlay) {
+        const isOpen = sidebar.classList.contains('show');
+        
+        if (isOpen) {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
+            console.log('✅ Sidebar closed');
+        } else {
             sidebar.classList.add('show');
             overlay.classList.add('show');
-            body.classList.add('sidebar-open');
-            if (sidebarToggle) {
-                sidebarToggle.setAttribute('aria-expanded', 'true');
-            }
-            console.log('✅ Sidebar opened successfully');
+            document.body.classList.add('sidebar-open');
+            console.log('✅ Sidebar opened');
         }
-    }
-    
-    // Enhanced close sidebar function
-    function closeSidebar() {
-        console.log('🔒 Closing sidebar...');
+        
+        return true;
+    };
+
+    // Safe close sidebar function
+    window.NavigationModule.closeSidebar = function() {
+        console.log('🔒 NavigationModule.closeSidebar called');
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
         if (sidebar && overlay) {
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
-            body.classList.remove('sidebar-open');
-            if (sidebarToggle) {
-                sidebarToggle.setAttribute('aria-expanded', 'false');
-                sidebarToggle.focus();
-            }
-            console.log('✅ Sidebar closed successfully');
+            document.body.classList.remove('sidebar-open');
+            console.log('✅ Sidebar closed');
+            return true;
         }
-    }
+        return false;
+    };
+
+    // Global wrapper functions for backward compatibility
+    window.toggleSidebar = function() {
+        return window.NavigationModule.toggleSidebar();
+    };
+
+    window.closeSidebar = function() {
+        return window.NavigationModule.closeSidebar();
+    };
     
-    // Update global functions
-    window.toggleSidebar = openSidebar;
-    window.closeSidebar = closeSidebar;
-    
-    // Event listeners
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function(e) {
-            console.log('🖱️ CLICK EVENT TRIGGERED!');
-            e.preventDefault();
-            e.stopPropagation();
-            openSidebar();
-        });
-    }
-    
-    if (sidebarClose) {
-        sidebarClose.addEventListener('click', function(e) {
-            console.log('❌ CLOSE BUTTON CLICKED!');
-            e.preventDefault();
-            e.stopPropagation();
-            closeSidebar();
-        });
-    }
-    
-    if (overlay) {
-        overlay.addEventListener('click', function(e) {
-            console.log('🔍 OVERLAY CLICKED!');
-            closeSidebar();
-        });
-    }
-    
-    // Close sidebar when clicking menu links
-    if (sidebar) {
-        const menuLinks = sidebar.querySelectorAll('.menu-link');
-        menuLinks.forEach((link) => {
-            link.addEventListener('click', function() {
-                if (!this.href.includes('#')) {
-                    this.classList.add('loading');
-                    setTimeout(() => {
-                        closeSidebar();
-                    }, 100);
+    // Immediate event listener attachment with enhanced debugging
+    function attachToggleListener() {
+        console.log('🔍 Attempting to attach toggle listener...');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        
+        if (sidebarToggle) {
+            console.log('🎯 Found toggle button, attaching listener');
+            
+            // Remove any existing listeners first
+            const newButton = sidebarToggle.cloneNode(true);
+            sidebarToggle.parentNode.replaceChild(newButton, sidebarToggle);
+            
+            newButton.addEventListener('click', function(e) {
+                console.log('🖱️ CLICK EVENT FIRED!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Debug sidebar elements
+                const sidebar = document.getElementById('mobileSidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                
+                console.log('Sidebar found:', !!sidebar);
+                console.log('Overlay found:', !!overlay);
+                
+                if (sidebar && overlay) {
+                    console.log('📱 Opening sidebar...');
+                    sidebar.classList.add('show');
+                    overlay.classList.add('show');
+                    document.body.classList.add('sidebar-open');
+                    console.log('✅ Sidebar should be open now');
+                } else {
+                    console.error('❌ Sidebar elements missing');
                 }
             });
-        });
+            
+            console.log('✅ Click listener attached successfully');
+            return true;
+        } else {
+            console.log('❌ Toggle button not found');
+            return false;
+        }
     }
     
-    // Keyboard navigation
+    // Try to attach immediately and keep trying
+    let attached = false;
+    
+    if (document.readyState !== 'loading') {
+        console.log('📄 DOM already loaded, trying to attach...');
+        attached = attachToggleListener();
+    }
+    
+    // Also try when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 DOM Content Loaded event fired');
+        if (!attached) {
+            attached = attachToggleListener();
+        }
+    });
+    
+    // Fallback: keep trying for up to 5 seconds
+    let attempts = 0;
+    const maxAttempts = 50;
+    const tryAttach = setInterval(() => {
+        attempts++;
+        console.log(`🔄 Attachment attempt ${attempts}/${maxAttempts}`);
+        
+        if (!attached) {
+            attached = attachToggleListener();
+        }
+        
+        if (attached || attempts >= maxAttempts) {
+            clearInterval(tryAttach);
+            if (attached) {
+                console.log('🎉 Toggle listener successfully attached!');
+            } else {
+                console.warn('⚠️ Could not attach toggle listener after max attempts');
+                // Last resort: try to find button and log state
+                const btn = document.getElementById('sidebarToggle');
+                console.log('Button exists:', !!btn);
+                if (btn) {
+                    console.log('Button HTML:', btn.outerHTML);
+                }
+            }
+        }
+    }, 100);
+    
+    console.log('✅ NavigationModule ready');
+})();
+
+// Initialize navigation functionality - Protected execution
+(function() {
+    'use strict';
+    
+    let initialized = false;
+    
+    function safeInitialize() {
+        if (initialized) {
+            console.log('⚠️ Navigation already initialized, skipping...');
+            return;
+        }
+        
+        console.log('🚀 Initializing navigation...');
+        
+        try {
+            // Initialize dropdowns (desktop)
+            initializeDropdowns();
+            
+            // Set active navigation based on current page
+            setActiveNavigation();
+            
+            // Update user information
+            updateUserInfo();
+            
+            // Initialize notification system
+            initializeNotifications();
+            
+            // Initialize mobile sidebar events
+            initializeMobileSidebar();
+            
+            initialized = true;
+            console.log('✅ Navigation initialized successfully');
+            
+        } catch (error) {
+            console.error('❌ Navigation initialization error:', error);
+        }
+    }
+    
+    // Multiple initialization attempts
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', safeInitialize);
+    } else {
+        safeInitialize();
+    }
+    
+    // Fallback initialization
+    setTimeout(safeInitialize, 100);
+    
+})();
+
+function initializeMobileSidebar() {
+    console.log('📱 Initializing mobile sidebar...');
+    
+    // Close button
+    const sidebarClose = document.getElementById('sidebarClose');
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.NavigationModule.closeSidebar();
+        });
+        console.log('✅ Close button listener added');
+    }
+    
+    // Overlay click
+    const overlay = document.getElementById('sidebarOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                window.NavigationModule.closeSidebar();
+            }
+        });
+        console.log('✅ Overlay listener added');
+    }
+    
+    // Escape key
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && sidebar && sidebar.classList.contains('show')) {
-            console.log('⌨️ ESC key pressed - closing sidebar');
-            closeSidebar();
+        if (e.key === 'Escape') {
+            window.NavigationModule.closeSidebar();
         }
     });
     
-    // Close sidebar on window resize to desktop
+    // Auto-close on window resize to desktop
     window.addEventListener('resize', function() {
-        if (window.innerWidth >= 992 && sidebar && sidebar.classList.contains('show')) {
-            console.log('📱 Window resized to desktop - closing sidebar');
-            closeSidebar();
+        if (window.innerWidth >= 992) {
+            window.NavigationModule.closeSidebar();
         }
     });
     
-    console.log('✅ Sidebar initialization completed');
+    // Menu links - close sidebar when navigating
+    const menuLinks = document.querySelectorAll('.mobile-sidebar .menu-link');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (this.href && !this.href.includes('#')) {
+                setTimeout(() => {
+                    window.NavigationModule.closeSidebar();
+                }, 100);
+            }
+        });
+    });
+    
+    console.log('✅ Mobile sidebar initialized');
 }
 
 function initializeDropdowns() {
-    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-    
-    dropdownToggles.forEach(toggle => {
+    // Handle dropdown toggles (desktop only)
+    document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
         toggle.addEventListener('click', function(e) {
             e.preventDefault();
             
-            const dropdown = this.closest('.dropdown');
-            const menu = dropdown.querySelector('.dropdown-menu');
+            const menu = this.nextElementSibling;
+            const isVisible = menu.classList.contains('show');
             
-            if (menu) {
-                const isVisible = menu.classList.contains('show');
-                
-                // Close all other dropdowns
-                document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
-                    if (otherMenu !== menu) {
-                        otherMenu.classList.remove('show');
+            // Close all other dropdowns
+            document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
+                if (otherMenu !== menu) {
+                    otherMenu.classList.remove('show');
+                    const otherToggle = otherMenu.previousElementSibling;
+                    if (otherToggle) {
+                        otherToggle.setAttribute('aria-expanded', 'false');
                     }
-                });
-                
-                // Toggle current dropdown
-                menu.classList.toggle('show', !isVisible);
-                this.setAttribute('aria-expanded', (!isVisible).toString());
-            }
+                }
+            });
+            
+            // Toggle current dropdown
+            menu.classList.toggle('show', !isVisible);
+            this.setAttribute('aria-expanded', (!isVisible).toString());
         });
     });
     
@@ -906,134 +826,92 @@ function updateUserInfo() {
     const userInfo = getUserFromStorage();
     if (userInfo) {
         // Desktop user info
-        const desktopUserName = document.querySelector('#userDropdown .d-none');
-        const desktopUserAvatar = document.querySelector('.navbar .user-avatar span');
+        const userDisplayName = document.getElementById('userDisplayName');
+        const userEmail = document.getElementById('userEmail');
+        const userAvatar = document.querySelector('.navbar .user-avatar span');
+        
+        if (userDisplayName) {
+            userDisplayName.textContent = userInfo.name || 'Kullanıcı';
+        }
+        
+        if (userEmail) {
+            userEmail.textContent = userInfo.email || 'user@example.com';
+        }
+        
+        if (userAvatar && userInfo.name) {
+            userAvatar.textContent = userInfo.name.charAt(0).toUpperCase();
+        }
         
         // Mobile user info
-        const mobileUserName = document.querySelector('.sidebar-user h6');
+        const mobileUserName = document.getElementById('mobileUserName');
+        const mobileUserEmail = document.getElementById('mobileUserEmail');
         const mobileUserAvatar = document.querySelector('.sidebar-user .user-avatar span');
-        const mobileUserEmail = document.querySelector('.sidebar-user small');
         
-        const name = userInfo.name || 'Kullanıcı';
-        const initial = name.charAt(0).toUpperCase();
+        if (mobileUserName && userInfo.name) {
+            mobileUserName.textContent = userInfo.name;
+        }
         
-        if (desktopUserName) desktopUserName.textContent = name;
-        if (desktopUserAvatar) desktopUserAvatar.textContent = initial;
-        if (mobileUserName) mobileUserName.textContent = name;
-        if (mobileUserAvatar) mobileUserAvatar.textContent = initial;
-        if (mobileUserEmail) mobileUserEmail.textContent = userInfo.email || 'user@example.com';
+        if (mobileUserEmail && userInfo.email) {
+            mobileUserEmail.textContent = userInfo.email;
+        }
+        
+        if (mobileUserAvatar && userInfo.name) {
+            mobileUserAvatar.textContent = userInfo.name.charAt(0).toUpperCase();
+        }
     }
 }
 
-function updateNotificationBadge() {
-    const desktopBadge = document.getElementById('notificationBadge');
+function initializeNotifications() {
+    // Simulate notification count
+    const notificationBadge = document.getElementById('notificationBadge');
     const mobileBadge = document.getElementById('mobileBadge');
-    const noNotifications = document.getElementById('noNotifications');
     
-    const notificationCount = 0; // API'den gelecek
+    // You can update this with real notification count from API
+    const notificationCount = 0;
     
     if (notificationCount > 0) {
-        if (desktopBadge) {
-            desktopBadge.textContent = notificationCount;
-            desktopBadge.classList.remove('d-none');
+        if (notificationBadge) {
+            notificationBadge.textContent = notificationCount;
+            notificationBadge.classList.remove('d-none');
         }
         if (mobileBadge) {
             mobileBadge.textContent = notificationCount;
             mobileBadge.classList.remove('d-none');
         }
-        if (noNotifications) noNotifications.style.display = 'none';
     } else {
-        if (desktopBadge) desktopBadge.classList.add('d-none');
+        if (notificationBadge) notificationBadge.classList.add('d-none');
         if (mobileBadge) mobileBadge.classList.add('d-none');
-        if (noNotifications) noNotifications.style.display = 'block';
     }
 }
 
 function getUserFromStorage() {
     try {
-        const token = localStorage.getItem('token') || localStorage.getItem('vervo_token');
-        if (token) {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            return {
-                name: payload.name || payload.username || 'Kullanıcı',
-                email: payload.email || 'user@example.com'
-            };
-        }
-    } catch (error) {
-        console.error('Error getting user from storage:', error);
+        const userData = localStorage.getItem('userData');
+        return userData ? JSON.parse(userData) : null;
+    } catch (e) {
+        console.error('Error getting user data from storage:', e);
+        return null;
     }
-    return null;
 }
 
 function logout() {
-    console.log('🔓 Logout function called');
+    // Clear user session
+    localStorage.removeItem('token');
+    localStorage.removeItem('userData');
     
-    if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        console.log('✅ User confirmed logout');
-        
-        try {
-            // Clear storage
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('vervo_auth_token');
-            localStorage.removeItem('vervo_user_data');
-            localStorage.removeItem('vervo_remember_username');
-            localStorage.removeItem('vervo_token');
-            localStorage.removeItem('vervo_user');
-            sessionStorage.clear();
-            
-            console.log('🗑️ Storage cleared');
-            
-            // Determine correct login path based on current location
-            const currentPath = window.location.pathname;
-            console.log('Current path:', currentPath);
-            
-            let loginPath;
-            if (currentPath.includes('/pages/')) {
-                loginPath = './login.html';
-            } else if (currentPath.includes('/frontend/')) {
-                loginPath = './pages/login.html';
-            } else {
-                loginPath = '../pages/login.html';
-            }
-            
-            console.log('🔄 Redirecting to:', loginPath);
-            
-            // Add logout message to URL
-            const redirectUrl = `${loginPath}?message=${encodeURIComponent('Başarıyla çıkış yapıldı.')}`;
-            console.log('📍 Final redirect URL:', redirectUrl);
-            
-            // Redirect
-            window.location.href = redirectUrl;
-            
-        } catch (error) {
-            console.error('❌ Logout error:', error);
-            
-            // Fallback - try multiple paths
-            const fallbackPaths = [
-                './login.html',
-                '../login.html',
-                './pages/login.html',
-                '../pages/login.html',
-                '/src/frontend/pages/login.html'
-            ];
-            
-            console.log('🔄 Trying fallback paths:', fallbackPaths);
-            
-            // Try each path
-            for (const path of fallbackPaths) {
-                try {
-                    console.log(`🔍 Trying: ${path}`);
-                    window.location.href = path;
-                    break;
-                } catch (e) {
-                    console.warn(`❌ Failed: ${path}`, e);
-                    continue;
-                }
-            }
-        }
-    } else {
-        console.log('❌ User cancelled logout');
+    // Show loading state
+    const logoutBtn = event.target.closest('a, button');
+    if (logoutBtn) {
+        logoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Çıkış yapılıyor...';
     }
+    
+    // Redirect to login page
+    setTimeout(() => {
+        window.location.href = '../login.html';
+    }, 500);
 }
+
+// Global functions for external use
+window.updateUserInfo = updateUserInfo;
+window.logout = logout;
 </script>
