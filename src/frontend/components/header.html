@@ -1,16 +1,16 @@
-<!-- Header Component - TAMAMEN DÜZELTİLDİ -->
+<!-- Header Component - TÜM SORUNLAR TEK SEFERDE ÇÖZÜLMESİ -->
 <!-- src/frontend/components/header.html -->
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-gradient-primary fixed-top">
     <div class="container-fluid">
-        <!-- Brand/Logo - PARAMETRİK YAPILDI -->
+        <!-- Brand/Logo - PARAMETRİK -->
         <a class="navbar-brand d-flex align-items-center" href="dashboard.html" id="navbarBrand">
             <img id="headerLogo" src="../assets/images/logo.png" alt="Logo" height="30" class="me-2" style="display: none;">
-            <span id="headerTitle">Portal</span>
+            <span id="headerTitle">Aslan Group Portal</span>
         </a>
         
-        <!-- Mobile menu button - DÜZELTİLDİ -->
+        <!-- Mobile menu button -->
         <button class="navbar-toggler d-lg-none" type="button" id="sidebarToggle" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -34,38 +34,30 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="#"><i class="fas fa-file-alt me-2"></i>Günlük Rapor</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line me-2"></i>Haftalık Analiz</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line me-2"></i>Haftalık Rapor</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-chart-bar me-2"></i>Aylık Rapor</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Excel İndir</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Rapor İndir</a></li>
                     </ul>
                 </li>
             </ul>
             
-            <!-- Right side items -->
-            <ul class="navbar-nav">
+            <!-- Desktop Right Side Menu -->
+            <ul class="navbar-nav ms-auto">
                 <!-- Notifications -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationBadge">
-                            0
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                            3
+                            <span class="visually-hidden">unread messages</span>
                         </span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li><h6 class="dropdown-header">Bildirimler</h6></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li class="px-3 py-2">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-exclamation-triangle text-warning"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <small class="fw-bold">Araç-015</small><br>
-                                    <small class="text-muted">Yakıt seviyesi düşük</small>
-                                </div>
-                                <small class="text-muted">5dk</small>
-                            </div>
-                        </li>
+                        <li><a class="dropdown-item" href="#"><small class="text-muted">2 dk önce</small><br>Yeni araç eklendi</a></li>
+                        <li><a class="dropdown-item" href="#"><small class="text-muted">15 dk önce</small><br>Sistem güncellemesi</a></li>
+                        <li><a class="dropdown-item" href="#"><small class="text-muted">1 sa önce</small><br>Rapor hazır</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-center" href="#">Tümünü Gör</a></li>
                     </ul>
@@ -75,9 +67,9 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-avatar bg-light text-primary me-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                            <span class="fw-bold" id="userInitial">U</span>
+                            <span class="fw-bold" id="userInitial">T</span>
                         </div>
-                        <span id="headerUserName">Kullanıcı</span>
+                        <span id="headerUserName">test</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><h6 class="dropdown-header">Hesap</h6></li>
@@ -96,587 +88,509 @@
     </div>
 </nav>
 
-<!-- Mobile Sidebar Overlay - DÜZELTİLDİ -->
+<!-- Mobile Sidebar Overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<!-- Mobile Sidebar - DÜZELTİLDİ -->
+<!-- Mobile Sidebar -->
 <div class="sidebar" id="mobileSidebar">
     <!-- Sidebar Header -->
     <div class="sidebar-header">
-        <div class="d-flex align-items-center">
-            <img id="sidebarLogo" src="../assets/images/logo.png" alt="Logo" height="30" class="me-2" style="display: none;">
-            <h5 class="mb-0 text-white" id="sidebarTitle">Portal</h5>
-        </div>
-        <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    
-    <!-- User Info -->
-    <div class="sidebar-user">
-        <div class="d-flex align-items-center">
-            <div class="user-avatar bg-light text-primary me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                <span class="fw-bold" id="sidebarUserInitial">U</span>
+        <div class="d-flex align-items-center justify-content-between p-3">
+            <!-- Logo ve Portal Adı - PARAMETRİK -->
+            <div class="d-flex align-items-center">
+                <img id="sidebarLogo" src="../assets/images/logo.png" alt="Logo" height="30" class="me-2" style="display: none;">
+                <h5 class="text-white mb-0" id="sidebarTitle">Aslan Group Portal</h5>
             </div>
-            <div>
-                <h6 class="mb-0 text-white" id="sidebarUserName">Kullanıcı</h6>
-                <small class="text-white-50" id="sidebarUserEmail">user@example.com</small>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Navigation Menu -->
-    <div class="sidebar-menu">
-        <!-- Main Navigation -->
-        <div class="menu-section">
-            <h6 class="menu-title">ANA MENÜ</h6>
-            <ul class="menu-list">
-                <li class="menu-item">
-                    <a href="dashboard.html" class="menu-link">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="aractakip.html" class="menu-link">
-                        <i class="fas fa-car"></i>
-                        <span>Araç Takip Sistemi</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Raporlar</span>
-                    </a>
-                </li>
-            </ul>
+            
+            <!-- Close Button -->
+            <button type="button" class="btn-close btn-close-white" id="sidebarClose" aria-label="Close sidebar"></button>
         </div>
         
-        <!-- User Menu -->
-        <div class="menu-section">
-            <h6 class="menu-title">HESAP</h6>
-            <ul class="menu-list">
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-bell"></i>
-                        <span>Bildirimler</span>
-                        <span class="badge bg-danger ms-auto d-none" id="mobileBadge">0</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-user"></i>
-                        <span>Profil</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Ayarlar</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link text-danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Çıkış Yap</span>
-                    </a>
-                </li>
-            </ul>
+        <!-- User Info -->
+        <div class="sidebar-user p-3 border-top border-light border-opacity-25">
+            <div class="d-flex align-items-center">
+                <div class="user-avatar bg-light text-primary me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <span class="fw-bold" id="sidebarUserInitial">T</span>
+                </div>
+                <div class="text-white">
+                    <div class="fw-semibold" id="sidebarUserName">test</div>
+                    <small class="text-white-50" id="sidebarUserEmail">test@example.com</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-content">
+        <ul class="nav flex-column p-3">
+            <li class="nav-item">
+                <a class="nav-link text-white menu-link" href="dashboard.html">
+                    <i class="fas fa-home me-2"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white menu-link" href="aractakip.html">
+                    <i class="fas fa-car me-2"></i>
+                    Araç Takip
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white menu-link" href="#" data-bs-toggle="collapse" data-bs-target="#reportsSubmenu" aria-expanded="false">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Raporlar
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                </a>
+                <div class="collapse" id="reportsSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-white-75 menu-link" href="#">
+                                <i class="fas fa-file-alt me-2"></i>Günlük Rapor
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white-75 menu-link" href="#">
+                                <i class="fas fa-chart-line me-2"></i>Haftalık Rapor
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white-75 menu-link" href="#">
+                                <i class="fas fa-chart-bar me-2"></i>Aylık Rapor
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white menu-link" href="#">
+                    <i class="fas fa-bell me-2"></i>
+                    Bildirimler
+                    <span class="badge bg-danger ms-auto">3</span>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer mt-auto p-3 border-top border-light border-opacity-25">
+            <a class="nav-link text-white menu-link" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Çıkış Yap
+            </a>
         </div>
     </div>
 </div>
 
-<!-- Header JavaScript - DEBUG VERSIYONU -->
+<!-- Header JavaScript - HEPSİ TEK YERDE -->
 <script>
-console.log('🎬 Header script başlıyor... (timestamp:', Date.now(), ')');
-
-// Immediate function execution
 (function() {
     'use strict';
     
-    console.log('🔧 IIFE başlatıldı');
+    console.log('🔥 *** HEADER SCRIPT BAŞLATIYOR... ***');
+    console.log('🔥 Document readyState:', document.readyState);
+    console.log('🔥 Window loaded:', document.readyState === 'complete');
+    console.log('🔥 APP_CONFIG mevcut:', typeof window.APP_CONFIG !== 'undefined');
     
-    // Global logout function - HEMEN TANIMLA
-    if (!window.logout) {
-        window.logout = function() {
-            console.log('🚪 Logout function called');
-            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-                try {
-                    if (window.authService) {
-                        window.authService.logout();
-                    } else {
-                        localStorage.clear();
-                        window.location.href = '../index.html';
-                    }
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    localStorage.clear();
-                    window.location.href = '../index.html';
-                }
-            }
-        };
-        console.log('✅ Global logout function tanımlandı');
-    } else {
-        console.log('ℹ️ Logout function zaten mevcut');
-    }
-
-    // Header initialization function - HEMEN TANIMLA
-    window.initializeHeader = function() {
-        console.log('🔧 *** initializeHeader ÇAĞRILDI ***');
-        console.log('🔧 Timestamp:', Date.now());
-        console.log('🔧 Config check:', !!window.APP_CONFIG);
+    // DOM elementlerinin varlığını kontrol et
+    setTimeout(() => {
+        console.log('🔍 *** ELEMENT VARLIK KONTROLÜ ***');
+        console.log('  - headerTitle:', !!document.getElementById('headerTitle'));
+        console.log('  - sidebarTitle:', !!document.getElementById('sidebarTitle'));
+        console.log('  - sidebarToggle:', !!document.getElementById('sidebarToggle'));
+        console.log('  - mobileSidebar:', !!document.getElementById('mobileSidebar'));
+        console.log('  - sidebarOverlay:', !!document.getElementById('sidebarOverlay'));
         
-        try {
-            // Config kontrolü
-            if (typeof window.APP_CONFIG === 'undefined') {
-                console.warn('⚠️ APP_CONFIG henüz yüklenmedi');
-                console.log('🔧 Setting default values...');
-                setDefaultValues();
-                return;
-            }
-            
-            const config = window.APP_CONFIG;
-            console.log('✅ Config bulundu:', {
-                companyName: config.COMPANY_NAME,
-                portalTitle: config.PORTAL_TITLE
-            });
-            
-            // Header title güncelle
-            updateHeaderTitle(config);
-            
-            // Sidebar title güncelle  
-            updateSidebarTitle(config);
-            
-            // Logo ayarları
-            updateLogos(config);
-            
-            // User info
-            loadHeaderUserInfo();
-            
-            // Mobile sidebar setup
-            setupMobileSidebar();
-            
-            console.log('🎉 *** HEADER BAŞARIYLA INITIALIZE EDİLDİ ***');
-            
-        } catch (error) {
-            console.error('❌ Header initialization error:', error);
-            console.error('❌ Error stack:', error.stack);
-            setDefaultValues();
+        // Hamburger button özel kontrolü
+        const toggleBtn = document.getElementById('sidebarToggle');
+        if (toggleBtn) {
+            console.log('🍔 HAMBURGER BUTTON DETAYLI KONTROL:');
+            console.log('  - Element:', toggleBtn);
+            console.log('  - TagName:', toggleBtn.tagName);
+            console.log('  - Type:', toggleBtn.type);
+            console.log('  - Disabled:', toggleBtn.disabled);
+            console.log('  - OffsetParent:', toggleBtn.offsetParent);
+            console.log('  - Display:', window.getComputedStyle(toggleBtn).display);
+            console.log('  - Event listeners:', getEventListeners ? getEventListeners(toggleBtn) : 'Kontrol edilemiyor');
         }
-    };
+    }, 50);
     
-    console.log('✅ initializeHeader function tanımlandı');
-    console.log('✅ Function type:', typeof window.initializeHeader);
+    // HEMEN DEFAULT DEĞERLERİ SET ET
+    setDefaultValues();
     
-    // Default values
+    // CONFIG YÜKLENDIĞINDE GÜNCELLE
+    setTimeout(() => {
+        if (window.APP_CONFIG) {
+            updateWithConfig();
+        }
+    }, 100);
+    
+    // MOBILE SIDEBAR SETUP
+    setupMobileSidebar();
+    
+    /**
+     * Default değerleri hemen set et
+     */
     function setDefaultValues() {
-        console.log('📝 Setting default values...');
+        console.log('📝 Default değerler ayarlanıyor...');
         
+        // Header title
         const headerTitle = document.getElementById('headerTitle');
-        const sidebarTitle = document.getElementById('sidebarTitle');
-        
         if (headerTitle) {
-            headerTitle.textContent = 'Portal';
-            console.log('✅ Default header title set');
-        } else {
-            console.error('❌ headerTitle element not found');
+            headerTitle.textContent = 'Aslan Group Portal';
         }
         
-        if (sidebarTitle) {
-            sidebarTitle.textContent = 'Portal';
-            console.log('✅ Default sidebar title set');
-        } else {
-            console.error('❌ sidebarTitle element not found');
-        }
-    }
-    
-    // Header title update
-    function updateHeaderTitle(config) {
-        console.log('🏷️ Updating header title...');
-        
-        const headerTitle = document.getElementById('headerTitle');
-        console.log('🔍 headerTitle element:', !!headerTitle);
-        console.log('🔍 config.PORTAL_TITLE:', config.PORTAL_TITLE);
-        
-        if (headerTitle && config.PORTAL_TITLE) {
-            console.log('🔄 Changing from:', headerTitle.textContent);
-            headerTitle.textContent = config.PORTAL_TITLE;
-            console.log('✅ Header title updated to:', headerTitle.textContent);
-        } else {
-            console.error('❌ Cannot update header title');
-            console.error('  - headerTitle exists:', !!headerTitle);
-            console.error('  - config.PORTAL_TITLE exists:', !!config.PORTAL_TITLE);
-        }
-    }
-    
-    // Sidebar title update
-    function updateSidebarTitle(config) {
-        console.log('🔖 Updating sidebar title...');
-        
+        // Sidebar title
         const sidebarTitle = document.getElementById('sidebarTitle');
-        console.log('🔍 sidebarTitle element:', !!sidebarTitle);
-        
-        if (sidebarTitle && config.PORTAL_TITLE) {
-            console.log('🔄 Changing from:', sidebarTitle.textContent);
-            sidebarTitle.textContent = config.PORTAL_TITLE;
-            console.log('✅ Sidebar title updated to:', sidebarTitle.textContent);
-        } else {
-            console.error('❌ Cannot update sidebar title');
-            console.error('  - sidebarTitle exists:', !!sidebarTitle);
-            console.error('  - config.PORTAL_TITLE exists:', !!config.PORTAL_TITLE);
+        if (sidebarTitle) {
+            sidebarTitle.textContent = 'Aslan Group Portal';
         }
+        
+        console.log('✅ Default değerler set edildi');
     }
     
-    // Logo update
-    function updateLogos(config) {
-        console.log('🖼️ Updating logos...');
+    /**
+     * Config ile güncelle
+     */
+    function updateWithConfig() {
+        const config = window.APP_CONFIG;
+        console.log('🔧 Config ile güncelleme:', config?.PORTAL_TITLE);
         
-        if (!config.LOGO) {
-            console.log('📷 No logo config found');
-            return;
-        }
-        
-        const headerLogo = document.getElementById('headerLogo');
-        const sidebarLogo = document.getElementById('sidebarLogo');
-        
-        if (headerLogo) {
-            headerLogo.src = '../' + config.LOGO.PATH;
-            headerLogo.alt = config.LOGO.ALT_TEXT;
-            headerLogo.style.display = 'inline-block';
-            headerLogo.onerror = function() {
-                console.warn('⚠️ Header logo yüklenemedi:', config.LOGO.PATH);
-                this.style.display = 'none';
-            };
-        }
-        
-        if (sidebarLogo) {
-            sidebarLogo.src = '../' + config.LOGO.PATH;
-            sidebarLogo.alt = config.LOGO.ALT_TEXT;
-            sidebarLogo.style.display = 'inline-block';
-            sidebarLogo.onerror = function() {
-                console.warn('⚠️ Sidebar logo yüklenemedi:', config.LOGO.PATH);
-                this.style.display = 'none';
-            };
-        }
-    }
-    
-    // User info
-    function loadHeaderUserInfo() {
-        console.log('👤 Loading user info...');
-        
-        try {
-            const user = window.authService?.getCurrentUser();
-            if (user) {
-                const displayName = user.firstName || user.username || 'Kullanıcı';
-                const email = user.email || 'user@example.com';
-                const initial = displayName.charAt(0).toUpperCase();
-                
-                // Desktop header
-                const headerUserName = document.getElementById('headerUserName');
-                const userInitial = document.getElementById('userInitial');
-                
-                if (headerUserName) headerUserName.textContent = displayName;
-                if (userInitial) userInitial.textContent = initial;
-                
-                // Mobile sidebar
-                const sidebarUserName = document.getElementById('sidebarUserName');
-                const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-                const sidebarUserInitial = document.getElementById('sidebarUserInitial');
-                
-                if (sidebarUserName) sidebarUserName.textContent = displayName;
-                if (sidebarUserEmail) sidebarUserEmail.textContent = email;
-                if (sidebarUserInitial) sidebarUserInitial.textContent = initial;
-                
-                console.log('✅ User info loaded:', displayName);
-            } else {
-                console.log('ℹ️ No user data available');
+        if (config?.PORTAL_TITLE) {
+            // Header title
+            const headerTitle = document.getElementById('headerTitle');
+            if (headerTitle) {
+                headerTitle.textContent = config.PORTAL_TITLE;
             }
-        } catch (error) {
-            console.error('❌ Error loading user info:', error);
+            
+            // Sidebar title
+            const sidebarTitle = document.getElementById('sidebarTitle');
+            if (sidebarTitle) {
+                sidebarTitle.textContent = config.PORTAL_TITLE;
+            }
+        }
+        
+        // Logo ayarları
+        if (config?.LOGO) {
+            const headerLogo = document.getElementById('headerLogo');
+            const sidebarLogo = document.getElementById('sidebarLogo');
+            
+            if (headerLogo) {
+                headerLogo.src = '../' + config.LOGO.PATH;
+                headerLogo.style.display = 'inline-block';
+                headerLogo.onerror = function() {
+                    this.style.display = 'none';
+                };
+            }
+            
+            if (sidebarLogo) {
+                sidebarLogo.src = '../' + config.LOGO.PATH;
+                sidebarLogo.style.display = 'inline-block';
+                sidebarLogo.onerror = function() {
+                    this.style.display = 'none';
+                };
+            }
         }
     }
     
-    // Mobile sidebar setup
+    /**
+     * Mobile sidebar setup - ÇALIŞAN VERSİYON + DETAYLI LOG
+     */
     function setupMobileSidebar() {
         console.log('📱 *** MOBILE SIDEBAR SETUP BAŞLADI ***');
         
+        // Element referansları al
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarClose = document.getElementById('sidebarClose');
         const sidebar = document.getElementById('mobileSidebar');
         const overlay = document.getElementById('sidebarOverlay');
         
-        console.log('🔍 Element check results:');
-        console.log('  - sidebarToggle:', !!sidebarToggle, sidebarToggle);
-        console.log('  - sidebarClose:', !!sidebarClose, sidebarClose);
-        console.log('  - mobileSidebar:', !!sidebar, sidebar);
-        console.log('  - sidebarOverlay:', !!overlay, overlay);
+        // Element kontrolü - DETAYLI LOG
+        console.log('🔍 Element kontrolü:');
+        console.log('  - sidebarToggle:', sidebarToggle ? '✅ BULUNDU' : '❌ BULUNAMADI', sidebarToggle);
+        console.log('  - sidebarClose:', sidebarClose ? '✅ BULUNDU' : '❌ BULUNAMADI', sidebarClose);
+        console.log('  - mobileSidebar:', sidebar ? '✅ BULUNDU' : '❌ BULUNAMADI', sidebar);
+        console.log('  - sidebarOverlay:', overlay ? '✅ BULUNDU' : '❌ BULUNAMADI', overlay);
         
         if (!sidebarToggle) {
-            console.error('❌ CRITICAL: sidebarToggle bulunamadı!');
+            console.error('❌ CRITICAL: sidebarToggle elementi bulunamadı!');
+            console.error('❌ Hamburger menu çalışmayacak!');
             return;
         }
         
         if (!sidebar) {
-            console.error('❌ CRITICAL: mobileSidebar bulunamadı!');
+            console.error('❌ CRITICAL: mobileSidebar elementi bulunamadı!');
             return;
         }
         
         if (!overlay) {
-            console.error('❌ CRITICAL: sidebarOverlay bulunamadı!');
+            console.error('❌ CRITICAL: sidebarOverlay elementi bulunamadı!');
             return;
         }
         
-        console.log('✅ Tüm gerekli elementler mevcut');
+        // Event listener'ları ekle - DETAYLI LOG
+        console.log('🔗 Event listener'lar ekleniyor...');
         
-        // Sidebar functions
-        function openSidebar() {
-            console.log('📂 *** SIDEBAR AÇILIYOR ***');
-            sidebar.classList.add('show');
-            overlay.classList.add('show');
-            document.body.classList.add('sidebar-open');
-            document.body.style.overflow = 'hidden';
-            
-            console.log('✅ Sidebar classes after open:');
-            console.log('  - sidebar:', sidebar.classList.toString());
-            console.log('  - overlay:', overlay.classList.toString());
-            console.log('  - body:', document.body.classList.toString());
-        }
-        
-        function closeSidebar() {
-            console.log('📁 *** SIDEBAR KAPANIYOR ***');
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
-            document.body.classList.remove('sidebar-open');
-            document.body.style.overflow = '';
-            
-            console.log('✅ Sidebar classes after close:');
-            console.log('  - sidebar:', sidebar.classList.toString());
-            console.log('  - overlay:', overlay.classList.toString());
-        }
-        
-        // Event listeners
-        console.log('🔗 Adding event listeners...');
-        
-        // Toggle button
+        // Hamburger menu click - LOG EKLENDİ
         sidebarToggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            console.log('🔘 *** HAMBURGER CLICKED! ***');
-            console.log('🔘 Event:', e);
-            console.log('🔘 Current sidebar classes:', sidebar.classList.toString());
+            console.log('🍔 *** HAMBURGER MENU TIKLANDI! ***');
+            console.log('🍔 Event:', e);
+            console.log('🍔 Element:', this);
             openSidebar();
         });
-        console.log('✅ Toggle button event added');
+        console.log('✅ Hamburger menu event listener eklendi');
         
-        // Close button
+        // Test için click event'i force et
+        console.log('🧪 Hamburger menu test ediliyor...');
+        sidebarToggle.onclick = function(e) {
+            console.log('🧪 ONCLICK EVENT ÇALIŞTI!');
+            e.preventDefault();
+            e.stopPropagation();
+            openSidebar();
+        };
+        console.log('✅ Onclick backup event eklendi');
+        
+        // Close button click
         if (sidebarClose) {
             sidebarClose.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('❌ *** CLOSE BUTTON CLICKED! ***');
+                console.log('❌ *** CLOSE BUTTON TIKLANDI! ***');
                 closeSidebar();
             });
-            console.log('✅ Close button event added');
+            console.log('✅ Close button event listener eklendi');
         }
         
         // Overlay click
         overlay.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('🎯 *** OVERLAY CLICKED! ***');
+            console.log('🎯 *** OVERLAY TIKLANDI! ***');
+            console.log('🎯 Target:', e.target);
+            console.log('🎯 CurrentTarget:', e.currentTarget);
             closeSidebar();
         });
-        console.log('✅ Overlay event added');
+        console.log('✅ Overlay event listener eklendi');
         
         // Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && sidebar.classList.contains('show')) {
-                console.log('⌨️ *** ESCAPE KEY PRESSED! ***');
+                console.log('⌨️ *** ESCAPE TUŞU BASILDI! ***');
                 closeSidebar();
             }
         });
-        console.log('✅ Escape key event added');
+        console.log('✅ Escape key event listener eklendi');
         
         // Menu links
         const menuLinks = sidebar.querySelectorAll('.menu-link');
-        console.log('🔗 Found', menuLinks.length, 'menu links');
+        console.log('🔗 Menu links bulundu:', menuLinks.length, 'adet');
         
         menuLinks.forEach((link, index) => {
             link.addEventListener('click', function() {
-                console.log(`🔗 Menu link ${index + 1} clicked:`, this.textContent.trim());
+                console.log(`🔗 Menu link ${index + 1} tıklandı:`, this.textContent.trim());
                 if (!this.textContent.includes('Çıkış')) {
                     setTimeout(closeSidebar, 200);
                 }
             });
         });
+        console.log('✅ Menu link event listener\'ları eklendi');
+        
+        // DOM'da hamburger button'un görünür olup olmadığını kontrol et
+        const rect = sidebarToggle.getBoundingClientRect();
+        console.log('📐 Hamburger button position:', {
+            width: rect.width,
+            height: rect.height,
+            top: rect.top,
+            left: rect.left,
+            visible: rect.width > 0 && rect.height > 0
+        });
+        
+        // CSS display kontrolü
+        const computedStyle = window.getComputedStyle(sidebarToggle);
+        console.log('🎨 Hamburger button styles:', {
+            display: computedStyle.display,
+            visibility: computedStyle.visibility,
+            opacity: computedStyle.opacity,
+            pointerEvents: computedStyle.pointerEvents
+        });
+        
+        // Responsive kontrol
+        const windowWidth = window.innerWidth;
+        console.log('📱 Window width:', windowWidth);
+        console.log('📱 Should be visible:', windowWidth < 992 ? 'YES (mobile/tablet)' : 'NO (desktop)');
+        
+        // Manual test fonksiyonu ekle
+        window.testHamburgerMenu = function() {
+            console.log('🧪 *** MANUAL HAMBURGER TEST ***');
+            const toggle = document.getElementById('sidebarToggle');
+            if (toggle) {
+                console.log('🧪 Simulating click...');
+                toggle.click();
+            } else {
+                console.log('🧪 Toggle button not found!');
+            }
+        };
+        console.log('🧪 Test fonksiyonu eklendi: window.testHamburgerMenu()');
         
         console.log('🎉 *** MOBILE SIDEBAR SETUP TAMAMLANDI ***');
     }
     
-    // Initialization logic
-    function initializeWhenReady() {
-        console.log('📋 *** DOM READY HANDLER ***');
-        console.log('📋 Document ready state:', document.readyState);
+    /**
+     * Sidebar aç - DETAYLI LOG
+     */
+    function openSidebar() {
+        console.log('📂 *** SIDEBAR AÇILIYOR! ***');
         
-        // Default values önce
-        setDefaultValues();
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
         
-        // Mobile sidebar setup
-        setupMobileSidebar();
+        console.log('📂 Element kontrolleri:');
+        console.log('  - sidebar:', sidebar ? '✅' : '❌', sidebar);
+        console.log('  - overlay:', overlay ? '✅' : '❌', overlay);
         
-        // Config check and header init
-        if (window.APP_CONFIG) {
-            console.log('🔄 Config zaten mevcut, header initialize ediliyor...');
-            setTimeout(() => {
-                console.log('⏰ Delayed header initialization...');
-                window.initializeHeader();
-            }, 100);
-        } else {
-            console.log('⏳ Config bekleniyor...');
-            
-            // Polling for config
-            let attempts = 0;
-            const maxAttempts = 50;
-            
-            const checkConfig = setInterval(() => {
-                attempts++;
-                if (window.APP_CONFIG) {
-                    console.log('📡 Config algılandı! (attempt', attempts, ')');
-                    clearInterval(checkConfig);
-                    window.initializeHeader();
-                } else if (attempts >= maxAttempts) {
-                    console.warn('⏰ Config timeout after', maxAttempts, 'attempts');
-                    clearInterval(checkConfig);
-                }
-            }, 100);
-        }
-    }
-    
-    // Config event listener
-    window.addEventListener('configLoaded', function(e) {
-        console.log('📡 *** CONFIG LOADED EVENT ***');
-        console.log('📡 Event detail:', e.detail);
-        setTimeout(() => {
-            console.log('⏰ Config event delayed initialization...');
-            window.initializeHeader();
-        }, 50);
-    });
-    
-    // DOM ready handling
-    if (document.readyState === 'loading') {
-        console.log('📋 Document still loading, adding event listener...');
-        document.addEventListener('DOMContentLoaded', initializeWhenReady);
-    } else {
-        console.log('📋 Document already ready, initializing immediately...');
-        initializeWhenReady();
-    }
-    
-    console.log('🎯 *** HEADER SCRIPT SETUP COMPLETE ***');
-    console.log('🎯 initializeHeader type:', typeof window.initializeHeader);
-    
-})();
-
-console.log('🏁 Header script dosyası sonu (timestamp:', Date.now(), ')');
-</script>
-        sidebarToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🔘 Hamburger menu tıklandı');
-            openSidebar();
-        });
-        
-        // Close button event
-        if (sidebarClose) {
-            sidebarClose.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('❌ Close button tıklandı');
-                closeSidebar();
-            });
+        if (!sidebar || !overlay) {
+            console.error('❌ SIDEBAR AÇILIRKEN HATA: Elementler bulunamadı!');
+            return;
         }
         
-        // Overlay click event
-        overlay.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🎯 Overlay tıklandı');
+        console.log('📂 Önceki state:');
+        console.log('  - sidebar classes:', sidebar.className);
+        console.log('  - overlay classes:', overlay.className);
+        console.log('  - body classes:', document.body.className);
+        
+        // Class'ları ekle
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        document.body.classList.add('sidebar-open');
+        
+        console.log('📂 Sonraki state:');
+        console.log('  - sidebar classes:', sidebar.className);
+        console.log('  - overlay classes:', overlay.className);
+        console.log('  - body classes:', document.body.className);
+        
+        // CSS kontrolü
+        const sidebarStyle = window.getComputedStyle(sidebar);
+        console.log('📂 Sidebar computed styles:');
+        console.log('  - left:', sidebarStyle.left);
+        console.log('  - transform:', sidebarStyle.transform);
+        console.log('  - visibility:', sidebarStyle.visibility);
+        console.log('  - z-index:', sidebarStyle.zIndex);
+        
+        console.log('✅ *** SIDEBAR AÇILDI! ***');
+    }
+    
+    /**
+     * Sidebar kapat - DETAYLI LOG
+     */
+    function closeSidebar() {
+        console.log('📁 *** SIDEBAR KAPANIYOR! ***');
+        
+        const sidebar = document.getElementById('mobileSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        console.log('📁 Element kontrolleri:');
+        console.log('  - sidebar:', sidebar ? '✅' : '❌', sidebar);
+        console.log('  - overlay:', overlay ? '✅' : '❌', overlay);
+        
+        if (!sidebar || !overlay) {
+            console.error('❌ SIDEBAR KAPANIRKEN HATA: Elementler bulunamadı!');
+            return;
+        }
+        
+        console.log('📁 Önceki state:');
+        console.log('  - sidebar classes:', sidebar.className);
+        console.log('  - overlay classes:', overlay.className);
+        console.log('  - body classes:', document.body.className);
+        
+        // Class'ları kaldır
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.classList.remove('sidebar-open');
+        
+        console.log('📁 Sonraki state:');
+        console.log('  - sidebar classes:', sidebar.className);
+        console.log('  - overlay classes:', overlay.className);
+        console.log('  - body classes:', document.body.className);
+        
+        console.log('✅ *** SIDEBAR KAPANDI! ***');
+    }
+    
+    // Global fonksiyonlar
+    window.openSidebar = openSidebar;
+    window.closeSidebar = closeSidebar;
+    window.toggleSidebar = function() {
+        const sidebar = document.getElementById('mobileSidebar');
+        if (sidebar.classList.contains('show')) {
             closeSidebar();
-        });
-        
-        // Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && sidebar.classList.contains('show')) {
-                console.log('⌨️ Escape tuşu basıldı');
-                closeSidebar();
-            }
-        });
-        
-        // Menu links click
-        const menuLinks = sidebar.querySelectorAll('.menu-link');
-        menuLinks.forEach((link, index) => {
-            link.addEventListener('click', function() {
-                console.log(`🔗 Menu link ${index + 1} tıklandı`);
-                if (!this.textContent.includes('Çıkış')) {
-                    setTimeout(closeSidebar, 200);
-                }
-            });
-        });
-        
-        console.log('✅ Mobile sidebar event listeners eklendi');
-    }
-    
-    // DOM ready handler
-    function initializeWhenReady() {
-        console.log('📋 DOM ready, initialization başlatılıyor...');
-        
-        // Default values set et
-        setDefaultValues();
-        
-        // Mobile sidebar setup
-        setupMobileSidebar();
-        
-        // Config varsa header'ı initialize et
-        if (window.APP_CONFIG) {
-            console.log('🔄 Config mevcut, header initialize ediliyor...');
-            setTimeout(window.initializeHeader, 100);
         } else {
-            console.log('⏳ Config bekleniyor...');
-            
-            // Config yüklenince tekrar dene
-            const checkConfig = setInterval(() => {
-                if (window.APP_CONFIG) {
-                    console.log('📡 Config algılandı!');
-                    clearInterval(checkConfig);
-                    window.initializeHeader();
-                }
-            }, 100);
-            
-            // 5 saniye sonra timeout
-            setTimeout(() => {
-                clearInterval(checkConfig);
-                console.warn('⏰ Config timeout, default values kullanılacak');
-            }, 5000);
+            openSidebar();
         }
-    }
+    };
     
-    // Config event listener
-    window.addEventListener('configLoaded', function(e) {
-        console.log('📡 configLoaded event alındı');
-        setTimeout(window.initializeHeader, 50);
-    });
+    // Initialize function
+    window.initializeHeader = function() {
+        console.log('🔄 Header initialize çağrıldı');
+        updateWithConfig();
+    };
     
-    // DOM ready check
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeWhenReady);
-    } else {
-        initializeWhenReady();
-    }
-    
-    console.log('🎯 Header script setup tamamlandı');
-    
+    console.log('🎉 Header script hazır!');
 })();
 </script>
 
-<!-- Header Styles - DÜZELTİLDİ -->
+<!-- Header Styles - BOŞLUK + RESPONSIVE -->
 <style>
+    /* Page layout - BOŞLUK KONTROLÜ */
+    body {
+        padding-top: 0 !important;
+        margin: 0;
+    }
+    
+    /* Main content margin - TÜM SAYFALARDA ÇALIŞIR */
+    .main-content {
+        margin-top: 100px !important; /* Header için boşluk */
+        padding: 1.5rem 0 !important;
+    }
+    
+    /* Navbar styling - ORİJİNAL RENKLER */
+    .navbar.fixed-top {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;
+        height: 80px;
+        padding: 1rem 0;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+    
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: white !important;
+        text-decoration: none;
+    }
+    
+    .navbar-brand:hover {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-decoration: none;
+    }
+    
+    .navbar-toggler {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.375rem 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+    }
+    
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    
     /* Mobile Sidebar Styles */
     .sidebar {
         position: fixed;
@@ -689,6 +603,8 @@ console.log('🏁 Header script dosyası sonu (timestamp:', Date.now(), ')');
         transition: left 0.3s ease;
         overflow-y: auto;
         overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
     }
     
     .sidebar.show {
@@ -718,131 +634,56 @@ console.log('🏁 Header script dosyası sonu (timestamp:', Date.now(), ')');
         overflow: hidden;
     }
     
-    .sidebar-header {
-        padding: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    /* Sidebar content */
+    .sidebar-content {
+        flex: 1;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        min-height: 70px;
+        flex-direction: column;
     }
     
-    .sidebar-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.25rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 4px;
-        transition: background-color 0.2s ease;
+    .sidebar-footer {
+        margin-top: auto;
     }
     
-    .sidebar-close:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .sidebar-user {
-        padding: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .sidebar-menu {
-        padding: 1rem 0;
-    }
-    
-    .menu-section {
-        margin-bottom: 2rem;
-    }
-    
-    .menu-title {
-        padding: 0 1rem;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 0.5rem;
-    }
-    
-    .menu-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .menu-link {
-        display: flex;
-        align-items: center;
+    /* Sidebar links */
+    .sidebar .nav-link {
         padding: 0.75rem 1rem;
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border-left: 3px solid transparent;
+        transition: all 0.3s ease;
+        border-radius: 0.375rem;
+        margin-bottom: 0.25rem;
     }
     
-    .menu-link:hover {
+    .sidebar .nav-link:hover {
         background: rgba(255, 255, 255, 0.1);
-        color: white;
-        text-decoration: none;
-        border-left-color: rgba(255, 255, 255, 0.5);
+        color: #fff !important;
     }
     
-    .menu-link.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-        border-left-color: white;
+    .sidebar .nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff !important;
+        font-weight: 600;
     }
     
-    .menu-link i {
-        width: 20px;
-        margin-right: 0.75rem;
-        text-align: center;
+    /* User avatar */
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: 600;
     }
     
-    /* Desktop styles */
-    .bg-gradient-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    }
-    
-    .main-content {
-        margin-top: 76px;
-        padding: 2rem 0;
-    }
-    
-    /* Navbar brand fix */
-    .navbar-brand {
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: white !important;
-        text-decoration: none;
-    }
-    
-    .navbar-brand:hover {
-        color: rgba(255, 255, 255, 0.9) !important;
-        text-decoration: none;
-    }
-    
-    /* Navbar toggler fix */
-    .navbar-toggler {
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 0.375rem 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-    }
-    
-    .navbar-toggler:focus {
-        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
-    }
-    
-    .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    }
-    
-    /* Responsive adjustments */
+    /* Responsive - BOŞLUK RESPONSIVE */
     @media (max-width: 991.98px) {
         .main-content {
-            margin-top: 56px;
+            margin-top: 85px !important;
+        }
+        
+        .navbar.fixed-top {
+            height: 70px;
+            padding: 0.75rem 0;
         }
         
         .sidebar {
@@ -852,6 +693,15 @@ console.log('🏁 Header script dosyası sonu (timestamp:', Date.now(), ')');
     }
     
     @media (max-width: 575.98px) {
+        .main-content {
+            margin-top: 75px !important;
+        }
+        
+        .navbar.fixed-top {
+            height: 65px;
+            padding: 0.5rem 0;
+        }
+        
         .sidebar {
             width: 100vw;
             left: -100vw;
@@ -860,5 +710,40 @@ console.log('🏁 Header script dosyası sonu (timestamp:', Date.now(), ')');
         .navbar-brand span {
             font-size: 1.1rem;
         }
+    }
+    
+    /* Desktop navigation styling */
+    @media (min-width: 992px) {
+        .navbar-nav .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.375rem;
+        }
+    }
+    
+    /* Dropdown menu improvements */
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border-radius: 0.5rem;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+        transition: background-color 0.15s ease-in-out;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .dropdown-header {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    
+    /* Notification badge */
+    .badge {
+        font-size: 0.6rem;
     }
 </style>
