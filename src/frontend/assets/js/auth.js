@@ -1,65 +1,142 @@
-// Authentication Service
-// src/frontend/assets/js/auth.js
+/**
+ * Authentication Service - LOGOUT DÜZELTİLDİ
+ * src/frontend/assets/js/auth.js
+ * 
+ * Bu dosya config.js'den ayarları alarak çalışır
+ */
 
 class AuthService {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:5154/api';
-        this.tokenKey = 'vervo_token';
-        this.userKey = 'vervo_user';
-        this.refreshTokenKey = 'vervo_refresh_token';
-        this.loginTimeKey = 'vervo_login_time';
-        this.rememberUsernameKey = 'vervo_remember_username';
+        // Config'ten ayarları al
+        this.initializeFromConfig();
         
-        console.log('AuthService initialized');
+        // Setup token refresh
+        this.setupTokenRefresh();
         
-        // Setup token refresh if authenticated
-        if (this.isAuthenticated()) {
-            this.setupTokenRefresh();
-        }
+        console.log('AuthService initialized with config');
     }
 
     /**
-     * Login user
+     * Config'ten ayarları initialize et
+     */
+    initializeFromConfig() {
+        if (typeof window.APP_CONFIG === 'undefined') {
+            console.warn('APP_CONFIG not found, using default values');
+            // Fallback values
+            this.apiBaseUrl = 'http://localhost:5154/api';
+            this.tokenKey = 'vervo_auth_token';
+            this.userKey = 'vervo_user_data';
+            this.refreshTokenKey = 'vervo_refresh_token';
+            this.loginTimeKey = 'vervo_login_time';
+            this.rememberUsernameKey = 'vervo_remember_username';
+            this.loginRedirect = 'pages/dashboard.html';
+            this.logoutRedirect = 'pages/login.html';
+            return;
+        }
+
+        const config = window.APP_CONFIG;
+        
+        // API ayarları
+        this.apiBaseUrl = config.API.BASE_URL;
+        this.apiTimeout = config.API.TIMEOUT || 10000;
+        this.retryAttempts = config.API.RETRY_ATTEMPTS || 3;
+        
+        // Storage anahtarları
+        this.tokenKey = config.SECURITY.TOKEN_STORAGE_KEY;
+        this.userKey = config.SECURITY.USER_STORAGE_KEY;
+        this.refreshTokenKey = config.SECURITY.REFRESH_TOKEN_KEY;
+        this.loginTimeKey = config.SECURITY.LOGIN_TIME_KEY;
+        this.rememberUsernameKey = config.SECURITY.REMEMBER_USERNAME_KEY;
+        
+        // Güvenlik ayarları
+        this.autoLogoutMinutes = config.SECURITY.AUTO_LOGOUT_MINUTES || 60;
+        
+        // Sayfa ayarları
+        this.loginRedirect = config.PAGES.LOGIN_REDIRECT;
+        this.logoutRedirect = config.PAGES.LOGOUT_REDIRECT;
+        
+        // Özellik bayrakları
+        this.enableAutoRefresh = config.FEATURES.AUTO_REFRESH_TOKEN;
+        this.showLogs = config.FEATURES.SHOW_CONSOLE_LOGS;
+        
+        // Mesajlar
+        this.messages = config.MESSAGES;
+    }
+
+    /**
+     * Login işlemi
      */
     async login(username, password, rememberMe = false) {
-        console.log('AuthService.login called');
+        if (this.showLogs) {
+            console.log('Login attempt for username:', username);
+        }
         
         try {
-            const response = await fetch(`${this.apiBaseUrl}/auth/login`, {
+            const response = await this.makeRequest('/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     username: username,
-                    password: password,
-                    rememberMe: rememberMe
+                    password: password
                 })
             });
-
-            console.log('Login response status:', response.status);
-
+            
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Login error response:', errorText);
-                throw new Error(this.getErrorMessage(response.status));
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || this.getErrorMessage(response.status));
             }
-
+            
             const data = await response.json();
-            console.log('Login response data:', data);
-
-            // Store authentication data
+            
+            // Auth verilerini sakla
             this.storeAuthData(data);
-
+            
+            // Remember me
+            if (rememberMe) {
+                this.rememberUser(username);
+            } else {
+                this.clearRememberedUser();
+            }
+            
+            if (this.showLogs) {
+                console.log('Login successful');
+            }
+            
             return data;
-
+            
         } catch (error) {
             console.error('Login error:', error);
             
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                throw new Error('Sunucu bağlantısı kurulamadı. Lütfen sunucunun çalıştığından emin olun.');
+                throw new Error('Sunucuya bağlanılamıyor. Lütfen sunucunun çalıştığından emin olun.');
             }
             
+            throw error;
+        }
+    }
+
+    /**
+     * HTTP request wrapper with retry logic
+     */
+    async makeRequest(endpoint, options = {}, retryCount = 0) {
+        const url = `${this.apiBaseUrl}${endpoint}`;
+        
+        const requestOptions = {
+            timeout: this.apiTimeout,
+            ...options
+        };
+        
+        try {
+            const response = await fetch(url, requestOptions);
+            return response;
+        } catch (error) {
+            if (retryCount < this.retryAttempts) {
+                console.log(`Request failed, retrying... (${retryCount + 1}/${this.retryAttempts})`);
+                await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+                return this.makeRequest(endpoint, options, retryCount + 1);
+            }
             throw error;
         }
     }
@@ -68,7 +145,9 @@ class AuthService {
      * Store authentication data
      */
     storeAuthData(data) {
-        console.log('Storing auth data:', data);
+        if (this.showLogs) {
+            console.log('Storing auth data');
+        }
         
         // Store token
         if (data.token) {
@@ -88,14 +167,18 @@ class AuthService {
         // Store login time
         localStorage.setItem(this.loginTimeKey, Date.now().toString());
         
-        console.log('Auth data stored successfully');
+        if (this.showLogs) {
+            console.log('Auth data stored successfully');
+        }
     }
 
     /**
-     * Logout user
+     * Logout user - YÖNLENDIRME DÜZELTİLDİ
      */
     logout() {
-        console.log('Logging out user...');
+        if (this.showLogs) {
+            console.log('Logging out user...');
+        }
         
         // Clear all auth data
         localStorage.removeItem(this.tokenKey);
@@ -103,13 +186,66 @@ class AuthService {
         localStorage.removeItem(this.refreshTokenKey);
         localStorage.removeItem(this.loginTimeKey);
         
-        // Optionally clear remember me
-        // localStorage.removeItem(this.rememberUsernameKey);
+        if (this.showLogs) {
+            console.log('User logged out, redirecting...');
+        }
         
-        console.log('User logged out, redirecting to login...');
-        
-        // Redirect to login
+        // Redirect to appropriate page
         this.redirectToLogin();
+    }
+
+    /**
+     * Redirect to login page - YÖNLENDIRME DÜZELTİLDİ
+     */
+    redirectToLogin() {
+        const currentPath = window.location.pathname;
+        const currentPage = currentPath.split('/').pop();
+        
+        if (this.showLogs) {
+            console.log('Current path:', currentPath);
+            console.log('Current page:', currentPage);
+        }
+        
+        // Avoid redirect loop
+        if (currentPage === 'login.html' || currentPage === 'index.html') {
+            return;
+        }
+        
+        // Determine correct redirect path based on current location
+        let redirectPath;
+        
+        if (currentPath.includes('/pages/')) {
+            // We're in a pages subfolder, go to login
+            redirectPath = 'login.html';
+        } else {
+            // We're in root or other location, go to index
+            redirectPath = 'index.html';
+        }
+        
+        if (this.showLogs) {
+            console.log('Redirecting to:', redirectPath);
+        }
+        
+        // Use replace to prevent back button issues
+        window.location.replace(redirectPath);
+    }
+
+    /**
+     * Redirect to dashboard
+     */
+    redirectToDashboard() {
+        const currentPath = window.location.pathname;
+        
+        let redirectPath;
+        if (currentPath.includes('/pages/')) {
+            // Already in pages folder
+            redirectPath = 'dashboard.html';
+        } else {
+            // In root folder
+            redirectPath = this.loginRedirect || 'pages/dashboard.html';
+        }
+        
+        window.location.href = redirectPath;
     }
 
     /**
@@ -129,7 +265,9 @@ class AuthService {
             const now = Math.floor(Date.now() / 1000);
             
             if (payload.exp && payload.exp < now) {
-                console.log('Token expired');
+                if (this.showLogs) {
+                    console.log('Token expired');
+                }
                 this.logout();
                 return false;
             }
@@ -195,9 +333,11 @@ class AuthService {
             const response = await fetch(url, requestOptions);
             
             if (response.status === 401) {
-                console.log('Unauthorized request, logging out...');
+                if (this.showLogs) {
+                    console.log('Unauthorized request, logging out...');
+                }
                 this.logout();
-                throw new Error('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+                throw new Error(this.messages?.SESSION_EXPIRED || 'Oturum süresi doldu. Lütfen tekrar giriş yapın.');
             }
             
             return response;
@@ -208,146 +348,33 @@ class AuthService {
     }
 
     /**
-     * Parse JWT payload
+     * Setup automatic token refresh
      */
-    parseJwtPayload(token) {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
-            return JSON.parse(jsonPayload);
-        } catch (error) {
-            throw new Error('Invalid token format');
-        }
-    }
-
-    /**
-     * Redirect to login page - FIXED VERSION
-     */
-    redirectToLogin() {
-        console.log('redirectToLogin called, current path:', window.location.pathname);
-        
-        // Check if we're already on login page to prevent loops
-        const currentPath = window.location.pathname;
-        const isAlreadyOnLogin = currentPath.includes('index.html') || 
-                               currentPath === '/' || 
-                               currentPath.endsWith('/');
-        
-        if (isAlreadyOnLogin) {
-            console.log('Already on login page, not redirecting');
+    setupTokenRefresh() {
+        if (!this.enableAutoRefresh) {
             return;
         }
         
-        // Determine the correct path to index.html
-        let redirectPath;
-        if (currentPath.includes('/pages/')) {
-            redirectPath = '../index.html';
-        } else {
-            redirectPath = './index.html';
-        }
-        
-        console.log('Redirecting to:', redirectPath);
-        window.location.href = redirectPath;
-    }
-
-    /**
-     * Redirect after successful login - FIXED VERSION
-     */
-    redirectAfterLogin() {
-        console.log('redirectAfterLogin called');
-        console.log('Current path:', window.location.pathname);
-        console.log('Current href:', window.location.href);
-        
-        // Path'e göre doğru dashboard yolunu belirle
-        const currentPath = window.location.pathname;
-        let dashboardPath;
-        
-        // login.html'den dashboard.html'e yönlendirme
-        if (currentPath.includes('/pages/') || currentPath.includes('login.html')) {
-            // pages klasöründen pages klasörüne
-            dashboardPath = './dashboard.html';
-        } else if (currentPath.includes('/frontend/')) {
-            // frontend ana dizininden pages klasörüne
-            dashboardPath = './pages/dashboard.html';
-        } else {
-            // Ana dizinden pages klasörüne
-            dashboardPath = './pages/dashboard.html';
-        }
-        
-        console.log('Calculated dashboard path:', dashboardPath);
-        
-        try {
-            // Doğrudan yönlendirme yap
-            window.location.href = dashboardPath;
-            
-        } catch (error) {
-            console.error('Redirect error:', error);
-            
-            // Fallback yöntemleri dene
-            try {
-                window.location.assign(dashboardPath);
-            } catch (e) {
-                console.error('Assign failed, trying replace:', e);
-                window.location.replace(dashboardPath);
-            }
-        }
-    }
-
-    /**
-     * Force redirect to login (fallback)
-     */
-    forceRedirectToLogin() {
-        console.log('Force redirecting to login...');
-        
-        // Try multiple possible paths
-        const possiblePaths = [
-            '../index.html',
-            './index.html',
-            '/index.html',
-            '/'
-        ];
-        
-        // Use the first one that makes sense based on current location
-        const currentPath = window.location.pathname;
-        let redirectPath = '/';
-        
-        if (currentPath.includes('/pages/')) {
-            redirectPath = '../index.html';
-        } else if (currentPath.includes('/frontend/')) {
-            redirectPath = './index.html';
-        }
-        
-        console.log('Force redirect to:', redirectPath);
-        window.location.replace(redirectPath); // Use replace to prevent back button issues
-    }
-
-    /**
-     * Setup token refresh
-     */
-    setupTokenRefresh() {
         const token = this.getToken();
         if (!token) return;
         
         try {
             const payload = this.parseJwtPayload(token);
             const now = Math.floor(Date.now() / 1000);
-            const timeToExpire = (payload.exp - now) * 1000; // Convert to milliseconds
+            const refreshTime = payload.exp - (5 * 60); // 5 minutes before expiry
             
-            // Refresh token 5 minutes before expiration
-            const refreshTime = timeToExpire - (5 * 60 * 1000);
-            
-            if (refreshTime > 0) {
+            if (refreshTime > now) {
+                const timeoutMs = (refreshTime - now) * 1000;
                 setTimeout(() => {
                     this.refreshToken();
-                }, refreshTime);
+                }, timeoutMs);
                 
-                console.log(`Token refresh scheduled in ${refreshTime / 1000} seconds`);
+                if (this.showLogs) {
+                    console.log(`Token refresh scheduled in ${Math.floor(timeoutMs / 60000)} minutes`);
+                }
             }
         } catch (error) {
-            console.error('Token refresh setup error:', error);
+            console.error('Error setting up token refresh:', error);
         }
     }
 
@@ -357,7 +384,9 @@ class AuthService {
     async refreshToken() {
         const refreshToken = localStorage.getItem(this.refreshTokenKey);
         if (!refreshToken) {
-            console.log('No refresh token available');
+            if (this.showLogs) {
+                console.log('No refresh token available');
+            }
             this.logout();
             return;
         }
@@ -380,7 +409,9 @@ class AuthService {
             const data = await response.json();
             this.storeAuthData(data);
             
-            console.log('Token refreshed successfully');
+            if (this.showLogs) {
+                console.log('Token refreshed successfully');
+            }
             
             // Setup next refresh
             this.setupTokenRefresh();
@@ -388,6 +419,24 @@ class AuthService {
         } catch (error) {
             console.error('Token refresh error:', error);
             this.logout();
+        }
+    }
+
+    /**
+     * Parse JWT payload
+     */
+    parseJwtPayload(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            
+            return JSON.parse(jsonPayload);
+        } catch (error) {
+            console.error('Error parsing JWT:', error);
+            throw error;
         }
     }
 
@@ -418,7 +467,7 @@ class AuthService {
     getErrorMessage(status) {
         const messages = {
             400: 'Geçersiz istek. Lütfen bilgilerinizi kontrol edin.',
-            401: 'Kullanıcı adı veya şifre hatalı.',
+            401: this.messages?.LOGIN_ERROR || 'Kullanıcı adı veya şifre hatalı.',
             403: 'Bu işlem için yetkiniz bulunmuyor.',
             404: 'İstenen kaynak bulunamadı.',
             429: 'Çok fazla istek gönderdiniz. Lütfen bekleyin.',
@@ -447,10 +496,93 @@ class AuthService {
             sessionDurationMinutes: Math.floor(sessionDuration / 60000)
         };
     }
+
+    /**
+     * Check if features are enabled
+     */
+    isFeatureEnabled(featureName) {
+        if (typeof window.APP_CONFIG === 'undefined') {
+            return false;
+        }
+        return window.APP_CONFIG.FEATURES[featureName] || false;
+    }
+
+    /**
+     * Get configuration value
+     */
+    getConfigValue(path) {
+        if (typeof window.APP_CONFIG === 'undefined') {
+            return null;
+        }
+        
+        const keys = path.split('.');
+        let value = window.APP_CONFIG;
+        
+        for (const key of keys) {
+            if (value && typeof value === 'object' && key in value) {
+                value = value[key];
+            } else {
+                return null;
+            }
+        }
+        
+        return value;
+    }
+
+    /**
+     * Force logout with cleanup - EMERGENCY LOGOUT
+     */
+    forceLogout() {
+        console.log('Force logout initiated');
+        
+        // Clear all possible auth data
+        const authKeys = [
+            this.tokenKey || 'vervo_auth_token',
+            this.userKey || 'vervo_user_data', 
+            this.refreshTokenKey || 'vervo_refresh_token',
+            this.loginTimeKey || 'vervo_login_time'
+        ];
+        
+        authKeys.forEach(key => {
+            try {
+                localStorage.removeItem(key);
+            } catch (error) {
+                console.error('Error clearing', key, error);
+            }
+        });
+        
+        // Redirect to appropriate page
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/pages/')) {
+            window.location.replace('../index.html');
+        } else {
+            window.location.replace('index.html');
+        }
+    }
 }
 
-// Create global auth service instance
-window.authService = new AuthService();
+// Global auth service instance - wait for config to load
+window.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for config to be processed
+    setTimeout(() => {
+        if (!window.authService) {
+            try {
+                window.authService = new AuthService();
+            } catch (error) {
+                console.error('Error creating AuthService:', error);
+            }
+        }
+    }, 100);
+});
+
+// Fallback for immediate access
+if (typeof window.APP_CONFIG !== 'undefined') {
+    try {
+        window.authService = new AuthService();
+    } catch (error) {
+        console.error('Error creating AuthService immediately:', error);
+    }
+}
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {

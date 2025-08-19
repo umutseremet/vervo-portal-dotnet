@@ -3,118 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Aslan Group Portal</title>
-    
-    <!-- Bootstrap CSS -->
+    <title id="pageTitle">Portal - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    
+    <!-- Config dosyasını ilk sırada yükle -->
+    <script src="../assets/js/config.js"></script>
     
     <style>
-        /* Custom Dashboard Styles */
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .main-content {
-            padding-top: 2rem;
-            min-height: calc(100vh - 56px);
-        }
-        
-        /* Welcome Card */
+        /* Dashboard specific styles */
         .welcome-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         
-        /* Statistics Cards */
         .stat-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            height: 100%;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
         }
         
-        /* Activity Items */
-        .activity-item {
-            padding: 1rem 0;
-            border-bottom: 1px solid #e9ecef;
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
         }
         
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        /* Chart Container */
         .chart-container {
+            position: relative;
             height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8f9fa;
-            border-radius: 10px;
         }
         
-        /* Quick Actions */
-        .quick-action-btn {
-            border: none;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            width: 100%;
-            text-align: left;
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .quick-action-btn:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        /* Animations */
         .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 0.6s ease forwards;
+            animation: fadeIn 0.5s ease-in;
         }
         
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Status Badges */
-        .status-indicator {
+        .activity-item {
+            border-left: 3px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .activity-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        
+        .status-badge {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 0.5rem;
+            margin-right: 8px;
         }
         
         .status-active {
@@ -174,230 +134,194 @@
                                     <h2 class="mb-3">
                                         Hoş Geldiniz, <span id="welcomeUserName">Kullanıcı</span>!
                                     </h2>
-                                    <p class="mb-0 fs-5">
-                                        Aslan Group Portal'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, 
+                                    <p class="mb-0 fs-5" id="welcomeMessage">
+                                        Portal'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, 
                                         raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.
                                     </p>
                                 </div>
-                                <div class="col-md-4 text-center">
-                                    <i class="fas fa-tachometer-alt" style="font-size: 4rem; opacity: 0.3;"></i>
+                                <div class="col-md-4 text-end">
+                                    <div class="d-none d-md-block">
+                                        <i class="fas fa-chart-line fa-5x opacity-50"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Statistics Cards -->
+
+            <!-- Stats Cards -->
             <div class="row mb-4">
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stat-card fade-in" style="animation-delay: 0.1s;">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card stat-card fade-in">
                         <div class="card-body text-center">
-                            <div class="stat-icon bg-primary text-white mx-auto">
-                                <i class="fas fa-car"></i>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="stat-number text-primary">42</h3>
+                                    <p class="stat-label">Aktif Araçlar</p>
+                                </div>
+                                <div class="text-primary">
+                                    <i class="fas fa-car fa-2x"></i>
+                                </div>
                             </div>
-                            <h3 class="mb-2" id="totalVehicles">24</h3>
-                            <p class="text-muted mb-0">Toplam Araç</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stat-card fade-in" style="animation-delay: 0.2s;">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card stat-card fade-in">
                         <div class="card-body text-center">
-                            <div class="stat-icon bg-success text-white mx-auto">
-                                <i class="fas fa-check-circle"></i>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="stat-number text-success">1,247</h3>
+                                    <p class="stat-label">Toplam Mesafe (km)</p>
+                                </div>
+                                <div class="text-success">
+                                    <i class="fas fa-route fa-2x"></i>
+                                </div>
                             </div>
-                            <h3 class="mb-2" id="activeVehicles">18</h3>
-                            <p class="text-muted mb-0">Aktif Araç</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stat-card fade-in" style="animation-delay: 0.3s;">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card stat-card fade-in">
                         <div class="card-body text-center">
-                            <div class="stat-icon bg-warning text-white mx-auto">
-                                <i class="fas fa-route"></i>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="stat-number text-warning">3</h3>
+                                    <p class="stat-label">Uyarılar</p>
+                                </div>
+                                <div class="text-warning">
+                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                </div>
                             </div>
-                            <h3 class="mb-2" id="dailyKm">1,247</h3>
-                            <p class="text-muted mb-0">Günlük KM</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stat-card fade-in" style="animation-delay: 0.4s;">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card stat-card fade-in">
                         <div class="card-body text-center">
-                            <div class="stat-icon bg-info text-white mx-auto">
-                                <i class="fas fa-users"></i>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h3 class="stat-number text-info">15</h3>
+                                    <p class="stat-label">Aktif Kullanıcı</p>
+                                </div>
+                                <div class="text-info">
+                                    <i class="fas fa-users fa-2x"></i>
+                                </div>
                             </div>
-                            <h3 class="mb-2" id="activeUsers">12</h3>
-                            <p class="text-muted mb-0">Aktif Kullanıcı</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Main Dashboard Content -->
+
+            <!-- Charts and Activity -->
             <div class="row">
-                <!-- Left Column -->
-                <div class="col-lg-8">
-                    <!-- Recent Activity -->
-                    <div class="card mb-4 fade-in" style="animation-delay: 0.5s;">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="fas fa-clock me-2"></i>Son Aktiviteler
-                            </h5>
-                            <small class="text-muted" id="lastUpdate">Son güncelleme: --:--</small>
-                        </div>
-                        <div class="card-body">
-                            <div id="activityList">
-                                <div class="activity-item">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-user-check text-success me-3"></i>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Başarılı Giriş</h6>
-                                            <p class="mb-0 text-muted">Portal kimlik doğrulama ile giriş yapıldı</p>
-                                        </div>
-                                        <small class="text-muted">Şimdi</small>
-                                    </div>
-                                </div>
-                                
-                                <div class="activity-item">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-key text-primary me-3"></i>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Token Yenilendi</h6>
-                                            <p class="mb-0 text-muted">Güvenlik token'ı otomatik olarak yenilendi</p>
-                                        </div>
-                                        <small class="text-muted">5 dk önce</small>
-                                    </div>
-                                </div>
-                                
-                                <div class="activity-item">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-car text-warning me-3"></i>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Araç Takip Güncellemesi</h6>
-                                            <p class="mb-0 text-muted">34 ABC 123 plaka numaralı araç konumu güncellendi</p>
-                                        </div>
-                                        <small class="text-muted">10 dk önce</small>
-                                    </div>
-                                </div>
-                                
-                                <div class="activity-item">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-chart-line text-info me-3"></i>
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">Rapor Oluşturuldu</h6>
-                                            <p class="mb-0 text-muted">Aylık araç kullanım raporu hazırlandı</p>
-                                        </div>
-                                        <small class="text-muted">1 saat önce</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Chart Section -->
-                    <div class="card fade-in" style="animation-delay: 0.6s;">
+                <!-- Chart Section -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card fade-in">
                         <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-line me-2"></i>Araç Kullanım İstatistikleri
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-chart-area me-2"></i>
+                                Araç Aktivitesi
                             </h5>
                         </div>
                         <div class="card-body">
                             <div class="chart-container">
-                                <div class="text-center">
-                                    <i class="fas fa-chart-line fa-3x mb-3 text-muted"></i>
-                                    <p class="text-muted">Grafik Alanı</p>
-                                    <small class="text-muted">Araç kullanım verileriniz burada görüntülenecek</small>
-                                </div>
+                                <canvas id="activityChart"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Right Column -->
-                <div class="col-lg-4">
-                    <!-- Quick Actions -->
-                    <div class="card mb-4 fade-in" style="animation-delay: 0.7s;">
+
+                <!-- Recent Activity -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card fade-in">
                         <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-bolt me-2"></i>Hızlı İşlemler
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-clock me-2"></i>
+                                Son Aktiviteler
                             </h5>
                         </div>
                         <div class="card-body">
-                            <button class="quick-action-btn" onclick="window.location.href='aractakip.html'">
-                                <i class="fas fa-car text-primary me-3"></i>
-                                <div>
-                                    <strong>Araç Takip Sistemi</strong>
-                                    <div class="text-muted small">Araç konumlarını görüntüle</div>
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="status-badge status-active"></span>
+                                    <strong>Araç-001</strong>
+                                    <small class="activity-time ms-auto">5 dk önce</small>
                                 </div>
-                            </button>
+                                <p class="mb-0 small">İstanbul-Ankara rotasında</p>
+                            </div>
                             
-                            <button class="quick-action-btn" onclick="showAlert('Raporlar özelliği yakında!', 'info')">
-                                <i class="fas fa-chart-bar text-success me-3"></i>
-                                <div>
-                                    <strong>Raporlar</strong>
-                                    <div class="text-muted small">Detaylı raporları incele</div>
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="status-badge status-warning"></span>
+                                    <strong>Araç-015</strong>
+                                    <small class="activity-time ms-auto">12 dk önce</small>
                                 </div>
-                            </button>
+                                <p class="mb-0 small">Yakıt seviyesi düşük</p>
+                            </div>
                             
-                            <button class="quick-action-btn" onclick="refreshDashboard()">
-                                <i class="fas fa-sync-alt text-info me-3"></i>
-                                <div>
-                                    <strong>Verileri Yenile</strong>
-                                    <div class="text-muted small">Dashboard'u güncelle</div>
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="status-badge status-active"></span>
+                                    <strong>Araç-007</strong>
+                                    <small class="activity-time ms-auto">18 dk önce</small>
                                 </div>
-                            </button>
+                                <p class="mb-0 small">Teslimat tamamlandı</p>
+                            </div>
                             
-                            <button class="quick-action-btn" onclick="showAlert('Ayarlar özelliği yakında!', 'info')">
-                                <i class="fas fa-cog text-warning me-3"></i>
-                                <div>
-                                    <strong>Sistem Ayarları</strong>
-                                    <div class="text-muted small">Sistem yapılandırması</div>
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="status-badge status-inactive"></span>
+                                    <strong>Araç-023</strong>
+                                    <small class="activity-time ms-auto">25 dk önce</small>
                                 </div>
-                            </button>
+                                <p class="mb-0 small">Bakım için garajda</p>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- System Status -->
-                    <div class="card fade-in" style="animation-delay: 0.8s;">
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card fade-in">
                         <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-server me-2"></i>Sistem Durumu
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-bolt me-2"></i>
+                                Hızlı İşlemler
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>
-                                    <span class="status-indicator status-active"></span>
-                                    API Bağlantısı
-                                </span>
-                                <span class="badge bg-success" id="apiStatus">Aktif</span>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>
-                                    <span class="status-indicator status-active"></span>
-                                    Veritabanı
-                                </span>
-                                <span class="badge bg-success" id="dbStatus">Bağlı</span>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>
-                                    <span class="status-indicator status-active"></span>
-                                    Araç Takip Servisi
-                                </span>
-                                <span class="badge bg-success" id="trackingStatus">Çalışıyor</span>
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Son Sağlık Kontrolü</span>
-                                <small class="text-muted" id="lastHealthCheck">--:--</small>
+                            <div class="row">
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="aractakip.html" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-map-marked-alt fa-2x mb-2"></i>
+                                        <span>Araç Takip</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="#" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                                        <span>Raporlar</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="#" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-cog fa-2x mb-2"></i>
+                                        <span>Ayarlar</span>
+                                    </a>
+                                </div>
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="#" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-bell fa-2x mb-2"></i>
+                                        <span>Bildirimler</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -407,358 +331,441 @@
     </main>
 
     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- App Scripts -->
+    <script src="../assets/js/auth.js"></script>
+
     <script>
-        // API Base URL
-        const API_BASE_URL = 'http://localhost:5094/api';
-
-        // Dashboard initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📊 Dashboard loading...');
-            
-            // SECONDARY AUTH CHECK
-            if (!isAuthenticated()) {
-                console.log('❌ Secondary auth check failed');
-                localStorage.clear();
-                window.location.href = './login.html?message=' + encodeURIComponent('Kimlik doğrulama başarısız.');
-                return;
+        // Global logout function - YÖNLENDIRME DÜZELTİLDİ
+        window.logout = function() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                try {
+                    if (window.authService) {
+                        window.authService.logout();
+                    } else {
+                        // Fallback logout
+                        localStorage.clear();
+                        window.location.href = '../index.html';
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    // Force logout
+                    localStorage.clear();
+                    window.location.href = '../index.html';
+                }
             }
+        };
 
-            console.log('✅ Dashboard auth validated, loading components...');
-            
-            // Load header component
-            loadHeader();
-            
-            // Initialize dashboard
-            initializeDashboard();
-            
-            // Start periodic updates
-            startPeriodicUpdates();
+        // Sayfa yüklendiğinde - AUTH KONTROLÜ DÜZELTİLDİ
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log('Dashboard loading...');
+                
+                const config = window.APP_CONFIG;
+                
+                if (!config) {
+                    console.error('APP_CONFIG bulunamadı!');
+                    return;
+                }
+                
+                // Sayfa başlığını güncelle
+                const titleElement = document.getElementById('pageTitle');
+                if (titleElement && config.PORTAL_TITLE) {
+                    titleElement.textContent = config.PORTAL_TITLE + ' - Dashboard';
+                }
+                
+                // Hoş geldin mesajını güncelle
+                const welcomeElement = document.getElementById('welcomeMessage');
+                if (welcomeElement && config.PORTAL_TITLE) {
+                    welcomeElement.textContent = 
+                        `${config.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, ` +
+                        'raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.';
+                }
+                
+                // Auth kontrolü - Daha güvenilir
+                setTimeout(() => {
+                    checkAuthentication();
+                }, 200);
+                
+                // Header'ı yükle
+                loadHeader();
+                
+                // Dashboard verilerini yükle
+                loadDashboardData();
+                
+                // Chart'ı başlat
+                initializeChart();
+                
+                // Console welcome message
+                if (config.FEATURES && config.FEATURES.SHOW_CONSOLE_LOGS) {
+                    const welcomeMsg = config.CONSOLE.WELCOME_MESSAGE.replace('{{COMPANY_NAME}}', config.COMPANY_NAME);
+                    console.log(`%c${welcomeMsg} Dashboard`, config.CONSOLE.WELCOME_STYLE);
+                    console.log(`%c${config.CONSOLE.SUCCESS_MESSAGE}`, config.CONSOLE.SUCCESS_STYLE);
+                }
+                
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+            }
         });
 
-        // Auth check function
-        function isAuthenticated() {
-            const token = localStorage.getItem('token') || localStorage.getItem('vervo_token');
-            const user = localStorage.getItem('user') || localStorage.getItem('vervo_user');
-            
-            if (!token || !user) {
-                return false;
-            }
-            
-            // JWT validation
+        /**
+         * Auth kontrolü - DÜZELTİLDİ
+         */
+        function checkAuthentication() {
             try {
-                if (token.includes('.')) {
-                    const payload = JSON.parse(atob(token.split('.')[1]));
-                    const now = Math.floor(Date.now() / 1000);
-                    
-                    if (payload.exp && payload.exp < now) {
-                        return false;
-                    }
+                // AuthService'in yüklenmesini bekle
+                if (!window.authService) {
+                    console.log('AuthService not ready, waiting...');
+                    setTimeout(checkAuthentication, 300);
+                    return;
                 }
+                
+                if (!window.authService.isAuthenticated()) {
+                    console.log('User not authenticated, redirecting to login');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Kullanıcı bilgilerini yükle
+                loadUserInfo();
+                
+                console.log('✅ User authenticated successfully');
+                
             } catch (error) {
-                return false;
+                console.error('Auth check error:', error);
+                // Hata durumunda login'e yönlendir
+                window.location.href = 'login.html';
             }
-            
-            return true;
         }
 
-        // Load header component
-        function loadHeader() {
-            console.log('📄 Loading header component...');
-            
-            fetch('../components/header.html')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    // HTML'i yükle
-                    document.getElementById('headerContainer').innerHTML = html;
-                    console.log('✅ Header component loaded successfully');
-                    
-                    // Header navigation script'ini yükle
-                    loadHeaderNavigationScript();
-                })
-                .catch(error => {
-                    console.error('❌ Error loading header:', error);
-                    // Fallback: Create basic header
-                    document.getElementById('headerContainer').innerHTML = `
-                        <nav class="navbar navbar-dark bg-primary">
-                            <div class="container-fluid">
-                                <span class="navbar-brand">Aslan Group Portal</span>
-                                <button class="btn btn-outline-light btn-sm" onclick="logout()">Çıkış</button>
-                            </div>
-                        </nav>
-                    `;
-                });
-        }
-
-        // Header navigation script'ini yükle
-        function loadHeaderNavigationScript() {
-            console.log('📄 Loading header navigation script...');
-            
-            // Script'i dinamik olarak yükle
-            const script = document.createElement('script');
-            script.src = '../assets/js/header-navigation.js';
-            script.onload = function() {
-                console.log('✅ Header navigation script loaded');
-                
-                // Script yüklendikten sonra initialize et
-                if (window.initializeHeaderNavigation) {
-                    setTimeout(() => {
-                        window.initializeHeaderNavigation();
-                    }, 100);
-                }
-            };
-            script.onerror = function() {
-                console.error('❌ Failed to load header navigation script');
-                
-                // Fallback: Manual initialization
-                setupBasicToggle();
-            };
-            
-            document.head.appendChild(script);
-        }
-
-        // Fallback: Basic toggle functionality
-        function setupBasicToggle() {
-            console.log('🔧 Setting up basic toggle functionality...');
-            
-            setTimeout(() => {
-                const sidebarToggle = document.getElementById('sidebarToggle');
-                const sidebar = document.getElementById('mobileSidebar');
-                const overlay = document.getElementById('sidebarOverlay');
-                
-                if (sidebarToggle && sidebar && overlay) {
-                    sidebarToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('🖱️ Basic toggle clicked');
-                        
-                        const isOpen = sidebar.classList.contains('show');
-                        
-                        if (isOpen) {
-                            sidebar.classList.remove('show');
-                            overlay.classList.remove('show');
-                            document.body.classList.remove('sidebar-open');
-                        } else {
-                            sidebar.classList.add('show');
-                            overlay.classList.add('show');
-                            document.body.classList.add('sidebar-open');
-                        }
-                    });
-                    
-                    // Close button
-                    const closeBtn = document.getElementById('sidebarClose');
-                    if (closeBtn) {
-                        closeBtn.addEventListener('click', function() {
-                            sidebar.classList.remove('show');
-                            overlay.classList.remove('show');
-                            document.body.classList.remove('sidebar-open');
-                        });
-                    }
-                    
-                    // Overlay click
-                    overlay.addEventListener('click', function(e) {
-                        if (e.target === overlay) {
-                            sidebar.classList.remove('show');
-                            overlay.classList.remove('show');
-                            document.body.classList.remove('sidebar-open');
-                        }
-                    });
-                    
-                    console.log('✅ Basic toggle functionality set up');
-                } else {
-                    console.error('❌ Could not find sidebar elements for basic setup');
-                }
-            }, 200);
-        }
-
-        // Initialize dashboard
-        function initializeDashboard() {
-            console.log('🚀 Initializing dashboard...');
-            
-            // Load user info
-            loadUserInfo();
-            
-            // Update time displays
-            updateTimeDisplays();
-            
-            // Load statistics
-            loadStatistics();
-            
-            // Apply animations
-            setTimeout(() => {
-                document.querySelectorAll('.fade-in').forEach((el, index) => {
-                    el.style.animationDelay = (index * 0.1) + 's';
-                });
-            }, 100);
-            
-            console.log('✅ Dashboard initialized');
-        }
-
-        // Load user information
+        /**
+         * Kullanıcı bilgilerini yükle
+         */
         function loadUserInfo() {
             try {
-                const userJson = localStorage.getItem('user') || localStorage.getItem('vervo_user');
-                if (userJson) {
-                    const user = JSON.parse(userJson);
-                    const userName = user.name || user.username || user.FullName || 'Kullanıcı';
-                    
-                    document.getElementById('welcomeUserName').textContent = userName.split(' ')[0];
-                    console.log('✅ User info loaded:', userName);
-                } else {
-                    console.log('⚠️ No user data found');
+                const user = window.authService.getCurrentUser();
+                if (user) {
+                    const welcomeElement = document.getElementById('welcomeUserName');
+                    if (welcomeElement) {
+                        welcomeElement.textContent = user.firstName || user.username || 'Kullanıcı';
+                    }
                 }
             } catch (error) {
-                console.error('❌ Error loading user info:', error);
+                console.error('Error loading user info:', error);
             }
         }
 
-        // Update time displays
-        function updateTimeDisplays() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('tr-TR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-            
-            const elements = document.querySelectorAll('#lastUpdate, #lastHealthCheck');
-            elements.forEach(el => {
-                if (el) el.textContent = `Son güncelleme: ${timeString}`;
-            });
-        }
-
-        // Load statistics (simulated data)
-        function loadStatistics() {
+        /**
+         * Header component'ini yükle - SCRIPT EXECUTION DÜZELTİLDİ
+         */
+        async function loadHeader() {
             try {
-                // Simulate API call with random data
-                const stats = {
-                    totalVehicles: Math.floor(Math.random() * 50) + 20,
-                    activeVehicles: Math.floor(Math.random() * 30) + 15,
-                    dailyKm: Math.floor(Math.random() * 2000) + 500,
-                    activeUsers: Math.floor(Math.random() * 20) + 5
-                };
+                console.log('📥 Loading header component...');
                 
-                // Update statistics on page
-                document.getElementById('totalVehicles').textContent = stats.totalVehicles;
-                document.getElementById('activeVehicles').textContent = stats.activeVehicles;
-                document.getElementById('dailyKm').textContent = stats.dailyKm.toLocaleString('tr-TR');
-                document.getElementById('activeUsers').textContent = stats.activeUsers;
-                
-                console.log('✅ Statistics loaded');
+                const response = await fetch('../components/header.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    const headerContainer = document.getElementById('headerContainer');
+                    if (headerContainer) {
+                        headerContainer.innerHTML = html;
+                        console.log('✅ Header HTML loaded successfully');
+                        
+                        // Script'lerin execute edilmesini bekle
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                        // Manual script execution - HEADER SCRIPT'İ ZORLA ÇALIŞTIR
+                        const headerScripts = headerContainer.querySelectorAll('script');
+                        console.log('🔍 Found', headerScripts.length, 'header scripts');
+                        
+                        for (let i = 0; i < headerScripts.length; i++) {
+                            const script = headerScripts[i];
+                            console.log(`📜 Executing header script ${i + 1}...`);
+                            
+                            try {
+                                // Script içeriğini al ve execute et
+                                const scriptContent = script.textContent || script.innerHTML;
+                                if (scriptContent.trim()) {
+                                    // Global scope'da execute et
+                                    const scriptFunc = new Function(scriptContent);
+                                    scriptFunc.call(window);
+                                    console.log(`✅ Header script ${i + 1} executed successfully`);
+                                }
+                            } catch (scriptError) {
+                                console.error(`❌ Header script ${i + 1} execution error:`, scriptError);
+                            }
+                        }
+                        
+                        // Şimdi initializeHeader'ı kontrol et
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        
+                        if (typeof window.initializeHeader === 'function') {
+                            console.log('✅ initializeHeader function artık mevcut!');
+                            window.initializeHeader();
+                        } else {
+                            console.error('❌ initializeHeader hala bulunamadı, manual setup yapılacak');
+                            manualHeaderSetup();
+                        }
+                        
+                    }
+                } else {
+                    console.error('❌ Header component yüklenemedi:', response.status);
+                }
             } catch (error) {
-                console.error('❌ Error loading statistics:', error);
+                console.error('❌ Error loading header:', error);
+                manualHeaderSetup();
             }
         }
-
-        // Start periodic updates
-        function startPeriodicUpdates() {
-            // Update time every minute
-            setInterval(updateTimeDisplays, 60000);
+        
+        /**
+         * Manual header setup - fallback
+         */
+        function manualHeaderSetup() {
+            console.log('🛠️ Manual header setup başlatılıyor...');
             
-            // Update statistics every 5 minutes
-            setInterval(loadStatistics, 300000);
-            
-            console.log('⏰ Periodic updates started');
-        }
-
-        // Refresh dashboard
-        function refreshDashboard() {
-            console.log('🔄 Refreshing dashboard...');
-            
-            // Show loading state
-            const refreshBtn = event.target.closest('button');
-            const originalContent = refreshBtn.innerHTML;
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-info me-3"></i><div><strong>Yenileniyor...</strong><div class="text-muted small">Lütfen bekleyin</div></div>';
-            refreshBtn.disabled = true;
-            
-            // Simulate refresh delay
-            setTimeout(() => {
-                loadStatistics();
-                updateTimeDisplays();
+            try {
+                const config = window.APP_CONFIG;
                 
-                // Reset button
-                refreshBtn.innerHTML = originalContent;
-                refreshBtn.disabled = false;
+                if (!config) {
+                    console.error('❌ Config bulunamadı manual setup için');
+                    return;
+                }
                 
-                showAlert('Dashboard başarıyla yenilendi!', 'success');
-            }, 2000);
+                // Header title güncelle
+                const headerTitle = document.getElementById('headerTitle');
+                if (headerTitle) {
+                    headerTitle.textContent = config.PORTAL_TITLE;
+                    console.log('✅ Manual: Header title updated to:', config.PORTAL_TITLE);
+                } else {
+                    console.error('❌ Manual: headerTitle element bulunamadı');
+                }
+                
+                // Sidebar title güncelle
+                const sidebarTitle = document.getElementById('sidebarTitle');
+                if (sidebarTitle) {
+                    sidebarTitle.textContent = config.PORTAL_TITLE;
+                    console.log('✅ Manual: Sidebar title updated to:', config.PORTAL_TITLE);
+                } else {
+                    console.error('❌ Manual: sidebarTitle element bulunamadı');
+                }
+                
+                // Hamburger menu setup
+                setupHamburgerMenu();
+                
+                console.log('✅ Manual header setup completed');
+                
+            } catch (error) {
+                console.error('❌ Manual header setup error:', error);
+            }
         }
-
-        // Show alert function
-        function showAlert(message, type = 'info') {
-            // Create alert element
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        
+        /**
+         * Hamburger menu setup - DEBUG VERSIYONU DÜZELTİLDİ
+         */
+        function setupHamburgerMenu() {
+            console.log('🍔 *** HAMBURGER MENU SETUP BAŞLADI ***');
+            
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const sidebarClose = document.getElementById('sidebarClose');
+            
+            console.log('🔍 Element kontrolleri:');
+            console.log('  - sidebarToggle:', !!sidebarToggle, sidebarToggle);
+            console.log('  - mobileSidebar:', !!sidebar, sidebar);
+            console.log('  - sidebarOverlay:', !!overlay, overlay);
+            console.log('  - sidebarClose:', !!sidebarClose, sidebarClose);
+            
+            if (!sidebarToggle) {
+                console.error('❌ CRITICAL: sidebarToggle bulunamadı!');
+                // Test için alternatif selector dene
+                const alternativeToggle = document.querySelector('.navbar-toggler');
+                console.log('🔍 Alternative toggle found:', !!alternativeToggle, alternativeToggle);
+                return;
+            }
+            
+            if (!sidebar) {
+                console.error('❌ CRITICAL: mobileSidebar bulunamadı!');
+                return;
+            }
+            
+            if (!overlay) {
+                console.error('❌ CRITICAL: sidebarOverlay bulunamadı!');
+                return;
+            }
+            
+            // Test: Mevcut event listener'ları temizle
+            const newToggle = sidebarToggle.cloneNode(true);
+            sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
+            console.log('🔄 sidebarToggle cloned to remove old listeners');
+            
+            // Yeni event listener ekle
+            newToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 *** HAMBURGER CLICKED (DASHBOARD VERSION) ***');
+                console.log('🔘 Event target:', e.target);
+                console.log('🔘 Event currentTarget:', e.currentTarget);
+                
+                // Sidebar aç
+                console.log('📂 Opening sidebar...');
+                sidebar.classList.add('show');
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                
+                console.log('✅ Sidebar açma işlemi tamamlandı');
+                console.log('  - sidebar classes:', sidebar.classList.toString());
+                console.log('  - overlay classes:', overlay.classList.toString());
+                console.log('  - body overflow:', document.body.style.overflow);
+            });
+            
+            // Close function
+            function closeSidebar() {
+                console.log('📁 *** SIDEBAR KAPANIYOR ***');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+                console.log('✅ Sidebar kapatma işlemi tamamlandı');
+            }
+            
+            // Close button
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('❌ Close button clicked (dashboard version)');
+                    closeSidebar();
+                });
+            }
+            
+            // Overlay click
+            overlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🎯 Overlay clicked (dashboard version)');
+                closeSidebar();
+            });
+            
+            // Test butonu ekle (geliştirme için)
+            addTestButton(sidebar, overlay);
+            
+            console.log('✅ *** HAMBURGER MENU SETUP TAMAMLANDI (DASHBOARD VERSION) ***');
+        }
+        
+        /**
+         * Test butonu ekle - DEVELOPMENT ONLY
+         */
+        function addTestButton(sidebar, overlay) {
+            console.log('🧪 Adding test button...');
+            
+            // Test butonu oluştur
+            const testButton = document.createElement('button');
+            testButton.id = 'testHamburger';
+            testButton.innerHTML = '🍔 Test Hamburger';
+            testButton.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 9999;
+                background: #ff6b35;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
             `;
             
-            document.body.appendChild(alertDiv);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
+            testButton.addEventListener('click', function() {
+                console.log('🧪 TEST BUTTON CLICKED!');
+                
+                if (sidebar.classList.contains('show')) {
+                    console.log('🧪 Closing sidebar via test button');
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                } else {
+                    console.log('🧪 Opening sidebar via test button');
+                    sidebar.classList.add('show');
+                    overlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
                 }
-            }, 5000);
+                
+                console.log('🧪 Test result - sidebar classes:', sidebar.classList.toString());
+            });
+            
+            document.body.appendChild(testButton);
+            console.log('✅ Test button added to page');
         }
 
-        // Logout function
-        function logout() {
-            console.log('👋 Logging out...');
-            
-            // Clear all storage
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            // Show logout message
-            showAlert('Başarıyla çıkış yapıldı', 'success');
-            
-            // Redirect to login after short delay
-            setTimeout(() => {
-                window.location.href = './login.html?message=' + encodeURIComponent('Başarıyla çıkış yapıldı.');
-            }, 1000);
+        /**
+         * Dashboard verilerini yükle
+         */
+        async function loadDashboardData() {
+            try {
+                console.log('Dashboard verileri yükleniyor...');
+                
+                // Şimdilik static veri gösteriyoruz
+                // Gerçek API çağrısı için:
+                // const response = await window.authService.apiRequest('/dashboard/stats');
+                // const data = await response.json();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
         }
 
-        // Handle page visibility change for security
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                // Page became visible - check auth
-                if (!isAuthenticated()) {
-                    console.log('⚠️ Auth check failed on page focus');
-                    localStorage.clear();
-                    window.location.href = './login.html?message=' + encodeURIComponent('Güvenlik nedeniyle oturum sonlandırıldı.');
-                }
-            }
-        });
+        /**
+         * Chart'ı başlat
+         */
+        function initializeChart() {
+            const ctx = document.getElementById('activityChart');
+            if (!ctx) return;
 
-        // Handle window focus for real-time updates
-        window.addEventListener('focus', function() {
-            if (isAuthenticated()) {
-                updateTimeDisplays();
-                console.log('👁️ Window focused - data refreshed');
+            try {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+                        datasets: [{
+                            label: 'Araç Aktivitesi',
+                            data: [12, 19, 8, 15, 10, 18],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Chart initialization error:', error);
             }
-        });
-
-        // Error handling for uncaught errors
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-            if (e.error && e.error.message && e.error.message.includes('AUTH')) {
-                // Auth related error - redirect to login
-                localStorage.clear();
-                window.location.href = './login.html?message=' + encodeURIComponent('Bir hata oluştu. Lütfen tekrar giriş yapın.');
-            }
-        });
-
-        // Console welcome message
-        console.log('%c🎉 Aslan Group Portal Dashboard', 'color: #007bff; font-size: 16px; font-weight: bold;');
-        console.log('%cDashboard başarıyla yüklendi!', 'color: #28a745; font-size: 14px;');
+        }
     </script>
 </body>
 </html>
