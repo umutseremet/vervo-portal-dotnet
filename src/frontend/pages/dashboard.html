@@ -7,54 +7,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/navbar-fix.css">
-    <link rel="stylesheet" href="../assets/css/layout-fix.css">
     
     <!-- Config dosyasını ilk sırada yükle -->
     <script src="../assets/js/config.js"></script>
     
     <style>
-        /* Dashboard specific styles - HEADER BOŞLUK DÜZELTİLDİ */
-        
-        /* Dashboard main content için boşluk artırma - EN ÖNEMLİ KISIM */
-        .main-content {
-            margin-top: 110px !important; /* Header ile arasında fazla boşluk */
-            padding: 2rem 1rem !important; /* İçerik için padding */
-        }
-        
-        /* Welcome card styling */
+        /* Dashboard specific styles - GRİ TEMA */
         .welcome-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
             color: white;
             border: none;
-            margin-bottom: 2rem !important;
-            border-radius: 15px !important;
-        }
-        
-        /* Navbar fixed positioning güçlendirme */
-        nav.navbar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            z-index: 1030 !important;
-            height: 85px !important; /* Biraz daha yüksek navbar */
-            padding: 1rem 0 !important;
-        }
-        
-        /* Body padding temizle */
-        body {
-            padding-top: 0 !important;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
         }
         
         .stat-card {
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             border: none;
             border-radius: 15px;
-            margin-bottom: 1.5rem;
         }
         
         .stat-card:hover {
@@ -121,12 +89,6 @@
             background-color: #ffc107;
         }
         
-        /* Container spacing */
-        .container-fluid {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        
         /* Loading Animation */
         .loading-spinner {
             border: 3px solid #f3f3f3;
@@ -143,28 +105,14 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Responsive Design - BOŞLUK RESPONSIVE */
-        @media (max-width: 991.98px) {
+        /* Responsive Design */
+        @media (max-width: 768px) {
             .main-content {
-                margin-top: 95px !important; /* Tablet için */
-                padding: 1.5rem 1rem !important;
+                padding-top: 1rem;
             }
             
-            nav.navbar {
-                height: 75px !important;
-                padding: 0.75rem 0 !important;
-            }
-        }
-        
-        @media (max-width: 575.98px) {
-            .main-content {
-                margin-top: 85px !important; /* Mobile için */
-                padding: 1rem 0.75rem !important;
-            }
-            
-            nav.navbar {
-                height: 70px !important;
-                padding: 0.5rem 0 !important;
+            .stat-card {
+                margin-bottom: 1rem;
             }
         }
     </style>
@@ -173,7 +121,7 @@
     <!-- Header Container -->
     <div id="headerContainer"></div>
     
-    <!-- Main Content - BOŞLUK DÜZELTİLDİ -->
+    <!-- Main Content -->
     <main class="main-content">
         <div class="container-fluid">
             <!-- Welcome Section -->
@@ -184,16 +132,16 @@
                             <div class="row align-items-center">
                                 <div class="col-md-8">
                                     <h2 class="mb-3">
-                                        Hoş Geldiniz, <span id="welcomeUserName">test</span>!
+                                        Hoş Geldiniz, <span id="welcomeUserName">Kullanıcı</span>!
                                     </h2>
                                     <p class="mb-0 fs-5" id="welcomeMessage">
-                                        Aslan Group Portal'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, 
+                                        Portal'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, 
                                         raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.
                                     </p>
                                 </div>
-                                <div class="col-md-4 text-center">
-                                    <div class="welcome-icon">
-                                        <i class="fas fa-chart-line fa-4x opacity-75"></i>
+                                <div class="col-md-4 text-end">
+                                    <div class="d-none d-md-block">
+                                        <i class="fas fa-chart-line fa-5x opacity-50"></i>
                                     </div>
                                 </div>
                             </div>
@@ -202,7 +150,7 @@
                 </div>
             </div>
 
-            <!-- Statistics Cards -->
+            <!-- Stats Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="card stat-card fade-in">
@@ -226,7 +174,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <h3 class="stat-number text-success">1,247</h3>
-                                    <p class="stat-label">Toplam Mesafe (KM)</p>
+                                    <p class="stat-label">Toplam Mesafe (km)</p>
                                 </div>
                                 <div class="text-success">
                                     <i class="fas fa-route fa-2x"></i>
@@ -276,7 +224,8 @@
                     <div class="card fade-in">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-chart-area me-2"></i>Araç Aktivitesi
+                                <i class="fas fa-chart-area me-2"></i>
+                                Araç Aktivitesi
                             </h5>
                         </div>
                         <div class="card-body">
@@ -292,44 +241,45 @@
                     <div class="card fade-in">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-clock me-2"></i>Son Aktiviteler
+                                <i class="fas fa-clock me-2"></i>
+                                Son Aktiviteler
                             </h5>
                         </div>
                         <div class="card-body">
                             <div class="activity-item">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-2">
                                     <span class="status-badge status-active"></span>
                                     <strong>Araç-001</strong>
+                                    <small class="activity-time ms-auto">5 dk önce</small>
                                 </div>
-                                <small class="activity-time">İstanbul-Ankara rotasında</small>
-                                <div class="activity-time">5 dk önce</div>
+                                <p class="mb-0 small">İstanbul-Ankara rotasında</p>
                             </div>
                             
                             <div class="activity-item">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-2">
                                     <span class="status-badge status-warning"></span>
                                     <strong>Araç-015</strong>
+                                    <small class="activity-time ms-auto">12 dk önce</small>
                                 </div>
-                                <small class="activity-time">Yakıt seviyesi düşük</small>
-                                <div class="activity-time">12 dk önce</div>
+                                <p class="mb-0 small">Yakıt seviyesi düşük</p>
                             </div>
                             
                             <div class="activity-item">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-2">
                                     <span class="status-badge status-active"></span>
                                     <strong>Araç-007</strong>
+                                    <small class="activity-time ms-auto">18 dk önce</small>
                                 </div>
-                                <small class="activity-time">Teslimat tamamlandı</small>
-                                <div class="activity-time">18 dk önce</div>
+                                <p class="mb-0 small">Teslimat tamamlandı</p>
                             </div>
                             
                             <div class="activity-item">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-2">
                                     <span class="status-badge status-inactive"></span>
                                     <strong>Araç-023</strong>
+                                    <small class="activity-time ms-auto">25 dk önce</small>
                                 </div>
-                                <small class="activity-time">Bakım için garajda</small>
-                                <div class="activity-time">25 dk önce</div>
+                                <p class="mb-0 small">Bakım için garajda</p>
                             </div>
                         </div>
                     </div>
@@ -342,30 +292,35 @@
                     <div class="card fade-in">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-bolt me-2"></i>Hızlı İşlemler
+                                <i class="fas fa-bolt me-2"></i>
+                                Hızlı İşlemler
                             </h5>
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <a href="aractakip.html" class="btn btn-outline-primary w-100">
-                                        <i class="fas fa-car me-2"></i>Araç Takip
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="aractakip.html" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-map-marked-alt fa-2x mb-2"></i>
+                                        <span>Araç Takip</span>
                                     </a>
                                 </div>
-                                <div class="col-md-3 mb-3">
-                                    <button class="btn btn-outline-success w-100">
-                                        <i class="fas fa-plus me-2"></i>Yeni Araç
-                                    </button>
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="#" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                                        <span>Raporlar</span>
+                                    </a>
                                 </div>
-                                <div class="col-md-3 mb-3">
-                                    <button class="btn btn-outline-info w-100">
-                                        <i class="fas fa-file-alt me-2"></i>Rapor Al
-                                    </button>
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="#" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-cog fa-2x mb-2"></i>
+                                        <span>Ayarlar</span>
+                                    </a>
                                 </div>
-                                <div class="col-md-3 mb-3">
-                                    <button class="btn btn-outline-warning w-100">
-                                        <i class="fas fa-cog me-2"></i>Ayarlar
-                                    </button>
+                                <div class="col-md-3 col-sm-6 mb-3">
+                                    <a href="#" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fas fa-bell fa-2x mb-2"></i>
+                                        <span>Bildirimler</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -375,77 +330,399 @@
         </div>
     </main>
 
-    <!-- Footer Container -->
-    <div id="footerContainer"></div>
-
-    <!-- Scripts - MİNİMAL VE ÇALIŞAN YAPILAR -->
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- App Scripts -->
+    <script src="../assets/js/auth.js"></script>
+
     <script>
-        // Dashboard initialization - WARNING DÜZELTİLDİ
+        // Global logout function - YÖNLENDIRME DÜZELTİLDİ
+        window.logout = function() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                try {
+                    if (window.authService) {
+                        window.authService.logout();
+                    } else {
+                        // Fallback logout
+                        localStorage.clear();
+                        window.location.href = '../index.html';
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    // Force logout
+                    localStorage.clear();
+                    window.location.href = '../index.html';
+                }
+            }
+        };
+
+        // Sayfa yüklendiğinde - AUTH KONTROLÜ DÜZELTİLDİ
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Dashboard loading...');
-            
-            // Header'ı yükle
-            loadHeaderComponent()
-                .then(() => {
-                    console.log('✅ Header loaded successfully');
-                    initializeChart();
-                })
-                .catch(error => {
-                    console.warn('⚠️ Header loading failed:', error);
-                    // Header olmadan da devam et
-                    initializeChart();
-                });
+            try {
+                console.log('Dashboard loading...');
+                
+                const config = window.APP_CONFIG;
+                
+                if (!config) {
+                    console.error('APP_CONFIG bulunamadı!');
+                    return;
+                }
+                
+                // Sayfa başlığını güncelle
+                const titleElement = document.getElementById('pageTitle');
+                if (titleElement && config.PORTAL_TITLE) {
+                    titleElement.textContent = config.PORTAL_TITLE + ' - Dashboard';
+                }
+                
+                // Hoş geldin mesajını güncelle
+                const welcomeElement = document.getElementById('welcomeMessage');
+                if (welcomeElement && config.PORTAL_TITLE) {
+                    welcomeElement.textContent = 
+                        `${config.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, ` +
+                        'raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.';
+                }
+                
+                // Auth kontrolü - Daha güvenilir
+                setTimeout(() => {
+                    checkAuthentication();
+                }, 200);
+                
+                // Header'ı yükle
+                loadHeader();
+                
+                // Dashboard verilerini yükle
+                loadDashboardData();
+                
+                // Chart'ı başlat
+                initializeChart();
+                
+                // Console welcome message
+                if (config.FEATURES && config.FEATURES.SHOW_CONSOLE_LOGS) {
+                    const welcomeMsg = config.CONSOLE.WELCOME_MESSAGE.replace('{{COMPANY_NAME}}', config.COMPANY_NAME);
+                    console.log(`%c${welcomeMsg} Dashboard`, config.CONSOLE.WELCOME_STYLE);
+                    console.log(`%c${config.CONSOLE.SUCCESS_MESSAGE}`, config.CONSOLE.SUCCESS_STYLE);
+                }
+                
+            } catch (error) {
+                console.error('Dashboard initialization error:', error);
+            }
         });
 
         /**
-         * Header component yükle - WARNING ÖNLEME
+         * Auth kontrolü - DÜZELTİLDİ
          */
-        async function loadHeaderComponent() {
+        function checkAuthentication() {
             try {
-                const response = await fetch('../components/header.html');
-                if (!response.ok) throw new Error('Header fetch failed');
-                
-                const html = await response.text();
-                const container = document.getElementById('headerContainer');
-                
-                if (container) {
-                    container.innerHTML = html;
-                    
-                    // Header script'inin tamamen yüklenmesi için yeterli bekleme
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                    
-                    // initializeHeader function kontrolü - WARNING ÖNLEME
-                    if (typeof window.initializeHeader === 'function') {
-                        console.log('🔧 Calling initializeHeader...');
-                        try {
-                            window.initializeHeader();
-                        } catch (error) {
-                            console.warn('⚠️ initializeHeader error:', error);
-                        }
-                    } else {
-                        console.log('ℹ️ Header already initialized or initializeHeader not needed');
-                    }
+                // AuthService'in yüklenmesini bekle
+                if (!window.authService) {
+                    console.log('AuthService not ready, waiting...');
+                    setTimeout(checkAuthentication, 300);
+                    return;
                 }
                 
-                return true;
+                if (!window.authService.isAuthenticated()) {
+                    console.log('User not authenticated, redirecting to login');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Kullanıcı bilgilerini yükle
+                loadUserInfo();
+                
+                console.log('✅ User authenticated successfully');
+                
             } catch (error) {
-                console.error('Header loading error:', error);
-                throw error;
+                console.error('Auth check error:', error);
+                // Hata durumunda login'e yönlendir
+                window.location.href = 'login.html';
             }
         }
 
         /**
-         * Chart initialize et
+         * Kullanıcı bilgilerini yükle
+         */
+        function loadUserInfo() {
+            try {
+                const user = window.authService.getCurrentUser();
+                if (user) {
+                    const welcomeElement = document.getElementById('welcomeUserName');
+                    if (welcomeElement) {
+                        welcomeElement.textContent = user.firstName || user.username || 'Kullanıcı';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+            }
+        }
+
+        /**
+         * Header component'ini yükle - SCRIPT EXECUTION DÜZELTİLDİ
+         */
+        async function loadHeader() {
+            try {
+                console.log('📥 Loading header component...');
+                
+                const response = await fetch('../components/header.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    const headerContainer = document.getElementById('headerContainer');
+                    if (headerContainer) {
+                        headerContainer.innerHTML = html;
+                        console.log('✅ Header HTML loaded successfully');
+                        
+                        // Script'lerin execute edilmesini bekle
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                        // Manual script execution - HEADER SCRIPT'İ ZORLA ÇALIŞTIR
+                        const headerScripts = headerContainer.querySelectorAll('script');
+                        console.log('🔍 Found', headerScripts.length, 'header scripts');
+                        
+                        for (let i = 0; i < headerScripts.length; i++) {
+                            const script = headerScripts[i];
+                            console.log(`📜 Executing header script ${i + 1}...`);
+                            
+                            try {
+                                // Script içeriğini al ve execute et
+                                const scriptContent = script.textContent || script.innerHTML;
+                                if (scriptContent.trim()) {
+                                    // Global scope'da execute et
+                                    const scriptFunc = new Function(scriptContent);
+                                    scriptFunc.call(window);
+                                    console.log(`✅ Header script ${i + 1} executed successfully`);
+                                }
+                            } catch (scriptError) {
+                                console.error(`❌ Header script ${i + 1} execution error:`, scriptError);
+                            }
+                        }
+                        
+                        // Şimdi initializeHeader'ı kontrol et
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        
+                        if (typeof window.initializeHeader === 'function') {
+                            console.log('✅ initializeHeader function artık mevcut!');
+                            window.initializeHeader();
+                        } else {
+                            console.error('❌ initializeHeader hala bulunamadı, manual setup yapılacak');
+                            manualHeaderSetup();
+                        }
+                        
+                    }
+                } else {
+                    console.error('❌ Header component yüklenemedi:', response.status);
+                }
+            } catch (error) {
+                console.error('❌ Error loading header:', error);
+                manualHeaderSetup();
+            }
+        }
+        
+        /**
+         * Manual header setup - fallback
+         */
+        function manualHeaderSetup() {
+            console.log('🛠️ Manual header setup başlatılıyor...');
+            
+            try {
+                const config = window.APP_CONFIG;
+                
+                if (!config) {
+                    console.error('❌ Config bulunamadı manual setup için');
+                    return;
+                }
+                
+                // Header title güncelle
+                const headerTitle = document.getElementById('headerTitle');
+                if (headerTitle) {
+                    headerTitle.textContent = config.PORTAL_TITLE;
+                    console.log('✅ Manual: Header title updated to:', config.PORTAL_TITLE);
+                } else {
+                    console.error('❌ Manual: headerTitle element bulunamadı');
+                }
+                
+                // Sidebar title güncelle
+                const sidebarTitle = document.getElementById('sidebarTitle');
+                if (sidebarTitle) {
+                    sidebarTitle.textContent = config.PORTAL_TITLE;
+                    console.log('✅ Manual: Sidebar title updated to:', config.PORTAL_TITLE);
+                } else {
+                    console.error('❌ Manual: sidebarTitle element bulunamadı');
+                }
+                
+                // Hamburger menu setup
+                setupHamburgerMenu();
+                
+                console.log('✅ Manual header setup completed');
+                
+            } catch (error) {
+                console.error('❌ Manual header setup error:', error);
+            }
+        }
+        
+        /**
+         * Hamburger menu setup - DEBUG VERSIYONU DÜZELTİLDİ
+         */
+        function setupHamburgerMenu() {
+            console.log('🍔 *** HAMBURGER MENU SETUP BAŞLADI ***');
+            
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const sidebarClose = document.getElementById('sidebarClose');
+            
+            console.log('🔍 Element kontrolleri:');
+            console.log('  - sidebarToggle:', !!sidebarToggle, sidebarToggle);
+            console.log('  - mobileSidebar:', !!sidebar, sidebar);
+            console.log('  - sidebarOverlay:', !!overlay, overlay);
+            console.log('  - sidebarClose:', !!sidebarClose, sidebarClose);
+            
+            if (!sidebarToggle) {
+                console.error('❌ CRITICAL: sidebarToggle bulunamadı!');
+                // Test için alternatif selector dene
+                const alternativeToggle = document.querySelector('.navbar-toggler');
+                console.log('🔍 Alternative toggle found:', !!alternativeToggle, alternativeToggle);
+                return;
+            }
+            
+            if (!sidebar) {
+                console.error('❌ CRITICAL: mobileSidebar bulunamadı!');
+                return;
+            }
+            
+            if (!overlay) {
+                console.error('❌ CRITICAL: sidebarOverlay bulunamadı!');
+                return;
+            }
+            
+            // Test: Mevcut event listener'ları temizle
+            const newToggle = sidebarToggle.cloneNode(true);
+            sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
+            console.log('🔄 sidebarToggle cloned to remove old listeners');
+            
+            // Yeni event listener ekle
+            newToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 *** HAMBURGER CLICKED (DASHBOARD VERSION) ***');
+                console.log('🔘 Event target:', e.target);
+                console.log('🔘 Event currentTarget:', e.currentTarget);
+                
+                // Sidebar aç
+                console.log('📂 Opening sidebar...');
+                sidebar.classList.add('show');
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                
+                console.log('✅ Sidebar açma işlemi tamamlandı');
+                console.log('  - sidebar classes:', sidebar.classList.toString());
+                console.log('  - overlay classes:', overlay.classList.toString());
+                console.log('  - body overflow:', document.body.style.overflow);
+            });
+            
+            // Close function
+            function closeSidebar() {
+                console.log('📁 *** SIDEBAR KAPANIYOR ***');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+                console.log('✅ Sidebar kapatma işlemi tamamlandı');
+            }
+            
+            // Close button
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('❌ Close button clicked (dashboard version)');
+                    closeSidebar();
+                });
+            }
+            
+            // Overlay click
+            overlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🎯 Overlay clicked (dashboard version)');
+                closeSidebar();
+            });
+            
+            // Test butonu ekle (geliştirme için)
+            addTestButton(sidebar, overlay);
+            
+            console.log('✅ *** HAMBURGER MENU SETUP TAMAMLANDI (DASHBOARD VERSION) ***');
+        }
+        
+        /**
+         * Test butonu ekle - DEVELOPMENT ONLY
+         */
+        function addTestButton(sidebar, overlay) {
+            console.log('🧪 Adding test button...');
+            
+            // Test butonu oluştur
+            const testButton = document.createElement('button');
+            testButton.id = 'testHamburger';
+            testButton.innerHTML = '🍔 Test Hamburger';
+            testButton.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 9999;
+                background: #ff6b35;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
+            `;
+            
+            testButton.addEventListener('click', function() {
+                console.log('🧪 TEST BUTTON CLICKED!');
+                
+                if (sidebar.classList.contains('show')) {
+                    console.log('🧪 Closing sidebar via test button');
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                } else {
+                    console.log('🧪 Opening sidebar via test button');
+                    sidebar.classList.add('show');
+                    overlay.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                console.log('🧪 Test result - sidebar classes:', sidebar.classList.toString());
+            });
+            
+            document.body.appendChild(testButton);
+            console.log('✅ Test button added to page');
+        }
+
+        /**
+         * Dashboard verilerini yükle
+         */
+        async function loadDashboardData() {
+            try {
+                console.log('Dashboard verileri yükleniyor...');
+                
+                // Şimdilik static veri gösteriyoruz
+                // Gerçek API çağrısı için:
+                // const response = await window.authService.apiRequest('/dashboard/stats');
+                // const data = await response.json();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        /**
+         * Chart'ı başlat
          */
         function initializeChart() {
             const ctx = document.getElementById('activityChart');
-            if (!ctx) {
-                console.log('Chart canvas bulunamadı');
-                return;
-            }
+            if (!ctx) return;
 
             try {
                 new Chart(ctx, {
@@ -465,38 +742,30 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
                         plugins: {
                             legend: {
                                 display: false
                             }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
                         }
                     }
                 });
-                console.log('✅ Chart başarıyla yüklendi');
             } catch (error) {
-                console.error('❌ Chart hatası:', error);
+                console.error('Chart initialization error:', error);
             }
         }
-
-        /**
-         * Logout function - BASIC
-         */
-        function logout() {
-            if (confirm('Çıkış yapmak istediğiniz emin misiniz?')) {
-                console.log('Logout işlemi...');
-                window.location.href = 'login.html';
-            }
-        }
-
-        // Global functions
-        window.logout = logout;
-        
-        console.log('✅ Dashboard scripts loaded - warnings fixed');
     </script>
 </body>
 </html>

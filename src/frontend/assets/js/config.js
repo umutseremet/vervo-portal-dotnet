@@ -39,11 +39,11 @@ window.APP_CONFIG = {
         AUTO_LOGOUT_MINUTES: 60
     },
     
-    // UI ayarları
+    // UI ayarları - GRİ-BEYAZ TEMA
     UI: {
         THEME: 'light',
-        PRIMARY_COLOR: '#667eea',
-        SECONDARY_COLOR: '#764ba2',
+        PRIMARY_COLOR: '#495057',        // Koyu gri
+        SECONDARY_COLOR: '#6c757d',      // Orta gri
         ANIMATION_DURATION: 300,
         TOAST_DURATION: 5000
     },

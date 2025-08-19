@@ -1,11 +1,11 @@
 /* Main Styles - Parametric Design Support */
 /* src/frontend/assets/css/styles.css */
 
-/* CSS Custom Properties (Variables) - Config'ten alınacak */
+/* CSS Custom Properties (Variables) - GRİ-BEYAZ TEMA */
 :root {
-    /* Default values - will be overridden by config */
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
+    /* Ana renkler - Gri tonları */
+    --primary-color: #495057;
+    --secondary-color: #6c757d;
     --success-color: #28a745;
     --info-color: #17a2b8;
     --warning-color: #ffc107;
@@ -17,7 +17,7 @@
     --transition: all 0.3s ease;
     --animation-duration: 300ms;
     
-    /* Company branding colors - will be set via config */
+    /* Company branding colors - Gri tonları */
     --company-primary: var(--primary-color);
     --company-secondary: var(--secondary-color);
     --company-gradient: linear-gradient(135deg, var(--company-primary) 0%, var(--company-secondary) 100%);

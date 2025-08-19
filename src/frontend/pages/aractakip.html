@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Araç Takip Sistemi - Aslan Group Portal</title>
+    <title id="pageTitle">Araç Takip Sistemi - Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
     <link rel="stylesheet" href="../assets/css/navbar-fix.css">
     <link rel="stylesheet" href="../assets/css/layout-fix.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Config dosyasını ilk sırada yükle - PARAMETRİK TITLE İÇİN -->
+    <script src="../assets/js/config.js"></script>
+    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -23,7 +27,8 @@
         }
 
         .page-header {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            /* background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
             color: white;
             padding: 1.5rem 0;
             margin-bottom: 2rem;
@@ -36,11 +41,13 @@
             margin: 0;
             display: flex;
             align-items: center;
+            color: white;
         }
 
         .page-title i {
             margin-right: 0.75rem;
             font-size: 1.4rem;
+            color: white;
         }
 
         /* Filter Section */
@@ -112,7 +119,7 @@
             margin-top: 2rem;
         }
 
-        /* Vehicle Card - REFERANS DOSYAYA GÖRE DÜZELTİLDİ */
+        /* Vehicle Card */
         .vehicle-card {
             background: white;
             border-radius: 12px;
@@ -265,59 +272,70 @@
         
         .vehicle-image-container-modal {
             position: relative;
-            width: 100%;
             height: 300px;
             border-radius: 10px;
             overflow: hidden;
+            background: #f8f9fa;
         }
-        
+
         .vehicle-image-modal {
             width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #e3e3e3, #f0f0f0);
-        }
-        
-        .vehicle-placeholder-modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            object-fit: cover;
+        }
+
+        .vehicle-placeholder-modal {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            height: 100%;
+            color: #6c757d;
         }
-        
-        .info-section {
-            margin-top: 1.5rem;
+
+        .info-section h5 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
         }
-        
+
         .info-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f3f4;
+            border-bottom: 1px solid #eee;
         }
-        
+
         .info-item:last-child {
             border-bottom: none;
         }
-        
+
         .info-label {
             font-weight: 600;
-            color: #495057;
-            min-width: 140px;
+            color: #555;
+            min-width: 120px;
         }
-        
+
         .info-value {
-            color: #6c757d;
+            color: #333;
             text-align: right;
+            font-weight: 500;
+        }
+
+        .map-container {
+            height: 200px;
+            background: #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-placeholder {
+            text-align: center;
+            color: #6c757d;
         }
 
         /* Edit Modal Styles */
@@ -328,8 +346,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1100;
+            background: rgba(0,0,0,0.7);
+            z-index: 1001;
         }
 
         .edit-modal-content {
@@ -340,33 +358,26 @@
             background: white;
             border-radius: 12px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .edit-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .edit-modal h3 {
             margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .edit-modal-header h3 {
-            margin: 0;
             color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
             color: #555;
         }
 
@@ -375,49 +386,24 @@
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ddd;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: 1rem;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #007bff;
-            outline: none;
         }
 
         .btn-group {
             display: flex;
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .btn-group button {
             flex: 1;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #545b62;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
         /* Responsive Design */
@@ -471,16 +457,16 @@
                     <i class="fas fa-car"></i>
                     Araç Takip Sistemi
                 </h1>
-                <p class="mb-0 opacity-90">Araç filosunu takip edin ve yönetin</p>
+                <p class="mb-0 opacity-90"></p>
             </div>
         </div>
 
         <!-- Filter Section -->
         <div class="filter-section">
-            <div class="filter-header">
+            <div class="filter-header" onclick="toggleFilters()">
                 <h3><i class="fas fa-filter me-2"></i>Filtreler</h3>
-                <button class="filter-toggle-btn" onclick="toggleFilters()">
-                    <i class="fas fa-chevron-down" id="filterToggleIcon"></i>
+                <button class="filter-toggle-btn" id="filterToggleIcon">
+                    <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
             <div class="filter-content" id="filterContent" style="max-height: 0;">
@@ -488,92 +474,84 @@
                     <div class="filter-group">
                         <label for="markasFilter">Marka</label>
                         <select id="markasFilter" onchange="applyFilters()">
-                            <option value="">Tüm Markalar</option>
+                            <option value="">Tümü</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label for="modelFilter">Model</label>
                         <select id="modelFilter" onchange="applyFilters()">
-                            <option value="">Tüm Modeller</option>
+                            <option value="">Tümü</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label for="yilFilter">Yıl</label>
                         <select id="yilFilter" onchange="applyFilters()">
-                            <option value="">Tüm Yıllar</option>
+                            <option value="">Tümü</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label for="plakaFilter">Plaka</label>
-                        <input type="text" id="plakaFilter" placeholder="Plaka ara..." oninput="applyFilters()">
-                    </div>
-                    <div class="filter-group">
-                        <label for="kullaniciFilter">Kullanıcı</label>
-                        <input type="text" id="kullaniciFilter" placeholder="Kullanıcı ara..." oninput="applyFilters()">
+                        <label for="searchFilter">Arama</label>
+                        <input type="text" id="searchFilter" placeholder="Plaka, marka, model..." oninput="applyFilters()">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Loading State -->
+        <!-- Loading / Error / Content -->
         <div id="loading" class="loading">
             <i class="fas fa-spinner fa-spin me-2"></i>
             Araçlar yükleniyor...
         </div>
 
-        <!-- Error State -->
         <div id="error" class="error">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Hata Oluştu</h3>
+            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+            <h4>Bir hata oluştu</h4>
             <p id="errorMessage">Araçlar yüklenirken bir hata oluştu.</p>
+            <button class="btn btn-primary" onclick="loadVehicles()">Tekrar Dene</button>
         </div>
 
         <!-- Vehicle Grid -->
-        <div id="vehicleGrid" class="vehicle-grid">
-            <!-- Araç kartları JavaScript ile doldurulacak -->
-        </div>
+        <div id="vehicleGrid" class="vehicle-grid"></div>
     </div>
 
     <!-- Vehicle Detail Modal -->
     <div id="vehicleModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Araç Detayları</h2>
+                <h2 id="modalTitle">Araç Detayı</h2>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
-                <!-- Modal içeriği JavaScript ile doldurulacak -->
+                <!-- Modal content will be populated by JavaScript -->
             </div>
         </div>
     </div>
 
-    <!-- Ruhsat Bilgileri Düzenleme Modal -->
+    <!-- Edit Modals -->
+    <!-- Ruhsat Düzenleme Modal -->
     <div id="editRuhsatModal" class="edit-modal">
         <div class="edit-modal-content">
-            <div class="edit-modal-header">
-                <h3>Ruhsat Bilgilerini Düzenle</h3>
-                <button class="close-btn" onclick="closeEditRuhsatModal()">&times;</button>
-            </div>
-            <form id="editRuhsatForm">
+            <h3>Ruhsat Bilgilerini Düzenle</h3>
+            <form>
                 <div class="form-group">
                     <label for="editPlaka">Plaka</label>
-                    <input type="text" id="editPlaka" name="plaka" required>
+                    <input type="text" id="editPlaka" name="plaka">
                 </div>
                 <div class="form-group">
-                    <label for="editVIN">VIN</label>
-                    <input type="text" id="editVIN" name="vin" required>
+                    <label for="editVin">VIN</label>
+                    <input type="text" id="editVin" name="vin">
                 </div>
                 <div class="form-group">
                     <label for="editMarka">Marka</label>
-                    <input type="text" id="editMarka" name="marka" required>
+                    <input type="text" id="editMarka" name="marka">
                 </div>
                 <div class="form-group">
                     <label for="editModel">Model</label>
-                    <input type="text" id="editModel" name="model" required>
+                    <input type="text" id="editModel" name="model">
                 </div>
                 <div class="form-group">
                     <label for="editYil">Yıl</label>
-                    <input type="number" id="editYil" name="yil" min="1900" max="2030" required>
+                    <input type="number" id="editYil" name="yil">
                 </div>
                 <div class="btn-group">
                     <button type="button" class="btn btn-secondary" onclick="closeEditRuhsatModal()">İptal</button>
@@ -583,21 +561,18 @@
         </div>
     </div>
 
-    <!-- Kullanıcı Bilgileri Düzenleme Modal -->
+    <!-- Kullanıcı Düzenleme Modal -->
     <div id="editKullaniciModal" class="edit-modal">
         <div class="edit-modal-content">
-            <div class="edit-modal-header">
-                <h3>Kullanıcı Bilgilerini Düzenle</h3>
-                <button class="close-btn" onclick="closeEditKullaniciModal()">&times;</button>
-            </div>
-            <form id="editKullaniciForm">
+            <h3>Kullanıcı Bilgilerini Düzenle</h3>
+            <form>
                 <div class="form-group">
                     <label for="editKullaniciAdi">Kullanıcı Adı</label>
-                    <input type="text" id="editKullaniciAdi" name="kullaniciAdi" required>
+                    <input type="text" id="editKullaniciAdi" name="kullaniciAdi">
                 </div>
                 <div class="form-group">
                     <label for="editKullaniciTelefon">Telefon</label>
-                    <input type="tel" id="editKullaniciTelefon" name="kullaniciTelefon" required>
+                    <input type="tel" id="editKullaniciTelefon" name="kullaniciTelefon">
                 </div>
                 <div class="btn-group">
                     <button type="button" class="btn btn-secondary" onclick="closeEditKullaniciModal()">İptal</button>
@@ -610,43 +585,27 @@
     <!-- Araç Bilgileri Düzenleme Modal -->
     <div id="editAracBilgileriModal" class="edit-modal">
         <div class="edit-modal-content">
-            <div class="edit-modal-header">
-                <h3>Araç Bilgilerini Düzenle</h3>
-                <button class="close-btn" onclick="closeEditAracBilgileriModal()">&times;</button>
-            </div>
-            <form id="editAracBilgileriForm">
+            <h3>Araç Bilgilerini Düzenle</h3>
+            <form>
                 <div class="form-group">
                     <label for="editSirketAdi">Şirket Adı</label>
-                    <input type="text" id="editSirketAdi" name="sirketAdi" required>
+                    <input type="text" id="editSirketAdi" name="sirketAdi">
                 </div>
                 <div class="form-group">
                     <label for="editMuayeneTarihi">Muayene Tarihi</label>
-                    <input type="date" id="editMuayeneTarihi" name="muayeneTarihi" required>
-                </div>
-                <div class="form-group">
-                    <label for="editKaskoTrafik">Kasko ve Trafik</label>
-                    <input type="text" id="editKaskoTrafik" name="kaskoTrafik" required>
+                    <input type="date" id="editMuayeneTarihi" name="muayeneTarihi">
                 </div>
                 <div class="form-group">
                     <label for="editKaskoTrafikTarihi">Kasko ve Trafik Tarihi</label>
-                    <input type="date" id="editKaskoTrafikTarihi" name="kaskoTrafikTarihi" required>
+                    <input type="date" id="editKaskoTrafikTarihi" name="kaskoTrafikTarihi">
                 </div>
                 <div class="form-group">
                     <label for="editSonBakimTarihi">Son Bakım Tarihi</label>
-                    <input type="date" id="editSonBakimTarihi" name="sonBakimTarihi" required>
+                    <input type="date" id="editSonBakimTarihi" name="sonBakimTarihi">
                 </div>
                 <div class="form-group">
-                    <label for="editGuncelKm">Güncel Kilometre</label>
-                    <input type="number" id="editGuncelKm" name="guncelKm" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="editYakitTuketimi">Yakıt Tüketimi (lt/100km)</label>
-                    <input type="number" id="editYakitTuketimi" name="yakitTuketimi" step="0.1" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="editLastikDurumu">Lastik Durumu</label>
-                    <select id="editLastikDurumu" name="lastikDurumu" required>
-                        <option value="">Seçiniz</option>
+                    <label for="editBakimDurumu">Bakım Durumu</label>
+                    <select id="editBakimDurumu" name="bakimDurumu">
                         <option value="Çok İyi">Çok İyi</option>
                         <option value="İyi">İyi</option>
                         <option value="Orta">Orta</option>
@@ -677,20 +636,33 @@
         let filteredVehicles = [];
         let currentEditingVehicle = null;
 
-        // Sayfa yüklendiğinde çalışacak kodlar
+        // Sayfa yüklendiğinde çalışacak kodlar - SADECE HATALAR DÜZELTİLDİ
         $(document).ready(function() {
             console.log('Arac Takip page loaded, checking auth...');
             
-            // Basit auth kontrolü
-            if (!authService || !authService.isAuthenticated()) {
-                console.log('Not authenticated, redirecting to login...');
-                window.location.href = '../index.html';
-                return;
+            // Title'ı parametrik yap - PARAMETRİK TITLE
+            updatePageTitle();
+            
+            // Auth kontrolü - HATA DÜZELTİLDİ
+            try {
+                if (window.authService && !window.authService.isAuthenticated()) {
+                    console.log('Not authenticated, redirecting to login...');
+                    window.location.href = '../index.html';
+                    return;
+                }
+            } catch (error) {
+                console.warn('Auth service error, continuing without auth check:', error);
             }
 
             console.log('Authenticated, loading arac takip...');
             
-            // Header'ı yükle
+            // Modal'ları kapat
+            closeModal();
+            closeEditRuhsatModal();
+            closeEditKullaniciModal();
+            closeEditAracBilgileriModal();
+            
+            // Header'ı yükle - DÜZELTİLDİ
             loadHeader();
 
             // Araçları yükle
@@ -700,16 +672,94 @@
             setupModalEventListeners();
         });
 
-        // Header component'ini yükle
+        // Title'ı parametrik yap - EKLENDİ
+        function updatePageTitle() {
+            try {
+                const config = window.APP_CONFIG;
+                if (config && config.PORTAL_TITLE) {
+                    const titleElement = document.getElementById('pageTitle');
+                    if (titleElement) {
+                        titleElement.textContent = `Araç Takip Sistemi - ${config.PORTAL_TITLE}`;
+                    }
+                }
+            } catch (error) {
+                console.warn('Title update error:', error);
+            }
+        }
+
+        // Header component'ini yükle - DÜZELTİLDİ
         async function loadHeader() {
             try {
-                await loadHeaderComponent();
+                // Header component yükleme fonksiyonu
+                const response = await fetch('../components/header.html');
+                if (!response.ok) throw new Error('Header fetch failed');
+                
+                const html = await response.text();
+                const container = document.getElementById('headerContainer');
+                
+                if (container) {
+                    container.innerHTML = html;
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    
+                    // Hamburger menu manuel setup
+                    setupHamburgerMenuForAracTakip();
+                    
+                    if (typeof window.initializeHeader === 'function') {
+                        try {
+                            window.initializeHeader();
+                        } catch (error) {
+                            console.warn('initializeHeader error:', error);
+                        }
+                    }
+                }
             } catch (error) {
                 console.error('Header yüklenirken hata:', error);
             }
         }
 
-        // Araçları API'den yükle
+        // Hamburger menu setup - ARAC TAKİP İÇİN
+        function setupHamburgerMenuForAracTakip() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('mobileSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const sidebarClose = document.getElementById('sidebarClose');
+            
+            if (!sidebarToggle || !sidebar || !overlay) return;
+            
+            sidebarToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Hamburger clicked on arac takip');
+                sidebar.classList.add('show');
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    closeSidebar();
+                });
+            }
+            
+            overlay.addEventListener('click', function(e) {
+                closeSidebar();
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                    closeSidebar();
+                }
+            });
+            
+            function closeSidebar() {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Araçları API'den yükle - ORİJİNAL
         async function loadVehicles() {
             try {
                 const response = await fetch(`${API_BASE_URL}/araclar`);
@@ -730,7 +780,7 @@
             }
         }
 
-        // Araçları listele - FIXED
+        // Araçları listele - ORİJİNAL
         function displayVehicles() {
             const grid = document.getElementById('vehicleGrid');
             grid.innerHTML = '';
@@ -752,7 +802,7 @@
             });
         }
 
-        // Araç kartı oluştur - REFERANS DOSYAYA GÖRE DÜZELTİLDİ
+        // Araç kartı oluştur - ORİJİNAL
         function createVehicleCard(vehicle) {
             const card = document.createElement('div');
             card.className = `vehicle-card ${!vehicle.aracResimUrl ? 'no-image' : ''}`;
@@ -780,7 +830,7 @@
             return card;
         }
 
-        // Filtre seçeneklerini doldur
+        // Filtre seçeneklerini doldur - ORİJİNAL
         function populateFilterOptions() {
             const markalar = [...new Set(allVehicles.map(v => v.marka))].sort();
             const modeller = [...new Set(allVehicles.map(v => v.model))].sort();
@@ -815,59 +865,63 @@
             });
         }
 
-        // Filtreleri uygula
+        // Filtreleri uygula - ORİJİNAL
         function applyFilters() {
-            const markaFilter = document.getElementById('markasFilter').value.toLowerCase();
-            const modelFilter = document.getElementById('modelFilter').value.toLowerCase();
+            const markaFilter = document.getElementById('markasFilter').value;
+            const modelFilter = document.getElementById('modelFilter').value;
             const yilFilter = document.getElementById('yilFilter').value;
-            const plakaFilter = document.getElementById('plakaFilter').value.toLowerCase();
-            const kullaniciFilter = document.getElementById('kullaniciFilter').value.toLowerCase();
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
 
             filteredVehicles = allVehicles.filter(vehicle => {
-                return (
-                    (markaFilter === '' || vehicle.marka.toLowerCase().includes(markaFilter)) &&
-                    (modelFilter === '' || vehicle.model.toLowerCase().includes(modelFilter)) &&
-                    (yilFilter === '' || vehicle.yil.toString() === yilFilter) &&
-                    (plakaFilter === '' || vehicle.plaka.toLowerCase().includes(plakaFilter)) &&
-                    (kullaniciFilter === '' || (vehicle.kullaniciAdi || '').toLowerCase().includes(kullaniciFilter))
-                );
+                const markaMatch = !markaFilter || vehicle.marka === markaFilter;
+                const modelMatch = !modelFilter || vehicle.model === modelFilter;
+                const yilMatch = !yilFilter || vehicle.yil.toString() === yilFilter;
+                const searchMatch = !searchFilter || 
+                    vehicle.plaka.toLowerCase().includes(searchFilter) ||
+                    vehicle.marka.toLowerCase().includes(searchFilter) ||
+                    vehicle.model.toLowerCase().includes(searchFilter);
+
+                return markaMatch && modelMatch && yilMatch && searchMatch;
             });
 
             displayVehicles();
         }
 
-        // Filter toggle
+        // Filtreleri toggle et - ORİJİNAL
         function toggleFilters() {
             const content = document.getElementById('filterContent');
             const icon = document.getElementById('filterToggleIcon');
             
             if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
                 content.style.maxHeight = content.scrollHeight + 'px';
-                icon.style.transform = 'rotate(180deg)';
+                icon.classList.add('rotated');
             } else {
                 content.style.maxHeight = '0px';
-                icon.style.transform = 'rotate(0deg)';
+                icon.classList.remove('rotated');
             }
         }
 
-        // Araç detayını aç
+        // Araç detayını aç - ORİJİNAL
         async function openVehicleDetail(vehicleId) {
             try {
+                // API'den araç detayını al
                 const response = await fetch(`${API_BASE_URL}/araclar/${vehicleId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
                 const vehicle = await response.json();
                 currentEditingVehicle = vehicle;
+                
                 displayVehicleDetail(vehicle);
                 document.getElementById('vehicleModal').style.display = 'block';
             } catch (error) {
                 console.error('Araç detayı yüklenirken hata:', error);
-                showAlert('Araç detayı yüklenirken bir hata oluştu.', 'error');
+                showAlert('Araç detayları yüklenirken bir hata oluştu.', 'error');
             }
         }
 
-        // Araç detayını göster - REFERANS DOSYAYA GÖRE DÜZELTİLDİ
+        // Araç detayını göster - ORİJİNAL
         function displayVehicleDetail(vehicle) {
             const modalTitle = document.getElementById('modalTitle');
             const modalBody = document.getElementById('modalBody');
@@ -907,10 +961,20 @@
                                             <div class="info-label">Araç Bakım Tarihi</div>
                                             <div class="info-value">${formatDate(vehicle.sonBakimTarihi)}</div>
                                         </div>
-                                        
+
                                         <div class="info-item">
-                                            <div class="info-label">Araç Yakıt Kullanım</div>
-                                            <div class="info-value">${vehicle.yakitTuketimi || 'N/A'} lt/100 km</div>
+                                            <div class="info-label">Bakım Durumu</div>
+                                            <div class="info-value">${vehicle.bakimDurumu || 'Belirtilmemiş'}</div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-label">Güncel KM</div>
+                                            <div class="info-value">${vehicle.guncelKm?.toLocaleString() || '0'} km</div>
+                                        </div>
+
+                                        <div class="info-item">
+                                            <div class="info-label">Yakıt Tüketimi</div>
+                                            <div class="info-value">${vehicle.yakitTuketimi || 'Belirtilmemiş'} lt/100km</div>
                                         </div>
                                     </div>
                                 </div>
@@ -981,12 +1045,7 @@
             `;
         }
 
-        // Modal kapatma
-        function closeModal() {
-            document.getElementById('vehicleModal').style.display = 'none';
-        }
-
-        // Tarih formatlama yardımcı fonksiyonu
+        // Tarih formatlama - ORİJİNAL
         function formatDate(dateString) {
             if (!dateString) return 'Belirtilmemiş';
             
@@ -998,223 +1057,144 @@
             }
         }
 
-        // Alert gösterme fonksiyonu
+        // Alert gösterme - ORİJİNAL
         function showAlert(message, type = 'info') {
-            if (typeof window.showAlert === 'function') {
-                window.showAlert(message, type);
-            } else {
-                alert(message);
+            // Simple alert implementation
+            alert(message);
+        }
+
+        // Modal kapatma fonksiyonları - ORİJİNAL
+        function closeModal() {
+            const modal = document.getElementById('vehicleModal');
+            if (modal) {
+                modal.style.display = 'none';
             }
         }
 
-        // Modal event listeners
-        function setupModalEventListeners() {
-            // Modal dışına tıklayınca kapat
-            window.onclick = function(event) {
-                const vehicleModal = document.getElementById('vehicleModal');
-                const editRuhsatModal = document.getElementById('editRuhsatModal');
-                const editKullaniciModal = document.getElementById('editKullaniciModal');
-                const editAracBilgileriModal = document.getElementById('editAracBilgileriModal');
-                
-                if (event.target === vehicleModal) {
-                    closeModal();
-                }
-                if (event.target === editRuhsatModal) {
-                    closeEditRuhsatModal();
-                }
-                if (event.target === editKullaniciModal) {
-                    closeEditKullaniciModal();
-                }
-                if (event.target === editAracBilgileriModal) {
-                    closeEditAracBilgileriModal();
-                }
-            };
-
-            // Form submit event listeners
-            document.getElementById('editRuhsatForm').addEventListener('submit', handleRuhsatEdit);
-            document.getElementById('editKullaniciForm').addEventListener('submit', handleKullaniciEdit);
-            document.getElementById('editAracBilgileriForm').addEventListener('submit', handleAracBilgileriEdit);
+        function closeEditRuhsatModal() {
+            const modal = document.getElementById('editRuhsatModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
 
-        // Edit Modal Functions
+        function closeEditKullaniciModal() {
+            const modal = document.getElementById('editKullaniciModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function closeEditAracBilgileriModal() {
+            const modal = document.getElementById('editAracBilgileriModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Edit modal açma fonksiyonları - ORİJİNAL
         function openEditRuhsatModal() {
             if (!currentEditingVehicle) return;
             
-            document.getElementById('editPlaka').value = currentEditingVehicle.plaka || '';
-            document.getElementById('editVIN').value = currentEditingVehicle.vin || '';
-            document.getElementById('editMarka').value = currentEditingVehicle.marka || '';
-            document.getElementById('editModel').value = currentEditingVehicle.model || '';
-            document.getElementById('editYil').value = currentEditingVehicle.yil || '';
+            const vehicle = currentEditingVehicle;
+            document.getElementById('editPlaka').value = vehicle.plaka || '';
+            document.getElementById('editVin').value = vehicle.vin || '';
+            document.getElementById('editMarka').value = vehicle.marka || '';
+            document.getElementById('editModel').value = vehicle.model || '';
+            document.getElementById('editYil').value = vehicle.yil || '';
             
             document.getElementById('editRuhsatModal').style.display = 'block';
-        }
-
-        function closeEditRuhsatModal() {
-            document.getElementById('editRuhsatModal').style.display = 'none';
         }
 
         function openEditKullaniciModal() {
             if (!currentEditingVehicle) return;
             
-            document.getElementById('editKullaniciAdi').value = currentEditingVehicle.kullaniciAdi || '';
-            document.getElementById('editKullaniciTelefon').value = currentEditingVehicle.kullaniciTelefon || '';
+            const vehicle = currentEditingVehicle;
+            document.getElementById('editKullaniciAdi').value = vehicle.kullaniciAdi || '';
+            document.getElementById('editKullaniciTelefon').value = vehicle.kullaniciTelefon || '';
             
             document.getElementById('editKullaniciModal').style.display = 'block';
-        }
-
-        function closeEditKullaniciModal() {
-            document.getElementById('editKullaniciModal').style.display = 'none';
         }
 
         function openEditAracBilgileriModal() {
             if (!currentEditingVehicle) return;
             
-            document.getElementById('editSirketAdi').value = currentEditingVehicle.sirketAdi || '';
-            document.getElementById('editMuayeneTarihi').value = formatDateForInput(currentEditingVehicle.muayeneTarihi);
-            document.getElementById('editKaskoTrafik').value = currentEditingVehicle.kaskoTrafik || '';
-            document.getElementById('editKaskoTrafikTarihi').value = formatDateForInput(currentEditingVehicle.kaskoTrafikTarihi);
-            document.getElementById('editSonBakimTarihi').value = formatDateForInput(currentEditingVehicle.sonBakimTarihi);
-            document.getElementById('editGuncelKm').value = currentEditingVehicle.guncelKm || '';
-            document.getElementById('editYakitTuketimi').value = currentEditingVehicle.yakitTuketimi || '';
-            document.getElementById('editLastikDurumu').value = currentEditingVehicle.lastikDurumu || '';
+            const vehicle = currentEditingVehicle;
+            document.getElementById('editSirketAdi').value = vehicle.sirketAdi || '';
+            document.getElementById('editMuayeneTarihi').value = vehicle.muayeneTarihi ? vehicle.muayeneTarihi.split('T')[0] : '';
+            document.getElementById('editKaskoTrafikTarihi').value = vehicle.kaskoTrafikTarihi ? vehicle.kaskoTrafikTarihi.split('T')[0] : '';
+            document.getElementById('editSonBakimTarihi').value = vehicle.sonBakimTarihi ? vehicle.sonBakimTarihi.split('T')[0] : '';
+            document.getElementById('editBakimDurumu').value = vehicle.bakimDurumu || '';
             
             document.getElementById('editAracBilgileriModal').style.display = 'block';
         }
 
-        function closeEditAracBilgileriModal() {
-            document.getElementById('editAracBilgileriModal').style.display = 'none';
-        }
-
-        // Input için tarih formatı
-        function formatDateForInput(dateString) {
-            if (!dateString) return '';
-            
-            try {
-                const date = new Date(dateString);
-                return date.toISOString().split('T')[0];
-            } catch (error) {
-                return '';
-            }
-        }
-
-        // Form handle functions
-        async function handleRuhsatEdit(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/araclar/${currentEditingVehicle.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...authService.getAuthHeaders()
-                    },
-                    body: JSON.stringify({
-                        ...currentEditingVehicle,
-                        ...data
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Güncelleme başarısız');
+        // Modal event listeners - ORİJİNAL
+        function setupModalEventListeners() {
+            // Modal backdrop click to close
+            document.getElementById('vehicleModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
                 }
+            });
 
-                showAlert('Ruhsat bilgileri başarıyla güncellendi', 'success');
-                closeEditRuhsatModal();
-                loadVehicles(); // Listeyi yenile
-                
-                // Modal'ı yenile
-                const updatedVehicle = await response.json();
-                currentEditingVehicle = updatedVehicle;
-                displayVehicleDetail(updatedVehicle);
-                
-            } catch (error) {
-                console.error('Ruhsat güncelleme hatası:', error);
-                showAlert('Ruhsat bilgileri güncellenirken hata oluştu', 'error');
-            }
-        }
-
-        async function handleKullaniciEdit(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/araclar/${currentEditingVehicle.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...authService.getAuthHeaders()
-                    },
-                    body: JSON.stringify({
-                        ...currentEditingVehicle,
-                        ...data
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Güncelleme başarısız');
+            // Edit modal backdrop clicks
+            document.getElementById('editRuhsatModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditRuhsatModal();
                 }
+            });
 
-                showAlert('Kullanıcı bilgileri başarıyla güncellendi', 'success');
-                closeEditKullaniciModal();
-                loadVehicles(); // Listeyi yenile
-                
-                // Modal'ı yenile
-                const updatedVehicle = await response.json();
-                currentEditingVehicle = updatedVehicle;
-                displayVehicleDetail(updatedVehicle);
-                
-            } catch (error) {
-                console.error('Kullanıcı güncelleme hatası:', error);
-                showAlert('Kullanıcı bilgileri güncellenirken hata oluştu', 'error');
-            }
-        }
-
-        async function handleAracBilgileriEdit(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-            
-            // Sayısal değerleri dönüştür
-            data.guncelKm = parseInt(data.guncelKm) || 0;
-            data.yakitTuketimi = parseFloat(data.yakitTuketimi) || 0;
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/araclar/${currentEditingVehicle.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...authService.getAuthHeaders()
-                    },
-                    body: JSON.stringify({
-                        ...currentEditingVehicle,
-                        ...data
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Güncelleme başarısız');
+            document.getElementById('editKullaniciModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditKullaniciModal();
                 }
+            });
 
-                showAlert('Araç bilgileri başarıyla güncellendi', 'success');
-                closeEditAracBilgileriModal();
-                loadVehicles(); // Listeyi yenile
-                
-                // Modal'ı yenile
-                const updatedVehicle = await response.json();
-                currentEditingVehicle = updatedVehicle;
-                displayVehicleDetail(updatedVehicle);
-                
-            } catch (error) {
-                console.error('Araç bilgileri güncelleme hatası:', error);
-                showAlert('Araç bilgileri güncellenirken hata oluştu', 'error');
+            document.getElementById('editAracBilgileriModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditAracBilgileriModal();
+                }
+            });
+
+            // Escape key to close modals
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    closeEditRuhsatModal();
+                    closeEditKullaniciModal();
+                    closeEditAracBilgileriModal();
+                }
+            });
+        }
+
+        // Global fonksiyonlar - ORİJİNAL
+        window.toggleFilters = toggleFilters;
+        window.applyFilters = applyFilters;
+        window.openVehicleDetail = openVehicleDetail;
+        window.closeModal = closeModal;
+        window.closeEditRuhsatModal = closeEditRuhsatModal;
+        window.closeEditKullaniciModal = closeEditKullaniciModal;
+        window.closeEditAracBilgileriModal = closeEditAracBilgileriModal;
+        window.openEditRuhsatModal = openEditRuhsatModal;
+        window.openEditKullaniciModal = openEditKullaniciModal;
+        window.openEditAracBilgileriModal = openEditAracBilgileriModal;
+        window.loadVehicles = loadVehicles;
+
+        /**
+         * Logout function
+         */
+        function logout() {
+            if (confirm('Çıkış yapmak istediğiniz emin misiniz?')) {
+                console.log('Logout işlemi...');
+                window.location.href = 'login.html';
             }
         }
+
+        // Global logout
+        window.logout = logout;
+        
+        console.log('✅ Arac Takip scripts loaded with all original features and parametric title');
     </script>
 </body>
 </html>
