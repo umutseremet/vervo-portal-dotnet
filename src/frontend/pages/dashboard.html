@@ -11,22 +11,53 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- App Configuration - ÖNCE YÜKLENMELİ -->
+    <script src="../assets/js/config.js"></script>
+    
     <!-- Custom Styles -->
     <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --header-height: 70px;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Main content responsive positioning */
         .main-content {
             margin-left: 0;
-            padding-top: 90px;
+            padding: 1rem;
             transition: margin-left 0.3s ease;
             min-height: 100vh;
         }
         
+        /* Mobile responsive - Content below header */
+        @media (max-width: 768px) {
+            .main-content {
+                padding-top: calc(var(--header-height) + 1rem) !important;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                margin-top: 0 !important;
+            }
+        }
+        
+        /* Desktop responsive */
+        @media (min-width: 769px) {
+            .main-content {
+                padding-top: calc(var(--header-height) + 2rem) !important;
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+        
         .welcome-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
             border: none;
             border-radius: 15px;
@@ -43,6 +74,7 @@
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             background: white;
+            height: 100%;
         }
         
         .stat-card:hover {
@@ -103,7 +135,7 @@
         }
         
         .btn-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             border: none;
             color: white;
             border-radius: 25px;
@@ -126,6 +158,8 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             height: 100%;
+            text-decoration: none;
+            color: inherit;
         }
         
         .quick-action:hover {
@@ -141,34 +175,36 @@
             color: #667eea;
         }
         
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Responsive Design */
+        /* Card responsiveness */
         @media (max-width: 768px) {
-            .main-content {
-                padding-top: 1rem;
+            .welcome-card .card-body {
+                padding: 1.5rem;
             }
             
             .stat-card {
                 margin-bottom: 1rem;
             }
             
-            .welcome-card .card-body {
-                padding: 1.5rem;
+            .quick-action {
+                padding: 1rem;
+                margin-bottom: 1rem;
             }
+            
+            .quick-action i {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Chart container */
+        #chartContainer {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Page title updates */
+        .page-title {
+            color: #667eea;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -348,11 +384,11 @@
             <!-- Quick Actions -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <h4 class="mb-3">Hızlı İşlemler</h4>
+                    <h4 class="mb-3 page-title">Hızlı İşlemler</h4>
                 </div>
                 
                 <div class="col-lg-3 col-md-6 mb-3">
-                    <a href="#" class="quick-action d-block">
+                    <a href="#" class="quick-action d-block" onclick="handleQuickAction('Yeni Araç Ekle')">
                         <i class="fas fa-plus-circle"></i>
                         <h6>Yeni Araç Ekle</h6>
                         <p class="text-muted small mb-0">Sisteme yeni araç kaydet</p>
@@ -360,7 +396,7 @@
                 </div>
                 
                 <div class="col-lg-3 col-md-6 mb-3">
-                    <a href="#" class="quick-action d-block">
+                    <a href="aractakip.html" class="quick-action d-block">
                         <i class="fas fa-map-marked-alt"></i>
                         <h6>Canlı Takip</h6>
                         <p class="text-muted small mb-0">Araçları harita üzerinde izle</p>
@@ -368,7 +404,7 @@
                 </div>
                 
                 <div class="col-lg-3 col-md-6 mb-3">
-                    <a href="#" class="quick-action d-block">
+                    <a href="#" class="quick-action d-block" onclick="handleQuickAction('Rapor Oluştur')">
                         <i class="fas fa-chart-line"></i>
                         <h6>Rapor Oluştur</h6>
                         <p class="text-muted small mb-0">Detaylı analiz raporları</p>
@@ -376,7 +412,7 @@
                 </div>
                 
                 <div class="col-lg-3 col-md-6 mb-3">
-                    <a href="#" class="quick-action d-block">
+                    <a href="#" class="quick-action d-block" onclick="handleQuickAction('Sistem Ayarları')">
                         <i class="fas fa-cog"></i>
                         <h6>Sistem Ayarları</h6>
                         <p class="text-muted small mb-0">Genel ayarları düzenle</p>
@@ -394,9 +430,6 @@
     
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    
-    <!-- App Configuration -->
-    <script src="../assets/js/config.js"></script>
     
     <!-- Sidebar Module -->
     <script src="../assets/js/sidebar-module.js"></script>
@@ -419,8 +452,8 @@
                 
                 loadHeaderComponent();
                 updateWelcomeMessage();
+                updatePageTitle();
                 initializeChart();
-                setupQuickActions();
                 
                 console.log('✅ Dashboard initialization complete');
             }
@@ -462,7 +495,16 @@
             }
             
             /**
-             * Update welcome message with user info
+             * Update page title with config
+             */
+            function updatePageTitle() {
+                if (window.APP_CONFIG && window.APP_CONFIG.PORTAL_TITLE) {
+                    document.title = `Dashboard - ${window.APP_CONFIG.PORTAL_TITLE}`;
+                }
+            }
+            
+            /**
+             * Update welcome message with user info and config
              */
             function updateWelcomeMessage() {
                 try {
@@ -477,6 +519,14 @@
                         }
                         
                         console.log('✅ Welcome message updated for:', userName);
+                    }
+                    
+                    // Update welcome message with portal title
+                    if (window.APP_CONFIG && window.APP_CONFIG.PORTAL_TITLE) {
+                        const welcomeMessageEl = document.getElementById('welcomeMessage');
+                        if (welcomeMessageEl) {
+                            welcomeMessageEl.textContent = `${window.APP_CONFIG.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.`;
+                        }
                     }
                 } catch (error) {
                     console.error('❌ Error updating welcome message:', error);
@@ -537,180 +587,23 @@
                 }
             }
             
-            /**
-             * Setup quick action handlers
-             */
-            function setupQuickActions() {
-                console.log('⚡ Setting up quick actions...');
-                
-                const quickActions = document.querySelectorAll('.quick-action');
-                quickActions.forEach((action, index) => {
-                    action.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const actionText = this.querySelector('h6').textContent;
-                        console.log('🔗 Quick action clicked:', actionText);
-                        
-                        // Show placeholder alert - replace with actual functionality
-                        alert(`${actionText} özelliği yakında aktif olacak!`);
-                    });
-                });
-                
-                console.log(`✅ ${quickActions.length} quick actions setup complete`);
-            }
-            
-            /**
-             * Dashboard sidebar setup
-             */
-            function setupDashboardSidebar() {
-                console.log('🎯 Setting up dashboard sidebar...');
-                
-                if (window.SidebarModule) {
-                    console.log('✅ Using global SidebarModule');
-                    window.SidebarModule.init();
-                    return;
-                }
-                
-                console.log('⚠️ SidebarModule not found, using manual setup');
-                manualSidebarSetup();
-            }
-            
-            /**
-             * Manual sidebar setup for dashboard
-             */
-            function manualSidebarSetup() {
-                console.log('🛠️ Manual dashboard sidebar setup...');
-                
-                const sidebarToggle = document.getElementById('sidebarToggle');
-                const sidebar = document.getElementById('mobileSidebar');
-                const overlay = document.getElementById('sidebarOverlay');
-                const sidebarClose = document.getElementById('sidebarClose');
-                
-                if (!sidebarToggle || !sidebar || !overlay) {
-                    console.error('❌ Required sidebar elements not found');
-                    return;
-                }
-                
-                console.log('✅ All sidebar elements found');
-                
-                // Remove existing listeners to prevent conflicts
-                const newToggle = sidebarToggle.cloneNode(true);
-                sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
-                
-                function openSidebar() {
-                    console.log('📂 *** DASHBOARD: OPENING SIDEBAR ***');
-                    
-                    sidebar.classList.add('show');
-                    overlay.classList.add('show');
-                    document.body.classList.add('sidebar-open');
-                    document.body.style.overflow = 'hidden';
-                    
-                    console.log('✅ Dashboard sidebar opened');
-                }
-                
-                function closeSidebar() {
-                    console.log('📁 *** DASHBOARD: CLOSING SIDEBAR ***');
-                    
-                    sidebar.classList.remove('show');
-                    overlay.classList.remove('show');
-                    document.body.classList.remove('sidebar-open');
-                    document.body.style.overflow = '';
-                    
-                    console.log('✅ Dashboard sidebar closed');
-                }
-                
-                newToggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔘 *** DASHBOARD: HAMBURGER CLICKED ***');
-                    
-                    const isOpen = sidebar.classList.contains('show');
-                    if (isOpen) {
-                        closeSidebar();
-                    } else {
-                        openSidebar();
-                    }
-                });
-                
-                if (sidebarClose) {
-                    sidebarClose.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('❌ *** DASHBOARD: CLOSE BUTTON CLICKED ***');
-                        closeSidebar();
-                    });
-                }
-                
-                overlay.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('🎯 *** DASHBOARD: OVERLAY CLICKED ***');
-                    closeSidebar();
-                });
-                
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && sidebar.classList.contains('show')) {
-                        console.log('⌨️ *** DASHBOARD: ESCAPE PRESSED ***');
-                        closeSidebar();
-                    }
-                });
-                
-                // Make functions globally available
-                window.openSidebar = openSidebar;
-                window.closeSidebar = closeSidebar;
-                window.toggleSidebar = function() {
-                    const isOpen = sidebar.classList.contains('show');
-                    if (isOpen) {
-                        closeSidebar();
-                    } else {
-                        openSidebar();
-                    }
-                };
-                
-                console.log('✅ Dashboard manual sidebar setup complete');
-            }
-            
-            /**
-             * Initialize after header is loaded
-             */
-            function initializeAfterHeader() {
-                console.log('⏳ Waiting for header to load...');
-                
-                let attempts = 0;
-                const maxAttempts = 50;
-                
-                const checkInterval = setInterval(() => {
-                    attempts++;
-                    
-                    const sidebarToggle = document.getElementById('sidebarToggle');
-                    const sidebar = document.getElementById('mobileSidebar');
-                    
-                    if (sidebarToggle && sidebar) {
-                        clearInterval(checkInterval);
-                        console.log('✅ Header loaded, setting up sidebar...');
-                        
-                        setTimeout(() => {
-                            setupDashboardSidebar();
-                        }, 100);
-                        
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(checkInterval);
-                        console.error('❌ Header elements not found after timeout');
-                    }
-                }, 100);
-            }
-            
             // Initialize dashboard when DOM is ready
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    initDashboard();
-                    initializeAfterHeader();
-                });
+                document.addEventListener('DOMContentLoaded', initDashboard);
             } else {
                 initDashboard();
-                initializeAfterHeader();
             }
             
             console.log('📊 Dashboard script loaded');
         })();
+        
+        /**
+         * Handle quick action clicks
+         */
+        function handleQuickAction(actionName) {
+            console.log('🔗 Quick action clicked:', actionName);
+            alert(`${actionName} özelliği yakında aktif olacak!`);
+        }
         
         /**
          * Global logout function

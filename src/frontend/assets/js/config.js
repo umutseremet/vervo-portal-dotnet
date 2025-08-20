@@ -1,4 +1,4 @@
-// Frontend Configuration
+// Frontend Configuration - DÜZELTİLDİ
 // src/frontend/assets/js/config.js
 
 /**
@@ -7,7 +7,8 @@
  */
 window.APP_CONFIG = {
     // *** MÜŞTERİ AYARLARI ***
-    // Bu değerleri değiştirerek farklı müşteriler için projeyi kullanabilirsiniz
+    // COMPANY_NAME: 'Aslan Group',
+    // PORTAL_TITLE: 'Aslan Group Portal',
     COMPANY_NAME: 'Vervo',
     PORTAL_TITLE: 'Vervo Portal',
     
@@ -39,11 +40,15 @@ window.APP_CONFIG = {
         AUTO_LOGOUT_MINUTES: 60
     },
     
-    // UI ayarları - GRİ-BEYAZ TEMA
+    // UI ayarları - Aslan Group renk teması
     UI: {
-        THEME: 'light',
-        PRIMARY_COLOR: '#495057',        // Koyu gri
-        SECONDARY_COLOR: '#6c757d',      // Orta gri
+        THEME: 'aslan-group',
+        PRIMARY_COLOR: '#667eea',
+        SECONDARY_COLOR: '#764ba2',
+        SUCCESS_COLOR: '#28a745',
+        WARNING_COLOR: '#ffc107',
+        DANGER_COLOR: '#dc3545',
+        INFO_COLOR: '#17a2b8',
         ANIMATION_DURATION: 300,
         TOAST_DURATION: 5000
     },
@@ -65,7 +70,7 @@ window.APP_CONFIG = {
     
     // Mesajlar
     MESSAGES: {
-        WELCOME: 'Portal\'a hoş geldiniz',
+        WELCOME: 'Vervo Portal - Aslan Group Portal\'a hoş geldiniz',
         LOGIN_SUCCESS: 'Giriş başarılı! Portal\'a yönlendiriliyorsunuz...',
         LOGIN_ERROR: 'Kullanıcı adı veya şifre hatalı.',
         LOGOUT_MESSAGE: 'Güvenli çıkış yapıldı.',
@@ -75,7 +80,7 @@ window.APP_CONFIG = {
     // Console mesajları
     CONSOLE: {
         WELCOME_MESSAGE: '🎉 {{COMPANY_NAME}} Portal',
-        WELCOME_STYLE: 'color: #007bff; font-size: 16px; font-weight: bold;',
+        WELCOME_STYLE: 'color: #667eea; font-size: 16px; font-weight: bold;',
         SUCCESS_MESSAGE: 'Dashboard başarıyla yüklendi!',
         SUCCESS_STYLE: 'color: #28a745; font-size: 14px;'
     }
@@ -83,15 +88,13 @@ window.APP_CONFIG = {
 
 /**
  * Müşteri adı değiştirme fonksiyonu
- * @param {string} companyName - Yeni müşteri adı
  */
 window.setCompanyName = function(companyName) {
     window.APP_CONFIG.COMPANY_NAME = companyName;
-    window.APP_CONFIG.PORTAL_TITLE = companyName + ' Portal';
     
-    // Sayfadaki mevcut elementleri güncelle
+    window.APP_CONFIG.PORTAL_TITLE = `${companyName} Portal`;
+    
     updatePageElements();
-    
     console.log(`Müşteri adı güncellendi: ${companyName}`);
 };
 
@@ -107,9 +110,21 @@ window.updatePageElements = function() {
         element.textContent = config.PORTAL_TITLE;
     });
     
+    // Header title güncelle
+    const headerTitle = document.getElementById('headerTitle');
+    if (headerTitle) {
+        headerTitle.textContent = config.PORTAL_TITLE;
+    }
+    
+    // Sidebar title güncelle
+    const sidebarTitle = document.getElementById('sidebarTitle');
+    if (sidebarTitle) {
+        sidebarTitle.textContent = config.PORTAL_TITLE;
+    }
+    
     // Page title güncelle
     if (document.title.includes('Portal')) {
-        document.title = document.title.replace(/^.*Portal/, config.PORTAL_TITLE);
+        document.title = document.title.replace(/Portal.*/, config.PORTAL_TITLE);
     }
     
     // Console mesajlarını güncelle
@@ -142,10 +157,13 @@ window.validateConfig = function() {
     return true;
 };
 
+// Config'i hemen kullanıma hazırla
+console.log('📝 Config loading...', window.APP_CONFIG?.PORTAL_TITLE);
+
 // Sayfa yüklendiğinde config'i doğrula
 document.addEventListener('DOMContentLoaded', function() {
     if (window.validateConfig()) {
-        console.log('✅ Configuration başarıyla yüklendi');
+        console.log('✅ Configuration başarıyla yüklendi:', window.APP_CONFIG.PORTAL_TITLE);
         window.updatePageElements();
         
         // Config yüklendiğini bildir
