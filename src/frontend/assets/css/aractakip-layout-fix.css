@@ -1,0 +1,136 @@
+/* src/frontend/assets/css/aractakip-layout-fix.css */
+/* Araç Takip Sayfası Layout Düzeltmeleri */
+
+/* Main content margin düzeltmesi - Header ile content arasındaki boşluğu azalt */
+.main-content {
+    margin-top: 70px !important; /* Navbar height'ı kadar margin */
+    padding: 1rem 2rem; /* Üst padding'i azalttık */
+}
+
+/* Page header margin düzeltmesi */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white;
+    padding: 1rem 0; /* Padding'i azalttık */
+    margin-bottom: 1.5rem; /* Margin'i azalttık */
+    border-radius: 10px;
+}
+
+/* Filter section margin düzeltmesi */
+.filter-section {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem; /* Margin'i azalttık */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Vehicle grid ile üstündeki alanlar arasındaki boşluk */
+.vehicle-grid {
+    margin-top: 0; /* Üst margin'i kaldırdık */
+}
+
+/* Mobile responsive düzeltmeleri */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 0.5rem 1rem; /* Mobile'da daha az padding */
+        margin-top: 60px !important; /* Mobile navbar height'ı */
+    }
+    
+    .page-header {
+        padding: 0.75rem 0;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-section {
+        margin-bottom: 1rem;
+        padding: 1rem;
+    }
+}
+
+/* Header fixed position için gerekli düzeltmeler */
+body {
+    padding-top: 0; /* Body'den üst padding'i kaldır */
+}
+
+/* Content area için genel düzeltmeler */
+.container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Alert container pozisyon düzeltmesi */
+#alertContainer {
+    top: 80px; /* Header'dan sonra göster */
+}
+
+/* Navbar ile content arası boşluk düzeltmesi */
+@media (min-width: 769px) {
+    .main-content {
+        padding-top: 1rem !important; /* Desktop'ta navbar'dan sonra minimal padding */
+    }
+}
+
+/* Filter content transition */
+.filter-content {
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
+}
+
+/* Vehicle card hover effects optimization */
+.vehicle-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Page responsive improvements */
+@media (max-width: 576px) {
+    .main-content {
+        padding: 0.5rem;
+        margin-top: 60px !important;
+    }
+    
+    .page-header {
+        margin-bottom: 1rem;
+    }
+    
+    .page-header .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .filter-section {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Fix for layout shifts */
+.vehicle-grid {
+    min-height: 200px; /* Prevent layout shift while loading */
+}
+
+/* Loading state improvements */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: #6c757d;
+}
+
+.loading i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
