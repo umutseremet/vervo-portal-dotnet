@@ -3,124 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Portal</title>
+    <title id="pageTitle">Dashboard - Portal</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <!-- App Configuration - ÖNCE YÜKLENMELİ -->
+    <!-- Config dosyasını ilk sırada yükle -->
     <script src="../assets/js/config.js"></script>
     
-    <!-- Custom Styles -->
     <style>
         :root {
-            --header-height: 70px;
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         
         body {
-            background: var(--bg-gradient);
+            background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
         }
         
-        /* Main content responsive positioning */
         .main-content {
-            margin-left: 0;
-            padding: 1rem;
-            transition: margin-left 0.3s ease;
-            min-height: 100vh;
+            margin-top: 80px;
+            padding: 1.5rem;
         }
         
-        /* Mobile responsive - Content below header */
-        @media (max-width: 768px) {
-            .main-content {
-                padding-top: calc(var(--header-height) + 1rem) !important;
-                padding-left: 1rem;
-                padding-right: 1rem;
-                margin-top: 0 !important;
-            }
-        }
-        
-        /* Desktop responsive */
-        @media (min-width: 769px) {
-            .main-content {
-                padding-top: calc(var(--header-height) + 2rem) !important;
-                padding-left: 2rem;
-                padding-right: 2rem;
-            }
-        }
-        
+        /* Welcome Card */
         .welcome-card {
             background: var(--primary-gradient);
             color: white;
             border: none;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
         }
         
         .welcome-card .card-body {
             padding: 2rem;
         }
         
+        /* Stat Cards */
         .stat-card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: white;
-            height: 100%;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         
         .stat-number {
             font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 0;
+            margin: 0;
         }
         
         .stat-label {
-            font-size: 0.9rem;
             color: #6c757d;
-            margin-bottom: 0;
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 500;
         }
         
+        /* Chart Card */
         .chart-card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
         
+        .chart-card .card-header {
+            background: none;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1.25rem;
+        }
+        
+        .chart-card .card-title {
+            color: #495057;
+            font-weight: 600;
+        }
+        
+        /* Activity Items */
         .activity-item {
-            border-left: 3px solid #667eea;
-            background: rgba(102, 126, 234, 0.05);
-            margin-bottom: 1rem;
-            border-radius: 0 8px 8px 0;
-            transition: all 0.3s ease;
+            border: none;
+            border-bottom: 1px solid #f1f3f4;
+            padding: 1rem;
+            transition: background-color 0.3s ease;
         }
         
         .activity-item:hover {
-            background: rgba(102, 126, 234, 0.1);
-            transform: translateX(5px);
+            background-color: #f8f9fa;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
         }
         
         .activity-time {
             color: #6c757d;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         
+        /* Quick Actions */
+        .quick-action {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .quick-action:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .quick-action i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        
+        /* Animations */
         .fade-in {
-            animation: fadeIn 0.6s ease-in;
+            animation: fadeIn 0.6s ease;
         }
         
         @keyframes fadeIn {
@@ -134,49 +149,25 @@
             }
         }
         
-        .btn-custom {
-            background: var(--primary-gradient);
-            border: none;
-            color: white;
-            border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-            transition: all 0.3s ease;
+        /* Chart container */
+        #chartContainer {
+            position: relative;
+            height: 300px;
         }
         
-        .btn-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-            color: white;
-        }
-        
-        .quick-action {
-            background: white;
-            border: none;
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            height: 100%;
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .quick-action:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            text-decoration: none;
-            color: inherit;
-        }
-        
-        .quick-action i {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+        /* Page title */
+        .page-title {
             color: #667eea;
+            font-weight: 700;
         }
         
-        /* Card responsiveness */
+        /* Responsive */
         @media (max-width: 768px) {
+            .main-content {
+                margin-top: 70px;
+                padding: 1rem;
+            }
+            
             .welcome-card .card-body {
                 padding: 1.5rem;
             }
@@ -193,18 +184,6 @@
             .quick-action i {
                 font-size: 2rem;
             }
-        }
-        
-        /* Chart container */
-        #chartContainer {
-            position: relative;
-            height: 300px;
-        }
-        
-        /* Page title updates */
-        .page-title {
-            color: #667eea;
-            font-weight: 700;
         }
     </style>
 </head>
@@ -231,7 +210,9 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4 text-center">
-                                    <i class="fas fa-tachometer-alt fa-5x opacity-50"></i>
+                                    <div class="dashboard-icon">
+                                        <i class="fas fa-tachometer-alt fa-4x text-white opacity-75"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -332,8 +313,8 @@
                                 <i class="fas fa-clock me-2"></i>Son Aktiviteler
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <div class="activity-item p-3">
+                        <div class="card-body p-0">
+                            <div class="activity-item">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="mb-1">Araç Eklendi</h6>
@@ -344,7 +325,7 @@
                                 </div>
                             </div>
                             
-                            <div class="activity-item p-3">
+                            <div class="activity-item">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="mb-1">Rapor Oluşturuldu</h6>
@@ -355,18 +336,7 @@
                                 </div>
                             </div>
                             
-                            <div class="activity-item p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="mb-1">Bakım Hatırlatması</h6>
-                                        <p class="mb-1 small">06 DEF 456 aracı bakım zamanı</p>
-                                        <span class="activity-time">6 saat önce</span>
-                                    </div>
-                                    <i class="fas fa-wrench text-warning"></i>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item p-3">
+                            <div class="activity-item">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h6 class="mb-1">Yeni Kullanıcı</h6>
@@ -422,204 +392,13 @@
         </div>
     </main>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Chart.js -->
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    
-    <!-- Sidebar Module -->
-    <script src="../assets/js/sidebar-module.js"></script>
-    
-    <!-- Main Dashboard Script -->
-    <script>
-        // Dashboard Page Script - DÜZELTİLMİŞ VERSİYON
-        (function() {
-            'use strict';
-            
-            console.log('📊 Dashboard page initializing...');
-            
-            let chart = null;
-            
-            /**
-             * Initialize dashboard
-             */
-            function initDashboard() {
-                console.log('🚀 Dashboard initialization starting...');
-                
-                loadHeaderComponent();
-                updateWelcomeMessage();
-                updatePageTitle();
-                initializeChart();
-                
-                console.log('✅ Dashboard initialization complete');
-            }
-            
-            /**
-             * Load header component
-             */
-            async function loadHeaderComponent() {
-                console.log('📥 Loading header component...');
-                
-                try {
-                    const response = await fetch('../components/header.html');
-                    if (response.ok) {
-                        const headerHtml = await response.text();
-                        document.getElementById('headerContainer').innerHTML = headerHtml;
-                        console.log('✅ Header component loaded');
-                        
-                        // Wait for header to be ready then initialize
-                        setTimeout(() => {
-                            if (typeof window.initializeHeader === 'function') {
-                                console.log('🔧 Initializing header...');
-                                window.initializeHeader();
-                            } else {
-                                console.log('⏳ Waiting for header initialization...');
-                                setTimeout(() => {
-                                    if (typeof window.initializeHeader === 'function') {
-                                        window.initializeHeader();
-                                    }
-                                }, 100);
-                            }
-                        }, 50);
-                        
-                    } else {
-                        console.error('❌ Header component load failed:', response.status);
-                    }
-                } catch (error) {
-                    console.error('❌ Error loading header:', error);
-                }
-            }
-            
-            /**
-             * Update page title with config
-             */
-            function updatePageTitle() {
-                if (window.APP_CONFIG && window.APP_CONFIG.PORTAL_TITLE) {
-                    document.title = `Dashboard - ${window.APP_CONFIG.PORTAL_TITLE}`;
-                }
-            }
-            
-            /**
-             * Update welcome message with user info and config
-             */
-            function updateWelcomeMessage() {
-                try {
-                    const userStr = localStorage.getItem('user');
-                    if (userStr) {
-                        const user = JSON.parse(userStr);
-                        const userName = user.name || user.fullname || 'Kullanıcı';
-                        
-                        const welcomeUserNameEl = document.getElementById('welcomeUserName');
-                        if (welcomeUserNameEl) {
-                            welcomeUserNameEl.textContent = userName;
-                        }
-                        
-                        console.log('✅ Welcome message updated for:', userName);
-                    }
-                    
-                    // Update welcome message with portal title
-                    if (window.APP_CONFIG && window.APP_CONFIG.PORTAL_TITLE) {
-                        const welcomeMessageEl = document.getElementById('welcomeMessage');
-                        if (welcomeMessageEl) {
-                            welcomeMessageEl.textContent = `${window.APP_CONFIG.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.`;
-                        }
-                    }
-                } catch (error) {
-                    console.error('❌ Error updating welcome message:', error);
-                }
-            }
-            
-            /**
-             * Initialize usage chart
-             */
-            function initializeChart() {
-                console.log('📈 Initializing usage chart...');
-                
-                const ctx = document.getElementById('usageChart');
-                if (!ctx) {
-                    console.error('❌ Chart canvas not found');
-                    return;
-                }
-                
-                // Sample data - replace with real data from API
-                const chartData = {
-                    labels: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'],
-                    datasets: [{
-                        label: 'Aktif Araç Sayısı',
-                        data: [12, 18, 15, 20, 16, 8, 6],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                };
-                
-                const config = {
-                    type: 'line',
-                    data: chartData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 25
-                            }
-                        }
-                    }
-                };
-                
-                try {
-                    chart = new Chart(ctx, config);
-                    console.log('✅ Chart initialized successfully');
-                } catch (error) {
-                    console.error('❌ Chart initialization failed:', error);
-                }
-            }
-            
-            // Initialize dashboard when DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initDashboard);
-            } else {
-                initDashboard();
-            }
-            
-            console.log('📊 Dashboard script loaded');
-        })();
-        
-        /**
-         * Handle quick action clicks
-         */
-        function handleQuickAction(actionName) {
-            console.log('🔗 Quick action clicked:', actionName);
-            alert(`${actionName} özelliği yakında aktif olacak!`);
-        }
-        
-        /**
-         * Global logout function
-         */
-        function logout() {
-            console.log('🚪 Logout from dashboard...');
-            
-            try {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                window.location.href = 'login.html';
-            } catch (error) {
-                console.error('❌ Logout error:', error);
-                window.location.href = 'login.html';
-            }
-        }
-    </script>
+    <!-- Auth ve Dashboard Scripts -->
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>

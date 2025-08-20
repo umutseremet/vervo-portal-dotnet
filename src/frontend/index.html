@@ -3,128 +3,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <title>Vervo Portal</title>
     
-    <!-- Config dosyasını ilk sırada yükle -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Config dosyasını yükle -->
     <script src="assets/js/config.js"></script>
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: backgroundFloat 20s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-20px) rotate(2deg); 
+                opacity: 0.8;
+            }
+        }
+        
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        .portal-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInUp 0.8s ease;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .portal-header {
+            background: var(--primary-gradient);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .portal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .logo-container {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .logo i {
+            font-size: 60px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .portal-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .portal-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 400;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .portal-content {
+            padding: 2.5rem;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .welcome-section h2 {
+            color: #343a40;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-section p {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .login-button {
+            width: 100%;
+            height: 60px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .login-button:hover::before {
+            left: 100%;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .action-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-card:hover {
+            background: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: rgba(102, 126, 234, 0.2);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+        
+        .action-card h6 {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .action-card p {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .portal-footer {
+            padding: 1.5rem 2.5rem;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        
+        .portal-footer small {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .portal-card {
+                border-radius: 20px;
+            }
+            
+            .portal-header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .logo {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .logo i {
+                font-size: 45px;
+            }
+            
+            .portal-title {
+                font-size: 2rem;
+            }
+            
+            .portal-content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .portal-footer {
+                padding: 1.5rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+        
+        /* Loading animation */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .loading .login-button {
+            background: #6c757d;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card shadow-lg border-0 rounded-lg mt-5">
-                    <div class="card-header text-center">
-                        <h1 class="font-weight-light my-4">
-                            <img id="mainLogo" src="" alt="" class="mb-3" style="">
-                            <br><span data-company-title id="mainTitle"></span>
-                        </h1> 
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center">
-                            <p class="lead mb-4" id="welcomeText">Portal'a erişim için lütfen giriş yapınız.</p>
-                            <div class="d-grid gap-2">
-                                <!-- Path düzeltildi: pages/pages/login.html değil, pages/login.html -->
-                                <a href="pages/login.html" class="btn btn-primary btn-lg">
-                                    Giriş Yap
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <hr class="my-4">
-                        
-                        <div class="row text-center">
-                            <div class="col-md-4 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon mb-2">
-                                        <span class="badge bg-primary rounded-pill fs-6">🔐</span>
-                                    </div>
-                                    <h6>Güvenli Giriş</h6>
-                                    <small class="text-muted">Portal kimlik doğrulama</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon mb-2">
-                                        <span class="badge bg-success rounded-pill fs-6">📊</span>
-                                    </div>
-                                    <h6>Dashboard</h6>
-                                    <small class="text-muted">Hızlı erişim paneli</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon mb-2">
-                                        <span class="badge bg-info rounded-pill fs-6">🚗</span>
-                                    </div>
-                                    <h6>Araç Takip</h6>
-                                    <small class="text-muted">Gerçek zamanlı izleme</small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-center mt-4">
-                            <small class="text-muted">
-                                Powered by <strong>Vervo Portal</strong>
-                            </small>
-                        </div>
+<body>
+    <div class="main-container">
+        <div class="portal-card">
+            <!-- Header -->
+            <div class="portal-header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-car"></i>
                     </div>
                 </div>
+                <h1 class="portal-title" id="portalTitle">Vervo Portal</h1>
+                <p class="portal-subtitle" id="portalSubtitle">Vervo Portal'a hoş geldiniz</p>
+            </div>
+            
+            <!-- Content -->
+            <div class="portal-content">
+                <div class="welcome-section">
+                    <h2>Portal Erişimi</h2>
+                    <p>Sisteme erişim için giriş yapın ve portal özelliklerini keşfedin.</p>
+                </div>
+                
+                <!-- Login Button -->
+                <button class="login-button" onclick="goToLogin()">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Giriş Yap
+                </button>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-card" onclick="handleQuickAction('Güvenli Giriş')">
+                        <i class="fas fa-shield-alt"></i>
+                        <h6>Güvenli Giriş</h6>
+                        <p>Portal kimlik doğrulama</p>
+                    </div>
+                    
+                    <div class="action-card" onclick="goToDashboard()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h6>Dashboard</h6>
+                        <p>Hızlı erişim paneli</p>
+                    </div>
+                    
+                    <div class="action-card" onclick="goToAracTakip()">
+                        <i class="fas fa-car"></i>
+                        <h6>Araç Takip</h6>
+                        <p>Gerçek zamanlı izleme</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="portal-footer">
+                <small>
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Powered by <strong>Vervo Portal</strong>
+                </small>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Sayfa yüklendiğinde config'ten bilgileri al ve uygula
+        // Update page from config
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                const config = window.APP_CONFIG;
-                
-                if (!config) {
-                    console.error('APP_CONFIG bulunamadı!');
-                    return;
-                }
-                
-                // Sayfa başlığını güncelle
-                const titleElement = document.getElementById('pageTitle');
-                if (titleElement && config.PORTAL_TITLE) {
-                    titleElement.textContent = config.PORTAL_TITLE;
-                }
-                
-                // Logo ayarlarını uygula
-                const logo = document.getElementById('mainLogo');
-                if (logo && config.LOGO) {
-                    logo.src = config.LOGO.PATH;
-                    logo.alt = config.LOGO.ALT_TEXT;
-                    logo.style.height = config.LOGO.HEIGHT.MAIN;
-                    logo.onerror = function() {
-                        console.warn('Logo yüklenemedi:', config.LOGO.PATH);
-                        this.style.display = 'none';
-                    };
-                }
-                
-                // Portal başlığını güncelle
-                const titleElement2 = document.getElementById('mainTitle');
-                if (titleElement2 && config.PORTAL_TITLE) {
-                    titleElement2.textContent = config.PORTAL_TITLE;
-                }
-                
-                // Hoş geldin mesajını güncelle
-                const welcomeElement = document.getElementById('welcomeText');
-                if (welcomeElement && config.MESSAGES && config.MESSAGES.WELCOME) {
-                    welcomeElement.textContent = config.MESSAGES.WELCOME;
-                }
-                
-                console.log('✅ Ana sayfa başarıyla yüklendi:', config.COMPANY_NAME);
-                
-            } catch (error) {
-                console.error('Sayfa yüklenirken hata:', error);
-            }
+            console.log('Index page initializing...');
+            
+            updatePageFromConfig();
+            
+            console.log('Index page initialized');
         });
+        
+        /**
+         * Update page elements from config
+         */
+        function updatePageFromConfig() {
+            const checkConfig = () => {
+                if (window.APP_CONFIG) {
+                    // Update portal title
+                    const portalTitle = document.getElementById('portalTitle');
+                    if (portalTitle) {
+                        portalTitle.textContent = window.APP_CONFIG.PORTAL_TITLE;
+                    }
+                    
+                    // Update portal subtitle
+                    const portalSubtitle = document.getElementById('portalSubtitle');
+                    if (portalSubtitle) {
+                        portalSubtitle.textContent = `${window.APP_CONFIG.PORTAL_TITLE}'a hoş geldiniz`;
+                    }
+                    
+                    // Update document title
+                    document.title = window.APP_CONFIG.PORTAL_TITLE;
+                    
+                    console.log('✅ Index page updated with config:', window.APP_CONFIG.PORTAL_TITLE);
+                } else {
+                    console.log('⏳ Config not ready, retrying...');
+                    setTimeout(checkConfig, 100);
+                }
+            };
+            
+            checkConfig();
+        }
+        
+        /**
+         * Go to login page
+         */
+        function goToLogin() {
+            console.log('🔐 Redirecting to login...');
+            window.location.href = 'pages/login.html';
+        }
+        
+        /**
+         * Go to dashboard (requires auth check)
+         */
+        function goToDashboard() {
+            console.log('📊 Redirecting to dashboard...');
+            // Check if user is authenticated
+            const token = localStorage.getItem('vervo_auth_token');
+            
+            if (token) {
+                window.location.href = 'pages/dashboard.html';
+            } else {
+                alert('Dashboard\'a erişim için önce giriş yapmanız gerekiyor.');
+                goToLogin();
+            }
+        }
+        
+        /**
+         * Go to araç takip (requires auth check) - FIXED REDIRECT
+         */
+        function goToAracTakip() {
+            console.log('🚗 Redirecting to araç takip...');
+            // Check if user is authenticated
+            const token = localStorage.getItem('vervo_auth_token');
+            
+            if (token) {
+                // FIXED: Doğru yönlendirme
+                window.location.href = 'pages/aractakip.html';
+            } else {
+                alert('Araç Takip sistemine erişim için önce giriş yapmanız gerekiyor.');
+                goToLogin();
+            }
+        }
+        
+        /**
+         * Handle quick action clicks
+         */
+        function handleQuickAction(actionName) {
+            console.log('⚡ Quick action clicked:', actionName);
+            
+            if (actionName === 'Güvenli Giriş') {
+                goToLogin();
+            } else {
+                alert(`${actionName} özelliği yakında aktif olacak!`);
+            }
+        }
     </script>
 </body>
 </html>

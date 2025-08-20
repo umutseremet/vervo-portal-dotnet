@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Portal - Giriş</title>
+    <title id="pageTitle">Vervo Portal - Giriş</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Config dosyasını ilk sırada yükle -->
     <script src="../assets/js/config.js"></script>
     
     <style>
-        /* Login page specific styles - DASHBOARD RENK TEMASI */
+        /* Login page complete styles - DASHBOARD RENK TEMASI */
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -133,6 +136,7 @@
         
         .form-floating {
             margin-bottom: 25px;
+            position: relative;
         }
         
         .form-floating > .form-control {
@@ -142,12 +146,19 @@
             font-size: 16px;
             transition: all 0.3s ease;
             background-color: #fafafa;
+            padding: 1rem 1.25rem;
         }
         
         .form-floating > .form-control:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
             background-color: white;
+            transform: translateY(-1px);
+        }
+        
+        .form-floating > .form-control:not(:placeholder-shown) {
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
         }
         
         .form-floating > label {
@@ -161,6 +172,25 @@
         .form-floating > .form-control:not(:placeholder-shown) ~ label {
             opacity: 0.75;
             transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+            color: #667eea;
+        }
+        
+        /* Password Toggle Button */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle:hover {
             color: #667eea;
         }
         
@@ -184,7 +214,7 @@
             font-weight: 500;
         }
         
-        /* Login Button - DASHBOARD TEMASI */
+        /* Login Button */
         .btn-login {
             width: 100%;
             height: 55px;
@@ -236,62 +266,72 @@
         
         /* Loading State */
         .btn-loading .spinner-border {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
+            width: 1.2rem;
+            height: 1.2rem;
         }
         
         /* Footer */
         .login-footer {
-            background-color: transparent;
-            padding: 20px 30px;
+            padding: 20px 30px 30px;
             text-align: center;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-top: 1px solid #f1f3f4;
         }
         
-        .login-footer a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-        
-        .login-footer a:hover {
-            color: #764ba2;
-            text-decoration: underline;
+        .login-footer small {
+            color: #6c757d;
+            font-size: 14px;
         }
         
         /* Alert Styles */
         .alert {
             border-radius: 12px;
             border: none;
-            font-weight: 500;
             margin-bottom: 25px;
-        }
-        
-        .alert-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
+            font-weight: 500;
         }
         
         .alert-success {
-            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
-            color: white;
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #0f5132;
+            border-left: 4px solid #198754;
         }
         
-        /* Responsive Design */
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .alert-info {
+            background-color: rgba(13, 202, 240, 0.1);
+            color: #055160;
+            border-left: 4px solid #0dcaf0;
+        }
+        
+        /* Form animations */
+        .shake {
+            animation: shake 0.6s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Responsive */
         @media (max-width: 576px) {
             .login-container {
-                margin: 0 15px;
-                max-width: none;
+                max-width: 100%;
+                padding: 0 15px;
+            }
+            
+            .login-card {
+                border-radius: 16px;
             }
             
             .login-header {
                 padding: 30px 20px;
-            }
-            
-            .login-header h1 {
-                font-size: 24px;
             }
             
             .login-form {
@@ -299,19 +339,22 @@
             }
             
             .login-footer {
-                padding: 15px 20px;
+                padding: 15px 20px 25px;
             }
         }
         
-        /* Touch device optimizations */
-        @media (hover: none) and (pointer: coarse) {
-            .btn-login:hover {
-                transform: none;
-            }
-            
-            .form-floating > .form-control {
-                font-size: 16px; /* Prevent zoom on iOS */
-            }
+        /* Loading overlay */
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        /* Focus styles for accessibility */
+        .form-control:focus,
+        .btn:focus,
+        .form-check-input:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -321,9 +364,9 @@
             <!-- Header -->
             <div class="login-header">
                 <div class="logo">
-                    <i class="fas fa-user-shield"></i>
+                    <i class="fas fa-car"></i>
                 </div>
-                <h1 id="loginTitle">Portal Girişi</h1>
+                <h1 id="loginTitle">Vervo Portal</h1>
                 <p id="loginSubtitle">Sisteme giriş yapmak için bilgilerinizi girin</p>
             </div>
             
@@ -335,7 +378,7 @@
                 <form id="loginForm">
                     <!-- Username -->
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Kullanıcı Adı" required>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Kullanıcı Adı" required autocomplete="username">
                         <label for="username">
                             <i class="fas fa-user me-2"></i>Kullanıcı Adı
                         </label>
@@ -343,10 +386,13 @@
                     
                     <!-- Password -->
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Şifre" required>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Şifre" required autocomplete="current-password">
                         <label for="password">
                             <i class="fas fa-lock me-2"></i>Şifre
                         </label>
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Şifreyi göster/gizle">
+                            <i class="fas fa-eye"></i>
+                        </button>
                     </div>
                     
                     <!-- Remember Me -->
@@ -380,206 +426,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/login.js"></script>
-    
-    <script>
-        // Login page initialization - CONFIG'TEN PARAMETRİK YÜKLEME
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Login page initializing...');
-            
-            // Update page title and login title from config
-            updateLoginPageFromConfig();
-            
-            // Focus on username field
-            const usernameField = document.getElementById('username');
-            if (usernameField) {
-                usernameField.focus();
-            }
-            
-            // Load remembered username
-            loadRememberedUsername();
-            
-            // Setup form handling
-            setupLoginForm();
-            
-            console.log('✅ Login page initialized');
-        });
-        
-        /**
-         * Update login page elements from config
-         */
-        function updateLoginPageFromConfig() {
-            if (window.APP_CONFIG) {
-                // Update page title (head title)
-                const pageTitle = document.getElementById('pageTitle');
-                if (pageTitle) {
-                    pageTitle.textContent = `${window.APP_CONFIG.PORTAL_TITLE} - Giriş`;
-                }
-                
-                // Update login title (header başlığı)
-                const loginTitle = document.getElementById('loginTitle');
-                if (loginTitle) {
-                    loginTitle.textContent = window.APP_CONFIG.PORTAL_TITLE;
-                }
-                
-                // Update login subtitle (header alt yazısı)
-                const loginSubtitle = document.getElementById('loginSubtitle');
-                if (loginSubtitle) {
-                    loginSubtitle.textContent = `${window.APP_CONFIG.PORTAL_TITLE} sistemine giriş yapmak için bilgilerinizi girin`;
-                }
-                
-                // Update document title
-                document.title = `${window.APP_CONFIG.PORTAL_TITLE} - Giriş`;
-                
-                console.log('✅ Login page updated with config:', window.APP_CONFIG.PORTAL_TITLE);
-            } else {
-                console.log('⏳ Config not ready, using defaults');
-                
-                // Wait for config to load
-                setTimeout(updateLoginPageFromConfig, 100);
-            }
-        }
-        
-        /**
-         * Load remembered username
-         */
-        function loadRememberedUsername() {
-            if (window.APP_CONFIG && window.APP_CONFIG.SECURITY) {
-                const rememberedUsername = localStorage.getItem(window.APP_CONFIG.SECURITY.REMEMBER_USERNAME_KEY);
-                if (rememberedUsername) {
-                    const usernameField = document.getElementById('username');
-                    const rememberCheckbox = document.getElementById('rememberMe');
-                    const passwordField = document.getElementById('password');
-                    
-                    if (usernameField) usernameField.value = rememberedUsername;
-                    if (rememberCheckbox) rememberCheckbox.checked = true;
-                    if (passwordField) passwordField.focus();
-                }
-            }
-        }
-        
-        /**
-         * Setup login form handling
-         */
-        function setupLoginForm() {
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', handleLogin);
-                
-                // Enter key handling
-                document.querySelectorAll('.form-control').forEach(input => {
-                    input.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleLogin(e);
-                        }
-                    });
-                });
-            }
-        }
-        
-        /**
-         * Handle login form submission
-         */
-        async function handleLogin(event) {
-            event.preventDefault();
-            console.log('🔐 Login attempt started...');
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-            
-            // Validation
-            if (!username || !password) {
-                showAlert('Kullanıcı adı ve şifre gereklidir.', 'danger');
-                return;
-            }
-            
-            // Show loading state
-            setLoginButtonLoading(true);
-            
-            try {
-                // API call would go here
-                console.log('Login data:', { username, rememberMe });
-                
-                // Simulate API call for demo
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Handle remember me
-                if (window.APP_CONFIG && window.APP_CONFIG.SECURITY) {
-                    if (rememberMe) {
-                        localStorage.setItem(window.APP_CONFIG.SECURITY.REMEMBER_USERNAME_KEY, username);
-                    } else {
-                        localStorage.removeItem(window.APP_CONFIG.SECURITY.REMEMBER_USERNAME_KEY);
-                    }
-                }
-                
-                // Success message from config
-                const successMessage = window.APP_CONFIG?.MESSAGES?.LOGIN_SUCCESS || 'Giriş başarılı!';
-                showAlert(successMessage, 'success');
-                
-                // Redirect after delay
-                setTimeout(() => {
-                    const redirectPage = window.APP_CONFIG?.PAGES?.LOGIN_REDIRECT || 'dashboard.html';
-                    window.location.href = redirectPage;
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                const errorMessage = window.APP_CONFIG?.MESSAGES?.LOGIN_ERROR || 'Giriş sırasında hata oluştu.';
-                showAlert(errorMessage, 'danger');
-            } finally {
-                setLoginButtonLoading(false);
-            }
-        }
-        
-        /**
-         * Show alert message
-         */
-        function showAlert(message, type = 'info') {
-            const alertContainer = document.getElementById('alertContainer');
-            if (!alertContainer) return;
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            alertContainer.innerHTML = '';
-            alertContainer.appendChild(alertDiv);
-            
-            // Auto dismiss after delay
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
-        }
-        
-        /**
-         * Set login button loading state
-         */
-        function setLoginButtonLoading(loading) {
-            const loginBtn = document.getElementById('loginBtn');
-            if (!loginBtn) return;
-            
-            if (loading) {
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = `
-                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                    Giriş yapılıyor...
-                `;
-                loginBtn.classList.add('btn-loading');
-            } else {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = `
-                    <i class="fas fa-sign-in-alt me-2"></i>
-                    Giriş Yap
-                `;
-                loginBtn.classList.remove('btn-loading');
-            }
-        }
-    </script>
 </body>
 </html>

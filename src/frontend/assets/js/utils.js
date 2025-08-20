@@ -1,424 +1,259 @@
-// Utility Functions for Aslan Group Portal
-// src/frontend/assets/js/utils.js
+/**
+ * Navigation Utility Functions - URL REDIRECT FIX
+ * src/frontend/assets/js/navigation-utils.js
+ * 
+ * Bu dosya navigation ve yönlendirme işlemleri için yardımcı fonksiyonlar içerir
+ * Özellikle "/pages" fazladan eklenmesi sorununu çözer
+ */
 
 /**
- * Show alert message
- * @param {string} message - Alert message
- * @param {string} type - Alert type (success, danger, warning, info)
- * @param {number} duration - Auto hide duration in milliseconds (default: 5000)
+ * Mevcut konuma göre doğru yönlendirme path'ini hesaplar
+ * @param {string} targetPage - Hedef sayfa (örn: 'dashboard.html' veya 'login.html')
+ * @returns {string} - Doğru relative path
  */
-function showAlert(message, type = 'info', duration = 5000) {
-    console.log('showAlert called:', message, type);
+function getCorrectRedirectPath(targetPage) {
+    const currentPath = window.location.pathname;
+    const currentDir = currentPath.substring(0, currentPath.lastIndexOf('/'));
     
-    // Remove existing alerts
-    $('#alertContainer').empty();
+    console.log('Navigation Utils - Current path:', currentPath);
+    console.log('Navigation Utils - Current dir:', currentDir);
+    console.log('Navigation Utils - Target page:', targetPage);
     
-    // Create new alert
-    const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            <strong>${getAlertIcon(type)}</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    `;
+    // Mevcut konumu analiz et
+    const isInPagesFolder = currentPath.includes('/pages/');
+    const isTargetInPages = ['dashboard.html', 'login.html', 'aractakip.html'].includes(targetPage);
     
-    // Add to container
-    $('#alertContainer').html(alertHtml);
+    let redirectPath;
     
-    // Auto remove after specified duration
-    if (duration > 0) {
-        setTimeout(() => {
-            $('.alert').alert('close');
-        }, duration);
-    }
-    
-    // Scroll to top to ensure alert is visible
-    $('html, body').animate({ scrollTop: 0 }, 300);
-}
-
-/**
- * Get appropriate icon for alert type
- * @param {string} type - Alert type
- * @returns {string} Icon emoji
- */
-function getAlertIcon(type) {
-    const icons = {
-        success: '✅',
-        danger: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
-    };
-    return icons[type] || 'ℹ️';
-}
-
-/**
- * Show confirmation dialog
- * @param {string} message - Confirmation message
- * @param {Function} onConfirm - Callback function when confirmed
- * @param {Function} onCancel - Callback function when cancelled
- */
-function showConfirm(message, onConfirm, onCancel = null) {
-    if (confirm(message)) {
-        if (typeof onConfirm === 'function') {
-            onConfirm();
-        }
+    if (isInPagesFolder && isTargetInPages) {
+        // Pages klasöründeyiz ve hedef de pages klasöründe
+        redirectPath = targetPage;
+    } else if (isInPagesFolder && !isTargetInPages) {
+        // Pages klasöründeyiz ama hedef root'ta
+        redirectPath = '../' + targetPage;
+    } else if (!isInPagesFolder && isTargetInPages) {
+        // Root'tayız ama hedef pages klasöründe
+        redirectPath = 'pages/' + targetPage;
     } else {
-        if (typeof onCancel === 'function') {
-            onCancel();
-        }
+        // Root'tayız ve hedef de root'ta
+        redirectPath = targetPage;
     }
+    
+    console.log('Navigation Utils - Final redirect path:', redirectPath);
+    return redirectPath;
 }
 
 /**
- * Format date for Turkish locale
- * @param {Date|string} date - Date to format
- * @param {boolean} includeTime - Include time in format
- * @returns {string} Formatted date string
+ * Login başarılı olduktan sonra dashboard'a yönlendir
  */
-function formatDate(date, includeTime = false) {
-    if (!date) return 'Belirtilmemiş';
-    
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    
-    if (isNaN(dateObj.getTime())) {
-        return 'Geçersiz tarih';
-    }
-    
-    const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-    };
-    
-    if (includeTime) {
-        options.hour = '2-digit';
-        options.minute = '2-digit';
-    }
-    
-    return dateObj.toLocaleDateString('tr-TR', options);
+function redirectToDashboard() {
+    const redirectPath = getCorrectRedirectPath('dashboard.html');
+    console.log('Redirecting to dashboard:', redirectPath);
+    window.location.href = redirectPath;
 }
 
 /**
- * Format number with Turkish locale
- * @param {number} number - Number to format
- * @param {number} decimals - Number of decimal places
- * @returns {string} Formatted number string
+ * Logout olduktan sonra login sayfasına yönlendir
  */
-function formatNumber(number, decimals = 0) {
-    if (isNaN(number)) return '0';
-    
-    return new Intl.NumberFormat('tr-TR', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-    }).format(number);
+function redirectToLogin() {
+    const redirectPath = getCorrectRedirectPath('login.html');
+    console.log('Redirecting to login:', redirectPath);
+    window.location.href = redirectPath;
 }
 
 /**
- * Debounce function
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in milliseconds
- * @returns {Function} Debounced function
+ * Mevcut sayfanın hangi klasörde olduğunu kontrol et
  */
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+function getCurrentPageLocation() {
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/').filter(segment => segment);
+    
+    return {
+        isInPagesFolder: currentPath.includes('/pages/'),
+        isInRootFolder: !currentPath.includes('/pages/'),
+        currentPage: pathSegments[pathSegments.length - 1] || 'index.html',
+        fullPath: currentPath,
+        directory: currentPath.substring(0, currentPath.lastIndexOf('/'))
     };
 }
 
 /**
- * Throttle function
- * @param {Function} func - Function to throttle
- * @param {number} limit - Limit in milliseconds
- * @returns {Function} Throttled function
+ * Sayfa yönlendirmesi için genel fonksiyon
+ * @param {string} targetPage - Hedef sayfa
+ * @param {number} delay - Yönlendirme gecikmesi (ms)
  */
-function throttle(func, limit) {
-    let lastFunc;
-    let lastRan;
-    return function(...args) {
-        if (!lastRan) {
-            func.apply(this, args);
-            lastRan = Date.now();
-        } else {
-            clearTimeout(lastFunc);
-            lastFunc = setTimeout(() => {
-                if ((Date.now() - lastRan) >= limit) {
-                    func.apply(this, args);
-                    lastRan = Date.now();
-                }
-            }, limit - (Date.now() - lastRan));
-        }
-    };
-}
-
-/**
- * Validate email format
- * @param {string} email - Email to validate
- * @returns {boolean} Is valid email
- */
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-/**
- * Validate phone number (Turkish format)
- * @param {string} phone - Phone number to validate
- * @returns {boolean} Is valid phone
- */
-function isValidPhone(phone) {
-    // Turkish phone number formats: +90 5xx xxx xx xx, 0 5xx xxx xx xx, 5xx xxx xx xx
-    const phoneRegex = /^(\+90|0)?[5][0-9]{2}[0-9]{3}[0-9]{2}[0-9]{2}$/;
-    const cleanPhone = phone.replace(/\s/g, '');
-    return phoneRegex.test(cleanPhone);
-}
-
-/**
- * Format phone number for display
- * @param {string} phone - Phone number to format
- * @returns {string} Formatted phone number
- */
-function formatPhone(phone) {
-    const cleanPhone = phone.replace(/\D/g, '');
+function navigateToPage(targetPage, delay = 0) {
+    const redirectPath = getCorrectRedirectPath(targetPage);
     
-    if (cleanPhone.length === 10 && cleanPhone.startsWith('5')) {
-        // Format: 5xx xxx xx xx
-        return cleanPhone.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
-    } else if (cleanPhone.length === 11 && cleanPhone.startsWith('05')) {
-        // Format: 0 5xx xxx xx xx
-        return cleanPhone.replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
-    } else if (cleanPhone.length === 12 && cleanPhone.startsWith('905')) {
-        // Format: +90 5xx xxx xx xx
-        return cleanPhone.replace(/(\d{2})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5');
+    if (delay > 0) {
+        setTimeout(() => {
+            window.location.href = redirectPath;
+        }, delay);
+    } else {
+        window.location.href = redirectPath;
     }
-    
-    return phone; // Return original if no format matches
 }
 
 /**
- * Get file size in human readable format
- * @param {number} bytes - File size in bytes
- * @returns {string} Human readable file size
+ * Güvenli sayfa yönlendirmesi - redirect loop'unu önler
+ * @param {string} targetPage - Hedef sayfa
  */
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
+function safeRedirect(targetPage) {
+    const currentLocation = getCurrentPageLocation();
     
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-/**
- * Copy text to clipboard
- * @param {string} text - Text to copy
- * @returns {Promise<boolean>} Success status
- */
-async function copyToClipboard(text) {
-    try {
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(text);
-            return true;
-        } else {
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                const successful = document.execCommand('copy');
-                document.body.removeChild(textArea);
-                return successful;
-            } catch (err) {
-                document.body.removeChild(textArea);
-                return false;
-            }
-        }
-    } catch (err) {
-        console.error('Failed to copy text: ', err);
+    // Aynı sayfaya yönlendirme yapmaya çalışıyorsak durdur
+    if (currentLocation.currentPage === targetPage) {
+        console.log('Already on target page:', targetPage);
         return false;
     }
-}
-
-/**
- * Generate random string
- * @param {number} length - Length of string
- * @param {string} chars - Characters to use
- * @returns {string} Random string
- */
-function generateRandomString(length = 8, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
-
-/**
- * Scroll to element smoothly
- * @param {string|Element} element - Element selector or element
- * @param {number} offset - Offset from top
- */
-function scrollToElement(element, offset = 0) {
-    const targetElement = typeof element === 'string' ? document.querySelector(element) : element;
     
-    if (targetElement) {
-        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - offset;
-        
-        window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-        });
+    // Yönlendirme yap
+    navigateToPage(targetPage);
+    return true;
+}
+
+/**
+ * Auth durumuna göre otomatik yönlendirme
+ */
+function autoRedirectBasedOnAuth() {
+    const currentLocation = getCurrentPageLocation();
+    const isAuthenticated = window.authService ? window.authService.isAuthenticated() : false;
+    
+    console.log('Auto redirect check:', {
+        currentPage: currentLocation.currentPage,
+        isAuthenticated: isAuthenticated
+    });
+    
+    // Eğer kullanıcı giriş yapmış ve login sayfasındaysa dashboard'a yönlendir
+    if (isAuthenticated && currentLocation.currentPage === 'login.html') {
+        console.log('User is authenticated but on login page, redirecting to dashboard');
+        safeRedirect('dashboard.html');
+        return;
+    }
+    
+    // Eğer kullanıcı giriş yapmamış ve korumalı sayfadaysa login'e yönlendir
+    const protectedPages = ['dashboard.html', 'aractakip.html'];
+    if (!isAuthenticated && protectedPages.includes(currentLocation.currentPage)) {
+        console.log('User is not authenticated but on protected page, redirecting to login');
+        safeRedirect('login.html');
+        return;
     }
 }
 
 /**
- * Check if element is in viewport
- * @param {Element} element - Element to check
- * @returns {boolean} Is in viewport
+ * URL path'ini normalize et - fazladan slashları kaldır
  */
-function isInViewport(element) {
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
+function normalizePath(path) {
+    return path.replace(/\/+/g, '/').replace(/\/$/, '') || '/';
 }
 
 /**
- * Load external script dynamically
- * @param {string} src - Script source URL
- * @returns {Promise} Promise that resolves when script is loaded
+ * Relative path'i absolute path'e çevir
  */
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
+function resolveRelativePath(basePath, relativePath) {
+    const baseSegments = basePath.split('/').filter(s => s);
+    const relativeSegments = relativePath.split('/').filter(s => s);
+    
+    for (const segment of relativeSegments) {
+        if (segment === '..') {
+            baseSegments.pop();
+        } else if (segment !== '.') {
+            baseSegments.push(segment);
+        }
+    }
+    
+    return '/' + baseSegments.join('/');
+}
+
+/**
+ * Sayfa yüklendiğinde otomatik kontroller
+ */
+function initializePageNavigation() {
+    console.log('Initializing page navigation...');
+    
+    // Mevcut lokasyonu logla
+    const location = getCurrentPageLocation();
+    console.log('Current page location:', location);
+    
+    // Auth durumunu kontrol et (config yüklenmesini bekle)
+    setTimeout(() => {
+        autoRedirectBasedOnAuth();
+    }, 200);
+}
+
+/**
+ * Navigation event listener'ları ekle
+ */
+function setupNavigationEventListeners() {
+    // Browser back/forward butonları için
+    window.addEventListener('popstate', function(event) {
+        console.log('Page navigation detected via popstate');
+        setTimeout(() => {
+            autoRedirectBasedOnAuth();
+        }, 100);
+    });
+    
+    // Sayfa görünürlüğü değiştiğinde auth kontrolü
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            console.log('Page became visible, checking auth status');
+            setTimeout(() => {
+                autoRedirectBasedOnAuth();
+            }, 100);
+        }
+    });
+    
+    // Page focus event
+    window.addEventListener('focus', function() {
+        console.log('Window focused, checking auth status');
+        setTimeout(() => {
+            autoRedirectBasedOnAuth();
+        }, 100);
     });
 }
 
 /**
- * Storage helper functions
+ * Debug bilgileri göster
  */
-const storage = {
-    /**
-     * Set item in localStorage with expiration
-     */
-    setItem(key, value, expirationMinutes = null) {
-        const item = {
-            value: value,
-            timestamp: Date.now(),
-            expiration: expirationMinutes ? Date.now() + (expirationMinutes * 60 * 1000) : null
-        };
-        
-        try {
-            localStorage.setItem(key, JSON.stringify(item));
-            return true;
-        } catch (error) {
-            console.error('Error setting localStorage item:', error);
-            return false;
-        }
-    },
-    
-    /**
-     * Get item from localStorage with expiration check
-     */
-    getItem(key) {
-        try {
-            const itemStr = localStorage.getItem(key);
-            if (!itemStr) return null;
-            
-            const item = JSON.parse(itemStr);
-            
-            // Check expiration
-            if (item.expiration && Date.now() > item.expiration) {
-                localStorage.removeItem(key);
-                return null;
-            }
-            
-            return item.value;
-        } catch (error) {
-            console.error('Error getting localStorage item:', error);
-            return null;
-        }
-    },
-    
-    /**
-     * Remove item from localStorage
-     */
-    removeItem(key) {
-        try {
-            localStorage.removeItem(key);
-            return true;
-        } catch (error) {
-            console.error('Error removing localStorage item:', error);
-            return false;
-        }
-    },
-    
-    /**
-     * Clear all expired items
-     */
-    clearExpired() {
-        try {
-            const keys = Object.keys(localStorage);
-            keys.forEach(key => {
-                const itemStr = localStorage.getItem(key);
-                if (itemStr) {
-                    try {
-                        const item = JSON.parse(itemStr);
-                        if (item.expiration && Date.now() > item.expiration) {
-                            localStorage.removeItem(key);
-                        }
-                    } catch (e) {
-                        // Item is not in our format, ignore
-                    }
-                }
-            });
-        } catch (error) {
-            console.error('Error clearing expired items:', error);
-        }
-    }
+function debugNavigationInfo() {
+    const location = getCurrentPageLocation();
+    console.group('🧭 Navigation Debug Info');
+    console.log('Current URL:', window.location.href);
+    console.log('Current pathname:', window.location.pathname);
+    console.log('Location info:', location);
+    console.log('Is authenticated:', window.authService ? window.authService.isAuthenticated() : 'AuthService not available');
+    console.groupEnd();
+}
+
+// Global fonksiyonları window objesine ekle
+window.NavigationUtils = {
+    getCorrectRedirectPath,
+    redirectToDashboard,
+    redirectToLogin,
+    getCurrentPageLocation,
+    navigateToPage,
+    safeRedirect,
+    autoRedirectBasedOnAuth,
+    normalizePath,
+    resolveRelativePath,
+    initializePageNavigation,
+    setupNavigationEventListeners,
+    debugNavigationInfo
 };
 
-// Make utility functions globally available
-window.utils = {
-    showAlert,
-    getAlertIcon,
-    showConfirm,
-    formatDate,
-    formatNumber,
-    debounce,
-    throttle,
-    isValidEmail,
-    isValidPhone,
-    formatPhone,
-    formatFileSize,
-    copyToClipboard,
-    generateRandomString,
-    scrollToElement,
-    isInViewport,
-    loadScript,
-    storage
-};
+// Global shortcuts
+window.redirectToDashboard = redirectToDashboard;
+window.redirectToLogin = redirectToLogin;
+window.navigateToPage = navigateToPage;
 
-// Initialize utility functions on page load
-$(document).ready(function() {
-    // Clear expired localStorage items
-    storage.clearExpired();
-    
-    console.log('Utils.js loaded successfully');
+// Sayfa yüklendiğinde otomatik olarak initialize et
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧭 NavigationUtils: DOM Content Loaded');
+    initializePageNavigation();
+    setupNavigationEventListeners();
 });
+
+// Export for modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = window.NavigationUtils;
+}
