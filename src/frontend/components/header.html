@@ -656,17 +656,19 @@
     function initializeWhenReady() {
         console.log('⏳ Waiting for configuration...');
         
+        // Always set default values first
+        setDefaultValues();
+        
         if (window.APP_CONFIG) {
             console.log('✅ Config found immediately');
             setTimeout(() => {
                 window.initializeHeader();
             }, 100);
         } else {
-            console.log('⏳ Config not found, setting defaults and waiting...');
-            setDefaultValues();
+            console.log('⏳ Config not found, waiting...');
             
             let attempts = 0;
-            const maxAttempts = 100;
+            const maxAttempts = 50; // Reduced from 100
             
             const checkConfig = setInterval(() => {
                 attempts++;
@@ -676,16 +678,16 @@
                     clearInterval(checkConfig);
                     window.initializeHeader();
                 } else if (attempts >= maxAttempts) {
-                    console.warn('⏰ Config timeout after', maxAttempts, 'attempts');
+                    console.warn('⏰ Config timeout after', maxAttempts, 'attempts, using defaults');
                     clearInterval(checkConfig);
                     // Initialize anyway with defaults
                     window.initializeHeader();
                 }
-            }, 100);
+            }, 50); // Reduced interval
         }
     }
     
-    // Config event listener
+    // Config event listener - ÖNCE EKLE
     window.addEventListener('configLoaded', function(e) {
         console.log('📡 *** CONFIG LOADED EVENT ***');
         setTimeout(() => {
@@ -699,7 +701,7 @@
         document.addEventListener('DOMContentLoaded', initializeWhenReady);
     } else {
         console.log('📋 Document ready, initializing...');
-        initializeWhenReady();
+        setTimeout(initializeWhenReady, 50); // Kısa delay ekle
     }
     
     console.log('🎯 *** HEADER SCRIPT SETUP COMPLETE ***');
