@@ -8,8 +8,8 @@
 window.APP_CONFIG = {
     // *** MÜŞTERİ AYARLARI ***
     // Bu değerleri değiştirerek farklı müşteriler için projeyi kullanabilirsiniz
-    COMPANY_NAME: 'Vervo',
-    PORTAL_TITLE: 'Vervo Portal',
+    COMPANY_NAME: 'Aslan Group',
+    PORTAL_TITLE: 'Aslan Group Portal',
     
     // Logo ayarları
     LOGO: {

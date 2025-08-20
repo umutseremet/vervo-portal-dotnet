@@ -8,11 +8,11 @@
   "AllowedHosts": "*",
 
   "ClientSettings": {
-    "CompanyName": "Vervo",
-    "PortalTitle": "Vervo Portal",
-    "ContactEmail": "info@vervo.com.tr",
-    "SupportEmail": "support@vervo.com.tr",
-    "CompanyWebsite": "https://www.vervo.com.tr",
+    "CompanyName": "Aslan Group",
+    "PortalTitle": "Aslan Group Portal",
+    "ContactEmail": "info@aslangroup.com",
+    "SupportEmail": "support@aslangroup.com",
+    "CompanyWebsite": "https://www.aslangroup.com",
     "CompanyAddress": "İstanbul, Türkiye",
     "CompanyPhone": "+90 212 XXX XX XX",
     "TimeZone": "Europe/Istanbul",

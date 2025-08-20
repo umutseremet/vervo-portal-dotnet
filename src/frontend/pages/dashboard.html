@@ -3,31 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Portal - Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Dashboard - Portal</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/css/styles.css">
     
-    <!-- Config dosyasını ilk sırada yükle -->
-    <script src="../assets/js/config.js"></script>
-    
+    <!-- Custom Styles -->
     <style>
-        /* Dashboard specific styles - GRİ TEMA */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-content {
+            margin-left: 0;
+            padding-top: 90px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+        
         .welcome-card {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-card .card-body {
+            padding: 2rem;
         }
         
         .stat-card {
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
             border: none;
             border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
         
         .stat-number {
@@ -37,61 +57,92 @@
         }
         
         .stat-label {
-            color: #6c757d;
             font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #6c757d;
             margin-bottom: 0;
         }
         
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .chart-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            background: white;
         }
         
         .activity-item {
-            border-left: 3px solid #007bff;
-            padding-left: 15px;
-            margin-bottom: 15px;
+            border-left: 3px solid #667eea;
+            background: rgba(102, 126, 234, 0.05);
+            margin-bottom: 1rem;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
         }
         
         .activity-time {
-            font-size: 0.8rem;
             color: #6c757d;
+            font-size: 0.85rem;
         }
         
-        .status-badge {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
         }
         
-        .status-active {
-            background-color: #28a745;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .status-inactive {
-            background-color: #dc3545;
+        .btn-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
         }
         
-        .status-warning {
-            background-color: #ffc107;
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            color: white;
         }
         
-        /* Loading Animation */
+        .quick-action {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            height: 100%;
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .quick-action i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        
         .loading-spinner {
-            border: 3px solid #f3f3f3;
+            border: 4px solid #f3f3f3;
             border-top: 3px solid #3498db;
             border-radius: 50%;
             width: 30px;
@@ -113,6 +164,10 @@
             
             .stat-card {
                 margin-bottom: 1rem;
+            }
+            
+            .welcome-card .card-body {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -139,10 +194,8 @@
                                         raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.
                                     </p>
                                 </div>
-                                <div class="col-md-4 text-end">
-                                    <div class="d-none d-md-block">
-                                        <i class="fas fa-chart-line fa-5x opacity-50"></i>
-                                    </div>
+                                <div class="col-md-4 text-center">
+                                    <i class="fas fa-tachometer-alt fa-5x opacity-50"></i>
                                 </div>
                             </div>
                         </div>
@@ -150,15 +203,15 @@
                 </div>
             </div>
 
-            <!-- Stats Cards -->
+            <!-- Statistics Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="card stat-card fade-in">
                         <div class="card-body text-center">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h3 class="stat-number text-primary">42</h3>
-                                    <p class="stat-label">Aktif Araçlar</p>
+                                    <h3 class="stat-number text-primary">24</h3>
+                                    <p class="stat-label">Toplam Araç</p>
                                 </div>
                                 <div class="text-primary">
                                     <i class="fas fa-car fa-2x"></i>
@@ -173,11 +226,11 @@
                         <div class="card-body text-center">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h3 class="stat-number text-success">1,247</h3>
-                                    <p class="stat-label">Toplam Mesafe (km)</p>
+                                    <h3 class="stat-number text-success">18</h3>
+                                    <p class="stat-label">Aktif Araç</p>
                                 </div>
                                 <div class="text-success">
-                                    <i class="fas fa-route fa-2x"></i>
+                                    <i class="fas fa-check-circle fa-2x"></i>
                                 </div>
                             </div>
                         </div>
@@ -221,65 +274,71 @@
             <div class="row">
                 <!-- Chart Section -->
                 <div class="col-lg-8 mb-4">
-                    <div class="card fade-in">
+                    <div class="card chart-card fade-in">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-chart-area me-2"></i>
-                                Araç Aktivitesi
+                                <i class="fas fa-chart-area me-2"></i>Araç Kullanım İstatistikleri
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="chart-container">
-                                <canvas id="activityChart"></canvas>
+                            <div id="chartContainer">
+                                <canvas id="usageChart" width="400" height="200"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-
+                
                 <!-- Recent Activity -->
                 <div class="col-lg-4 mb-4">
-                    <div class="card fade-in">
+                    <div class="card chart-card fade-in">
                         <div class="card-header">
                             <h5 class="card-title mb-0">
-                                <i class="fas fa-clock me-2"></i>
-                                Son Aktiviteler
+                                <i class="fas fa-clock me-2"></i>Son Aktiviteler
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="activity-item">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="status-badge status-active"></span>
-                                    <strong>Araç-001</strong>
-                                    <small class="activity-time ms-auto">5 dk önce</small>
+                            <div class="activity-item p-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Araç Eklendi</h6>
+                                        <p class="mb-1 small">34 ABC 123 plakası sisteme eklendi</p>
+                                        <span class="activity-time">2 saat önce</span>
+                                    </div>
+                                    <i class="fas fa-plus-circle text-success"></i>
                                 </div>
-                                <p class="mb-0 small">İstanbul-Ankara rotasında</p>
                             </div>
                             
-                            <div class="activity-item">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="status-badge status-warning"></span>
-                                    <strong>Araç-015</strong>
-                                    <small class="activity-time ms-auto">12 dk önce</small>
+                            <div class="activity-item p-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Rapor Oluşturuldu</h6>
+                                        <p class="mb-1 small">Aylık kullanım raporu hazırlandı</p>
+                                        <span class="activity-time">4 saat önce</span>
+                                    </div>
+                                    <i class="fas fa-file-alt text-info"></i>
                                 </div>
-                                <p class="mb-0 small">Yakıt seviyesi düşük</p>
                             </div>
                             
-                            <div class="activity-item">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="status-badge status-active"></span>
-                                    <strong>Araç-007</strong>
-                                    <small class="activity-time ms-auto">18 dk önce</small>
+                            <div class="activity-item p-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Bakım Hatırlatması</h6>
+                                        <p class="mb-1 small">06 DEF 456 aracı bakım zamanı</p>
+                                        <span class="activity-time">6 saat önce</span>
+                                    </div>
+                                    <i class="fas fa-wrench text-warning"></i>
                                 </div>
-                                <p class="mb-0 small">Teslimat tamamlandı</p>
                             </div>
                             
-                            <div class="activity-item">
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="status-badge status-inactive"></span>
-                                    <strong>Araç-023</strong>
-                                    <small class="activity-time ms-auto">25 dk önce</small>
+                            <div class="activity-item p-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">Yeni Kullanıcı</h6>
+                                        <p class="mb-1 small">Ahmet Yılmaz sisteme katıldı</p>
+                                        <span class="activity-time">1 gün önce</span>
+                                    </div>
+                                    <i class="fas fa-user-plus text-primary"></i>
                                 </div>
-                                <p class="mb-0 small">Bakım için garajda</p>
                             </div>
                         </div>
                     </div>
@@ -287,483 +346,385 @@
             </div>
 
             <!-- Quick Actions -->
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col-12">
-                    <div class="card fade-in">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-bolt me-2"></i>
-                                Hızlı İşlemler
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <a href="aractakip.html" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fas fa-map-marked-alt fa-2x mb-2"></i>
-                                        <span>Araç Takip</span>
-                                    </a>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <a href="#" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fas fa-chart-bar fa-2x mb-2"></i>
-                                        <span>Raporlar</span>
-                                    </a>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <a href="#" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fas fa-cog fa-2x mb-2"></i>
-                                        <span>Ayarlar</span>
-                                    </a>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <a href="#" class="btn btn-outline-warning w-100 h-100 d-flex flex-column align-items-center justify-content-center">
-                                        <i class="fas fa-bell fa-2x mb-2"></i>
-                                        <span>Bildirimler</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="mb-3">Hızlı İşlemler</h4>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <a href="#" class="quick-action d-block">
+                        <i class="fas fa-plus-circle"></i>
+                        <h6>Yeni Araç Ekle</h6>
+                        <p class="text-muted small mb-0">Sisteme yeni araç kaydet</p>
+                    </a>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <a href="#" class="quick-action d-block">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h6>Canlı Takip</h6>
+                        <p class="text-muted small mb-0">Araçları harita üzerinde izle</p>
+                    </a>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <a href="#" class="quick-action d-block">
+                        <i class="fas fa-chart-line"></i>
+                        <h6>Rapor Oluştur</h6>
+                        <p class="text-muted small mb-0">Detaylı analiz raporları</p>
+                    </a>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <a href="#" class="quick-action d-block">
+                        <i class="fas fa-cog"></i>
+                        <h6>Sistem Ayarları</h6>
+                        <p class="text-muted small mb-0">Genel ayarları düzenle</p>
+                    </a>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- App Scripts -->
-    <script src="../assets/js/auth.js"></script>
-
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- App Configuration -->
+    <script src="../assets/js/config.js"></script>
+    
+    <!-- Sidebar Module -->
+    <script src="../assets/js/sidebar-module.js"></script>
+    
+    <!-- Main Dashboard Script -->
     <script>
-        // Global logout function - YÖNLENDIRME DÜZELTİLDİ
-        window.logout = function() {
-            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-                try {
-                    if (window.authService) {
-                        window.authService.logout();
-                    } else {
-                        // Fallback logout
-                        localStorage.clear();
-                        window.location.href = '../index.html';
-                    }
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    // Force logout
-                    localStorage.clear();
-                    window.location.href = '../index.html';
-                }
-            }
-        };
-
-        // Sayfa yüklendiğinde - AUTH KONTROLÜ DÜZELTİLDİ
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                console.log('Dashboard loading...');
+        // Dashboard Page Script - DÜZELTİLMİŞ VERSİYON
+        (function() {
+            'use strict';
+            
+            console.log('📊 Dashboard page initializing...');
+            
+            let chart = null;
+            
+            /**
+             * Initialize dashboard
+             */
+            function initDashboard() {
+                console.log('🚀 Dashboard initialization starting...');
                 
-                const config = window.APP_CONFIG;
-                
-                if (!config) {
-                    console.error('APP_CONFIG bulunamadı!');
-                    return;
-                }
-                
-                // Sayfa başlığını güncelle
-                const titleElement = document.getElementById('pageTitle');
-                if (titleElement && config.PORTAL_TITLE) {
-                    titleElement.textContent = config.PORTAL_TITLE + ' - Dashboard';
-                }
-                
-                // Hoş geldin mesajını güncelle
-                const welcomeElement = document.getElementById('welcomeMessage');
-                if (welcomeElement && config.PORTAL_TITLE) {
-                    welcomeElement.textContent = 
-                        `${config.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, ` +
-                        'raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.';
-                }
-                
-                // Auth kontrolü - Daha güvenilir
-                setTimeout(() => {
-                    checkAuthentication();
-                }, 200);
-                
-                // Header'ı yükle
-                loadHeader();
-                
-                // Dashboard verilerini yükle
-                loadDashboardData();
-                
-                // Chart'ı başlat
+                loadHeaderComponent();
+                updateWelcomeMessage();
                 initializeChart();
+                setupQuickActions();
                 
-                // Console welcome message
-                if (config.FEATURES && config.FEATURES.SHOW_CONSOLE_LOGS) {
-                    const welcomeMsg = config.CONSOLE.WELCOME_MESSAGE.replace('{{COMPANY_NAME}}', config.COMPANY_NAME);
-                    console.log(`%c${welcomeMsg} Dashboard`, config.CONSOLE.WELCOME_STYLE);
-                    console.log(`%c${config.CONSOLE.SUCCESS_MESSAGE}`, config.CONSOLE.SUCCESS_STYLE);
-                }
-                
-            } catch (error) {
-                console.error('Dashboard initialization error:', error);
+                console.log('✅ Dashboard initialization complete');
             }
-        });
-
-        /**
-         * Auth kontrolü - DÜZELTİLDİ
-         */
-        function checkAuthentication() {
-            try {
-                // AuthService'in yüklenmesini bekle
-                if (!window.authService) {
-                    console.log('AuthService not ready, waiting...');
-                    setTimeout(checkAuthentication, 300);
-                    return;
-                }
-                
-                if (!window.authService.isAuthenticated()) {
-                    console.log('User not authenticated, redirecting to login');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                // Kullanıcı bilgilerini yükle
-                loadUserInfo();
-                
-                console.log('✅ User authenticated successfully');
-                
-            } catch (error) {
-                console.error('Auth check error:', error);
-                // Hata durumunda login'e yönlendir
-                window.location.href = 'login.html';
-            }
-        }
-
-        /**
-         * Kullanıcı bilgilerini yükle
-         */
-        function loadUserInfo() {
-            try {
-                const user = window.authService.getCurrentUser();
-                if (user) {
-                    const welcomeElement = document.getElementById('welcomeUserName');
-                    if (welcomeElement) {
-                        welcomeElement.textContent = user.firstName || user.username || 'Kullanıcı';
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading user info:', error);
-            }
-        }
-
-        /**
-         * Header component'ini yükle - SCRIPT EXECUTION DÜZELTİLDİ
-         */
-        async function loadHeader() {
-            try {
+            
+            /**
+             * Load header component
+             */
+            async function loadHeaderComponent() {
                 console.log('📥 Loading header component...');
                 
-                const response = await fetch('../components/header.html');
-                if (response.ok) {
-                    const html = await response.text();
-                    const headerContainer = document.getElementById('headerContainer');
-                    if (headerContainer) {
-                        headerContainer.innerHTML = html;
-                        console.log('✅ Header HTML loaded successfully');
+                try {
+                    const response = await fetch('../components/header.html');
+                    if (response.ok) {
+                        const headerHtml = await response.text();
+                        document.getElementById('headerContainer').innerHTML = headerHtml;
+                        console.log('✅ Header component loaded');
                         
-                        // Script'lerin execute edilmesini bekle
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        
-                        // Manual script execution - HEADER SCRIPT'İ ZORLA ÇALIŞTIR
-                        const headerScripts = headerContainer.querySelectorAll('script');
-                        console.log('🔍 Found', headerScripts.length, 'header scripts');
-                        
-                        for (let i = 0; i < headerScripts.length; i++) {
-                            const script = headerScripts[i];
-                            console.log(`📜 Executing header script ${i + 1}...`);
-                            
-                            try {
-                                // Script içeriğini al ve execute et
-                                const scriptContent = script.textContent || script.innerHTML;
-                                if (scriptContent.trim()) {
-                                    // Global scope'da execute et
-                                    const scriptFunc = new Function(scriptContent);
-                                    scriptFunc.call(window);
-                                    console.log(`✅ Header script ${i + 1} executed successfully`);
-                                }
-                            } catch (scriptError) {
-                                console.error(`❌ Header script ${i + 1} execution error:`, scriptError);
+                        // Wait for header to be ready then initialize
+                        setTimeout(() => {
+                            if (typeof window.initializeHeader === 'function') {
+                                console.log('🔧 Initializing header...');
+                                window.initializeHeader();
+                            } else {
+                                console.log('⏳ Waiting for header initialization...');
+                                setTimeout(() => {
+                                    if (typeof window.initializeHeader === 'function') {
+                                        window.initializeHeader();
+                                    }
+                                }, 100);
                             }
-                        }
+                        }, 50);
                         
-                        // Şimdi initializeHeader'ı kontrol et
-                        await new Promise(resolve => setTimeout(resolve, 200));
-                        
-                        if (typeof window.initializeHeader === 'function') {
-                            console.log('✅ initializeHeader function artık mevcut!');
-                            window.initializeHeader();
-                        } else {
-                            console.error('❌ initializeHeader hala bulunamadı, manual setup yapılacak');
-                            manualHeaderSetup();
-                        }
-                        
+                    } else {
+                        console.error('❌ Header component load failed:', response.status);
                     }
-                } else {
-                    console.error('❌ Header component yüklenemedi:', response.status);
+                } catch (error) {
+                    console.error('❌ Error loading header:', error);
                 }
-            } catch (error) {
-                console.error('❌ Error loading header:', error);
-                manualHeaderSetup();
             }
-        }
-        
-        /**
-         * Manual header setup - fallback
-         */
-        function manualHeaderSetup() {
-            console.log('🛠️ Manual header setup başlatılıyor...');
             
-            try {
-                const config = window.APP_CONFIG;
+            /**
+             * Update welcome message with user info
+             */
+            function updateWelcomeMessage() {
+                try {
+                    const userStr = localStorage.getItem('user');
+                    if (userStr) {
+                        const user = JSON.parse(userStr);
+                        const userName = user.name || user.fullname || 'Kullanıcı';
+                        
+                        const welcomeUserNameEl = document.getElementById('welcomeUserName');
+                        if (welcomeUserNameEl) {
+                            welcomeUserNameEl.textContent = userName;
+                        }
+                        
+                        console.log('✅ Welcome message updated for:', userName);
+                    }
+                } catch (error) {
+                    console.error('❌ Error updating welcome message:', error);
+                }
+            }
+            
+            /**
+             * Initialize usage chart
+             */
+            function initializeChart() {
+                console.log('📈 Initializing usage chart...');
                 
-                if (!config) {
-                    console.error('❌ Config bulunamadı manual setup için');
+                const ctx = document.getElementById('usageChart');
+                if (!ctx) {
+                    console.error('❌ Chart canvas not found');
                     return;
                 }
                 
-                // Header title güncelle
-                const headerTitle = document.getElementById('headerTitle');
-                if (headerTitle) {
-                    headerTitle.textContent = config.PORTAL_TITLE;
-                    console.log('✅ Manual: Header title updated to:', config.PORTAL_TITLE);
-                } else {
-                    console.error('❌ Manual: headerTitle element bulunamadı');
-                }
+                // Sample data - replace with real data from API
+                const chartData = {
+                    labels: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'],
+                    datasets: [{
+                        label: 'Aktif Araç Sayısı',
+                        data: [12, 18, 15, 20, 16, 8, 6],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                };
                 
-                // Sidebar title güncelle
-                const sidebarTitle = document.getElementById('sidebarTitle');
-                if (sidebarTitle) {
-                    sidebarTitle.textContent = config.PORTAL_TITLE;
-                    console.log('✅ Manual: Sidebar title updated to:', config.PORTAL_TITLE);
-                } else {
-                    console.error('❌ Manual: sidebarTitle element bulunamadı');
-                }
-                
-                // Hamburger menu setup
-                setupHamburgerMenu();
-                
-                console.log('✅ Manual header setup completed');
-                
-            } catch (error) {
-                console.error('❌ Manual header setup error:', error);
-            }
-        }
-        
-        /**
-         * Hamburger menu setup - DEBUG VERSIYONU DÜZELTİLDİ
-         */
-        function setupHamburgerMenu() {
-            console.log('🍔 *** HAMBURGER MENU SETUP BAŞLADI ***');
-            
-            const sidebarToggle = document.getElementById('sidebarToggle');
-            const sidebar = document.getElementById('mobileSidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const sidebarClose = document.getElementById('sidebarClose');
-            
-            console.log('🔍 Element kontrolleri:');
-            console.log('  - sidebarToggle:', !!sidebarToggle, sidebarToggle);
-            console.log('  - mobileSidebar:', !!sidebar, sidebar);
-            console.log('  - sidebarOverlay:', !!overlay, overlay);
-            console.log('  - sidebarClose:', !!sidebarClose, sidebarClose);
-            
-            if (!sidebarToggle) {
-                console.error('❌ CRITICAL: sidebarToggle bulunamadı!');
-                // Test için alternatif selector dene
-                const alternativeToggle = document.querySelector('.navbar-toggler');
-                console.log('🔍 Alternative toggle found:', !!alternativeToggle, alternativeToggle);
-                return;
-            }
-            
-            if (!sidebar) {
-                console.error('❌ CRITICAL: mobileSidebar bulunamadı!');
-                return;
-            }
-            
-            if (!overlay) {
-                console.error('❌ CRITICAL: sidebarOverlay bulunamadı!');
-                return;
-            }
-            
-            // Test: Mevcut event listener'ları temizle
-            const newToggle = sidebarToggle.cloneNode(true);
-            sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
-            console.log('🔄 sidebarToggle cloned to remove old listeners');
-            
-            // Yeni event listener ekle
-            newToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔘 *** HAMBURGER CLICKED (DASHBOARD VERSION) ***');
-                console.log('🔘 Event target:', e.target);
-                console.log('🔘 Event currentTarget:', e.currentTarget);
-                
-                // Sidebar aç
-                console.log('📂 Opening sidebar...');
-                sidebar.classList.add('show');
-                overlay.classList.add('show');
-                document.body.style.overflow = 'hidden';
-                
-                console.log('✅ Sidebar açma işlemi tamamlandı');
-                console.log('  - sidebar classes:', sidebar.classList.toString());
-                console.log('  - overlay classes:', overlay.classList.toString());
-                console.log('  - body overflow:', document.body.style.overflow);
-            });
-            
-            // Close function
-            function closeSidebar() {
-                console.log('📁 *** SIDEBAR KAPANIYOR ***');
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
-                document.body.style.overflow = '';
-                console.log('✅ Sidebar kapatma işlemi tamamlandı');
-            }
-            
-            // Close button
-            if (sidebarClose) {
-                sidebarClose.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('❌ Close button clicked (dashboard version)');
-                    closeSidebar();
-                });
-            }
-            
-            // Overlay click
-            overlay.addEventListener('click', function(e) {
-                e.preventDefault();
-                console.log('🎯 Overlay clicked (dashboard version)');
-                closeSidebar();
-            });
-            
-            // Test butonu ekle (geliştirme için)
-            addTestButton(sidebar, overlay);
-            
-            console.log('✅ *** HAMBURGER MENU SETUP TAMAMLANDI (DASHBOARD VERSION) ***');
-        }
-        
-        /**
-         * Test butonu ekle - DEVELOPMENT ONLY
-         */
-        function addTestButton(sidebar, overlay) {
-            console.log('🧪 Adding test button...');
-            
-            // Test butonu oluştur
-            const testButton = document.createElement('button');
-            testButton.id = 'testHamburger';
-            testButton.innerHTML = '🍔 Test Hamburger';
-            testButton.style.cssText = `
-                position: fixed;
-                top: 80px;
-                right: 20px;
-                z-index: 9999;
-                background: #ff6b35;
-                color: white;
-                border: none;
-                padding: 10px 15px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: bold;
-            `;
-            
-            testButton.addEventListener('click', function() {
-                console.log('🧪 TEST BUTTON CLICKED!');
-                
-                if (sidebar.classList.contains('show')) {
-                    console.log('🧪 Closing sidebar via test button');
-                    sidebar.classList.remove('show');
-                    overlay.classList.remove('show');
-                    document.body.style.overflow = '';
-                } else {
-                    console.log('🧪 Opening sidebar via test button');
-                    sidebar.classList.add('show');
-                    overlay.classList.add('show');
-                    document.body.style.overflow = 'hidden';
-                }
-                
-                console.log('🧪 Test result - sidebar classes:', sidebar.classList.toString());
-            });
-            
-            document.body.appendChild(testButton);
-            console.log('✅ Test button added to page');
-        }
-
-        /**
-         * Dashboard verilerini yükle
-         */
-        async function loadDashboardData() {
-            try {
-                console.log('Dashboard verileri yükleniyor...');
-                
-                // Şimdilik static veri gösteriyoruz
-                // Gerçek API çağrısı için:
-                // const response = await window.authService.apiRequest('/dashboard/stats');
-                // const data = await response.json();
-                
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-            }
-        }
-
-        /**
-         * Chart'ı başlat
-         */
-        function initializeChart() {
-            const ctx = document.getElementById('activityChart');
-            if (!ctx) return;
-
-            try {
-                new Chart(ctx, {
+                const config = {
                     type: 'line',
-                    data: {
-                        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
-                        datasets: [{
-                            label: 'Araç Aktivitesi',
-                            data: [12, 19, 8, 15, 10, 18],
-                            borderColor: '#667eea',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
+                    data: chartData,
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                display: false
+                                display: true,
+                                position: 'top'
                             }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0,0,0,0.05)'
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
+                                max: 25
                             }
                         }
                     }
+                };
+                
+                try {
+                    chart = new Chart(ctx, config);
+                    console.log('✅ Chart initialized successfully');
+                } catch (error) {
+                    console.error('❌ Chart initialization failed:', error);
+                }
+            }
+            
+            /**
+             * Setup quick action handlers
+             */
+            function setupQuickActions() {
+                console.log('⚡ Setting up quick actions...');
+                
+                const quickActions = document.querySelectorAll('.quick-action');
+                quickActions.forEach((action, index) => {
+                    action.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const actionText = this.querySelector('h6').textContent;
+                        console.log('🔗 Quick action clicked:', actionText);
+                        
+                        // Show placeholder alert - replace with actual functionality
+                        alert(`${actionText} özelliği yakında aktif olacak!`);
+                    });
                 });
+                
+                console.log(`✅ ${quickActions.length} quick actions setup complete`);
+            }
+            
+            /**
+             * Dashboard sidebar setup
+             */
+            function setupDashboardSidebar() {
+                console.log('🎯 Setting up dashboard sidebar...');
+                
+                if (window.SidebarModule) {
+                    console.log('✅ Using global SidebarModule');
+                    window.SidebarModule.init();
+                    return;
+                }
+                
+                console.log('⚠️ SidebarModule not found, using manual setup');
+                manualSidebarSetup();
+            }
+            
+            /**
+             * Manual sidebar setup for dashboard
+             */
+            function manualSidebarSetup() {
+                console.log('🛠️ Manual dashboard sidebar setup...');
+                
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('mobileSidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                const sidebarClose = document.getElementById('sidebarClose');
+                
+                if (!sidebarToggle || !sidebar || !overlay) {
+                    console.error('❌ Required sidebar elements not found');
+                    return;
+                }
+                
+                console.log('✅ All sidebar elements found');
+                
+                // Remove existing listeners to prevent conflicts
+                const newToggle = sidebarToggle.cloneNode(true);
+                sidebarToggle.parentNode.replaceChild(newToggle, sidebarToggle);
+                
+                function openSidebar() {
+                    console.log('📂 *** DASHBOARD: OPENING SIDEBAR ***');
+                    
+                    sidebar.classList.add('show');
+                    overlay.classList.add('show');
+                    document.body.classList.add('sidebar-open');
+                    document.body.style.overflow = 'hidden';
+                    
+                    console.log('✅ Dashboard sidebar opened');
+                }
+                
+                function closeSidebar() {
+                    console.log('📁 *** DASHBOARD: CLOSING SIDEBAR ***');
+                    
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                    document.body.classList.remove('sidebar-open');
+                    document.body.style.overflow = '';
+                    
+                    console.log('✅ Dashboard sidebar closed');
+                }
+                
+                newToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔘 *** DASHBOARD: HAMBURGER CLICKED ***');
+                    
+                    const isOpen = sidebar.classList.contains('show');
+                    if (isOpen) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+                
+                if (sidebarClose) {
+                    sidebarClose.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('❌ *** DASHBOARD: CLOSE BUTTON CLICKED ***');
+                        closeSidebar();
+                    });
+                }
+                
+                overlay.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 *** DASHBOARD: OVERLAY CLICKED ***');
+                    closeSidebar();
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                        console.log('⌨️ *** DASHBOARD: ESCAPE PRESSED ***');
+                        closeSidebar();
+                    }
+                });
+                
+                // Make functions globally available
+                window.openSidebar = openSidebar;
+                window.closeSidebar = closeSidebar;
+                window.toggleSidebar = function() {
+                    const isOpen = sidebar.classList.contains('show');
+                    if (isOpen) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                };
+                
+                console.log('✅ Dashboard manual sidebar setup complete');
+            }
+            
+            /**
+             * Initialize after header is loaded
+             */
+            function initializeAfterHeader() {
+                console.log('⏳ Waiting for header to load...');
+                
+                let attempts = 0;
+                const maxAttempts = 50;
+                
+                const checkInterval = setInterval(() => {
+                    attempts++;
+                    
+                    const sidebarToggle = document.getElementById('sidebarToggle');
+                    const sidebar = document.getElementById('mobileSidebar');
+                    
+                    if (sidebarToggle && sidebar) {
+                        clearInterval(checkInterval);
+                        console.log('✅ Header loaded, setting up sidebar...');
+                        
+                        setTimeout(() => {
+                            setupDashboardSidebar();
+                        }, 100);
+                        
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(checkInterval);
+                        console.error('❌ Header elements not found after timeout');
+                    }
+                }, 100);
+            }
+            
+            // Initialize dashboard when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initDashboard();
+                    initializeAfterHeader();
+                });
+            } else {
+                initDashboard();
+                initializeAfterHeader();
+            }
+            
+            console.log('📊 Dashboard script loaded');
+        })();
+        
+        /**
+         * Global logout function
+         */
+        function logout() {
+            console.log('🚪 Logout from dashboard...');
+            
+            try {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
             } catch (error) {
-                console.error('Chart initialization error:', error);
+                console.error('❌ Logout error:', error);
+                window.location.href = 'login.html';
             }
         }
     </script>
