@@ -1,337 +1,387 @@
-<!-- Header Component - DÜZELTİLMİŞ VERSİYON -->
 <!-- src/frontend/components/header.html -->
+<!-- CLEAN HEADER COMPONENT - SADECE HTML VE CSS -->
 
-<!-- Header CSS -->
 <style>
-    /* Aslan Group teması - Gradient renkler */
-    :root {
-        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --header-height: 70px;
-    }
-    
-    /* Header Styles */
-    .navbar {
-        background: var(--primary-gradient);
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        min-height: var(--header-height);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .navbar-brand {
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: white !important;
-        text-decoration: none;
+/* NAVBAR UNIFIED STYLES - TÜM SAYFALAR İÇİN */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --header-height: 70px;
+}
+
+/* GLOBAL NAVBAR RESET */
+.navbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: var(--header-height) !important;
+    z-index: 1030 !important;
+    background: var(--primary-gradient) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* CONTAINER FULL WIDTH */
+.navbar .container-fluid {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: var(--header-height) !important;
+    padding: 0 1rem !important;
+    margin: 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    box-sizing: border-box !important;
+}
+
+/* BRAND SECTION */
+.navbar-brand {
+    color: white !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    padding: 0.5rem 0 !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+}
+
+.navbar-brand:hover {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none !important;
+}
+
+/* NAVIGATION SECTION */
+.navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+
+.navbar-nav.me-auto {
+    margin-left: 1rem !important;
+    margin-right: auto !important;
+}
+
+.navbar-nav.ms-auto {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+.nav-item {
+    margin: 0 0.25rem !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 6px !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+}
+
+.nav-link:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    text-decoration: none !important;
+}
+
+.nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* DROPDOWN SECTION */
+.dropdown {
+    position: relative !important;
+}
+
+.dropdown-toggle {
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+.dropdown-toggle::after {
+    margin-left: 0.5rem !important;
+    border-top-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.dropdown-menu {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 1000 !important;
+    min-width: 200px !important;
+    margin: 0.5rem 0 0 !important;
+    background-color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    padding: 0.5rem 0 !important;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem !important;
+    color: #333 !important;
+    text-decoration: none !important;
+    display: block !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa !important;
+    color: #667eea !important;
+    text-decoration: none !important;
+}
+
+/* USER AVATAR */
+.user-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    margin-right: 0.5rem !important;
+}
+
+/* NOTIFICATION ICON */
+.notification-icon {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 1.1rem !important;
+    padding: 0.5rem !important;
+    border-radius: 50% !important;
+    transition: background-color 0.2s ease !important;
+    position: relative !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.notification-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.notification-badge {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.7rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* MOBILE HAMBURGER */
+.navbar-toggler {
+    border: none !important;
+    padding: 0.25rem 0.5rem !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.navbar-toggler:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* BODY PADDING FOR FIXED NAVBAR */
+body {
+    padding-top: var(--header-height) !important;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 991.98px) {
+    .navbar-nav:not(.ms-auto) {
+        display: none !important;
     }
     
     .navbar-toggler {
-        border: none;
-        padding: 0.25rem 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        transition: all 0.2s ease;
+        display: block !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar-toggler {
+        display: none !important;
     }
     
-    .navbar-toggler:hover {
-        background: rgba(255, 255, 255, 0.2);
+    .navbar-nav {
+        display: flex !important;
     }
-    
-    .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    }
-    
-    .navbar-toggler:focus {
-        box-shadow: none;
-    }
-    
-    .nav-link {
-        color: rgba(255, 255, 255, 0.9) !important;
-        font-weight: 500;
-        transition: color 0.2s ease;
-        display: flex;
-        align-items: center;
-        padding: 0.5rem 0.75rem;
-        border-radius: 6px;
-        margin: 0 0.25rem;
-        position: relative;
-    }
-    
-    .nav-link:hover {
-        color: white !important;
-        background: rgba(255, 255, 255, 0.1);
-    }
-    
-    .nav-link.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: white !important;
-    }
-    
-    .dropdown-menu {
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        border-radius: 12px;
-        padding: 0.5rem 0;
-        margin-top: 0.5rem;
-        min-width: 250px;
-    }
-    
-    .dropdown-item {
-        padding: 0.75rem 1.25rem;
-        transition: all 0.2s ease;
-        border-radius: 0;
-    }
-    
-    .dropdown-item:hover {
-        background: rgba(102, 126, 234, 0.1);
-        color: #667eea;
-    }
-    
-    .dropdown-header {
-        color: #6c757d;
-        font-weight: 600;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .dropdown-divider {
-        margin: 0.5rem 0;
-        border-color: rgba(0, 0, 0, 0.1);
-    }
-    
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-        background: rgba(255, 255, 255, 0.2);
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        font-size: 0.875rem;
-        font-weight: 600;
-    }
-    
-    .badge {
-        font-size: 0.75rem;
-        padding: 0.375em 0.5em;
-    }
-    
-    /* Sidebar Overlay */
-    .sidebar-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1040;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-    
-    .sidebar-overlay.show {
-        opacity: 1;
-        visibility: visible;
-    }
-    
-    /* Mobile Sidebar */
-    .sidebar {
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 300px;
-        height: 100%;
-        background: var(--primary-gradient);
-        z-index: 1041;
-        transition: left 0.3s ease;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-    }
-    
-    .sidebar.show {
-        left: 0;
-    }
-    
-    /* Body scroll lock when sidebar is open */
-    body.sidebar-open {
-        overflow: hidden;
-    }
-    
-    .sidebar-header {
-        padding: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        min-height: var(--header-height);
-    }
-    
-    .sidebar-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.25rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 4px;
-        transition: background-color 0.2s ease;
-    }
-    
-    .sidebar-close:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .sidebar-user {
-        padding: 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .sidebar-menu {
-        padding: 1rem 0;
-    }
-    
-    .menu-section {
-        margin-bottom: 2rem;
-    }
-    
-    .menu-title {
-        padding: 0 1rem;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 0.5rem;
-    }
-    
-    .menu-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .menu-link {
-        display: flex;
-        align-items: center;
-        padding: 0.75rem 1rem;
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border-left: 3px solid transparent;
-    }
-    
-    .menu-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        text-decoration: none;
-        border-left-color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .menu-link.active {
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
-        border-left-color: white;
-    }
-    
-    .menu-icon {
-        width: 20px;
-        margin-right: 0.75rem;
-        text-align: center;
-    }
-    
-    /* Mobile responsive fixes */
-    @media (max-width: 768px) {
-        .navbar-nav .nav-item:not(.d-block) {
-            display: none !important;
-        }
-        
-        /* Content padding for mobile */
-        .main-content {
-            padding-top: var(--header-height) !important;
-            margin-top: 0 !important;
-        }
-    }
-    
-    /* Desktop responsive */
-    @media (min-width: 769px) {
-        .main-content {
-            padding-top: calc(var(--header-height) + 1rem) !important;
-        }
-    }
+}
+
+/* SIDEBAR STYLES */
+.mobile-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: -300px !important;
+    width: 300px !important;
+    height: 100vh !important;
+    background: var(--primary-gradient) !important;
+    z-index: 1040 !important;
+    transition: left 0.3s ease !important;
+    overflow-y: auto !important;
+    padding: 1rem 0 !important;
+}
+
+.mobile-sidebar.show {
+    left: 0 !important;
+}
+
+.sidebar-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 1035 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.sidebar-overlay.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.sidebar-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.sidebar-close {
+    background: none !important;
+    border: none !important;
+    color: white !important;
+    font-size: 1.5rem !important;
+    cursor: pointer !important;
+}
+
+.sidebar-menu {
+    padding: 1rem !important;
+}
+
+.sidebar-menu a {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none !important;
+    padding: 0.75rem !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s ease !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.sidebar-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
 </style>
 
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+<!-- NAVBAR STRUCTURE -->
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <!-- Brand -->
         <a class="navbar-brand" href="dashboard.html" id="headerTitle">Portal</a>
         
-        <!-- Mobile menu toggle -->
+        <!-- Mobile toggle -->
         <button class="navbar-toggler d-lg-none" type="button" id="sidebarToggle">
             <span class="navbar-toggler-icon"></span>
         </button>
         
-        <!-- Desktop Navigation -->
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Desktop navigation -->
+        <div class="collapse navbar-collapse">
+            <!-- Left navigation -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="dashboard.html">
+                    <a class="nav-link" href="dashboard.html" id="navDashboard">
                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="aractakip.html">
+                    <a class="nav-link" href="aractakip.html" id="navAracTakip">
                         <i class="fas fa-car me-2"></i>Araç Takip
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="#" id="navReports">
                         <i class="fas fa-chart-bar me-2"></i>Raporlar
                     </a>
                 </li>
             </ul>
             
-            <!-- Right side navigation -->
-            <ul class="navbar-nav">
+            <!-- Right navigation -->
+            <ul class="navbar-nav ms-auto">
                 <!-- Notifications -->
-                <li class="nav-item dropdown d-none d-md-block">
-                    <a class="nav-link dropdown-toggle position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <li class="nav-item d-none d-md-block">
+                    <a class="nav-link notification-icon" href="#" title="Bildirimler">
                         <i class="fas fa-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                            3
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
+                        <span class="notification-badge">3</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><h6 class="dropdown-header">Bildirimler</h6></li>
-                        <li>
-                            <div class="dropdown-item">
-                                <strong>Yeni rapor hazır</strong><br>
-                                <small class="text-muted">Aylık araç takip raporu oluşturuldu.</small>
-                            </div>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-center" href="#">Tümünü Gör</a></li>
-                    </ul>
                 </li>
                 
-                <!-- User menu -->
+                <!-- User dropdown -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="user-avatar bg-light text-primary me-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                            <span class="fw-bold" id="userInitial">U</span>
-                        </div>
-                        <span id="headerUserName">Kullanıcı</span>
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <div class="user-avatar" id="userInitials">U</div>
+                        <span id="navUserName">Kullanıcı</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><h6 class="dropdown-header">Hesap</h6></li>
+                    <ul class="dropdown-menu">
+                        <li><h6 class="dropdown-header" id="dropdownUserInfo">Kullanıcı Bilgileri</h6></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Ayarlar</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item text-danger" href="#" onclick="logout()">
-                                <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
-                            </a>
-                        </li>
+                        <li><a class="dropdown-item" href="#" id="navLogout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                     </ul>
                 </li>
             </ul>
@@ -339,390 +389,36 @@
     </div>
 </nav>
 
-<!-- Mobile Sidebar Overlay -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
 <!-- Mobile Sidebar -->
-<div class="sidebar" id="mobileSidebar">
-    <!-- Sidebar Header -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="mobile-sidebar" id="mobileSidebar">
     <div class="sidebar-header">
-        <div class="d-flex align-items-center">
-            <h5 class="text-white mb-0" id="sidebarTitle">Portal</h5>
-        </div>
-        <button type="button" class="sidebar-close" id="sidebarClose">
-            <i class="fas fa-times"></i>
-        </button>
+        <h5 class="text-white mb-0" id="sidebarTitle">Portal</h5>
+        <button type="button" class="sidebar-close" id="sidebarClose">&times;</button>
     </div>
     
-    <!-- User Info -->
-    <div class="sidebar-user">
-        <div class="d-flex align-items-center">
-            <div class="user-avatar bg-light text-primary me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                <span class="fw-bold" id="sidebarUserInitial">U</span>
-            </div>
-            <div class="text-white">
-                <div class="fw-semibold" id="sidebarUserName">Kullanıcı</div>
-                <small class="text-white-50">Aktif Kullanıcı</small>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Sidebar Menu -->
     <div class="sidebar-menu">
-        <!-- Ana Menü -->
-        <div class="menu-section">
-            <div class="menu-title">Ana Menü</div>
-            <ul class="menu-list">
-                <li>
-                    <a href="dashboard.html" class="menu-link">
-                        <i class="fas fa-tachometer-alt menu-icon"></i>
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="aractakip.html" class="menu-link">
-                        <i class="fas fa-car menu-icon"></i>
-                        Araç Takip
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-route menu-icon"></i>
-                        Rotalar
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-chart-bar menu-icon"></i>
-                        Raporlar
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- Araç Yönetimi -->
-        <div class="menu-section">
-            <div class="menu-title">Araç Yönetimi</div>
-            <ul class="menu-list">
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-plus-circle menu-icon"></i>
-                        Araç Ekle
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-list menu-icon"></i>
-                        Araç Listesi
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-wrench menu-icon"></i>
-                        Bakım Takibi
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <!-- Ayarlar -->
-        <div class="menu-section">
-            <div class="menu-title">Sistem</div>
-            <ul class="menu-list">
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-cog menu-icon"></i>
-                        Ayarlar
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link">
-                        <i class="fas fa-users menu-icon"></i>
-                        Kullanıcılar
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="menu-link" onclick="logout()">
-                        <i class="fas fa-sign-out-alt menu-icon"></i>
-                        Çıkış Yap
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <ul class="list-unstyled">
+            <li class="mb-2">
+                <a href="dashboard.html" class="d-flex align-items-center">
+                    <i class="fas fa-tachometer-alt me-3"></i>Dashboard
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="aractakip.html" class="d-flex align-items-center">
+                    <i class="fas fa-car me-3"></i>Araç Takip
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#" class="d-flex align-items-center">
+                    <i class="fas fa-chart-bar me-3"></i>Raporlar
+                </a>
+            </li>
+            <li class="mt-4">
+                <a href="#" class="d-flex align-items-center" id="sidebarLogout">
+                    <i class="fas fa-sign-out-alt me-3"></i>Çıkış Yap
+                </a>
+            </li>
+        </ul>
     </div>
 </div>
-
-<!-- Header Script - DÜZELTİLMİŞ VERSİYON -->
-<script>
-(function() {
-    'use strict';
-    
-    console.log('🏁 Header script başlatılıyor (timestamp:', Date.now(), ')');
-    
-    /**
-     * Initialize header functionality
-     */
-    window.initializeHeader = function() {
-        console.log('🚀 *** HEADER INITIALIZE ***');
-        
-        const config = window.APP_CONFIG;
-        if (!config) {
-            console.warn('⚠️ APP_CONFIG not found, using defaults');
-            setDefaultValues();
-            return;
-        }
-        
-        updateHeaderTitle(config);
-        updateUserInfo();
-        setActiveNavigation();
-        initializeSidebarModule();
-        
-        console.log('✅ Header initialization complete');
-    };
-    
-    /**
-     * Set default values immediately
-     */
-    function setDefaultValues() {
-        const headerTitle = document.getElementById('headerTitle');
-        if (headerTitle) {
-            headerTitle.textContent = 'Portal';
-        }
-        
-        const sidebarTitle = document.getElementById('sidebarTitle');
-        if (sidebarTitle) {
-            sidebarTitle.textContent = 'Portal';
-        }
-    }
-    
-    /**
-     * Update header and sidebar titles
-     */
-    function updateHeaderTitle(config) {
-        const headerTitle = document.getElementById('headerTitle');
-        if (headerTitle) {
-            headerTitle.textContent = config.PORTAL_TITLE;
-            console.log('✅ Header title updated:', config.PORTAL_TITLE);
-        }
-        
-        const sidebarTitle = document.getElementById('sidebarTitle');
-        if (sidebarTitle) {
-            sidebarTitle.textContent = config.PORTAL_TITLE;
-            console.log('✅ Sidebar title updated:', config.PORTAL_TITLE);
-        }
-    }
-    
-    /**
-     * Update user information in header
-     */
-    function updateUserInfo() {
-        try {
-            const token = localStorage.getItem('token');
-            const userStr = localStorage.getItem('user');
-            
-            if (token && userStr) {
-                const user = JSON.parse(userStr);
-                
-                const userNameEl = document.getElementById('headerUserName');
-                if (userNameEl && user.name) {
-                    userNameEl.textContent = user.name;
-                }
-                
-                const userInitialEl = document.getElementById('userInitial');
-                if (userInitialEl && user.name) {
-                    userInitialEl.textContent = user.name.charAt(0).toUpperCase();
-                }
-                
-                const sidebarUserNameEl = document.getElementById('sidebarUserName');
-                if (sidebarUserNameEl && user.name) {
-                    sidebarUserNameEl.textContent = user.name;
-                }
-                
-                const sidebarUserInitialEl = document.getElementById('sidebarUserInitial');
-                if (sidebarUserInitialEl && user.name) {
-                    sidebarUserInitialEl.textContent = user.name.charAt(0).toUpperCase();
-                }
-                
-                console.log('✅ User info updated:', user.name);
-            }
-        } catch (error) {
-            console.error('❌ Error updating user info:', error);
-        }
-    }
-    
-    /**
-     * Set active navigation based on current page
-     */
-    function setActiveNavigation() {
-        const currentPage = window.location.pathname.split('/').pop();
-        
-        // Desktop navigation
-        const desktopLinks = document.querySelectorAll('.navbar-nav .nav-link');
-        desktopLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && (href === currentPage || currentPage.includes(href.replace('.html', '')))) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
-        });
-        
-        // Mobile sidebar navigation
-        const mobileLinks = document.querySelectorAll('.menu-link');
-        mobileLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && (href === currentPage || currentPage.includes(href.replace('.html', '')))) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
-        });
-    }
-    
-    /**
-     * Initialize sidebar using external module
-     */
-    function initializeSidebarModule() {
-        console.log('🔧 Initializing sidebar module...');
-        
-        if (window.SidebarModule) {
-            console.log('✅ SidebarModule found, initializing...');
-            window.SidebarModule.init();
-        } else {
-            console.log('⏳ SidebarModule not found, using fallback...');
-            fallbackSidebarSetup();
-        }
-    }
-    
-    /**
-     * Fallback sidebar setup if module not available
-     */
-    function fallbackSidebarSetup() {
-        console.log('🛠️ Setting up fallback sidebar...');
-        
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('mobileSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const sidebarClose = document.getElementById('sidebarClose');
-        
-        if (!sidebarToggle || !sidebar || !overlay) {
-            console.error('❌ Required sidebar elements not found');
-            return;
-        }
-        
-        sidebarToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('🔘 Fallback: Hamburger clicked');
-            
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
-            document.body.classList.toggle('sidebar-open');
-        });
-        
-        function closeSidebar() {
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
-            document.body.classList.remove('sidebar-open');
-        }
-        
-        if (sidebarClose) {
-            sidebarClose.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('❌ Fallback: Close clicked');
-                closeSidebar();
-            });
-        }
-        
-        overlay.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🎯 Fallback: Overlay clicked');
-            closeSidebar();
-        });
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && sidebar.classList.contains('show')) {
-                closeSidebar();
-            }
-        });
-        
-        console.log('✅ Fallback sidebar setup complete');
-    }
-    
-    /**
-     * Wait for config and initialize
-     */
-    function initializeWhenReady() {
-        console.log('⏳ Waiting for configuration...');
-        
-        // Always set default values first
-        setDefaultValues();
-        
-        if (window.APP_CONFIG) {
-            console.log('✅ Config found immediately');
-            setTimeout(() => {
-                window.initializeHeader();
-            }, 100);
-        } else {
-            console.log('⏳ Config not found, waiting...');
-            
-            let attempts = 0;
-            const maxAttempts = 50; // Reduced from 100
-            
-            const checkConfig = setInterval(() => {
-                attempts++;
-                
-                if (window.APP_CONFIG) {
-                    console.log('✅ Config found after', attempts, 'attempts');
-                    clearInterval(checkConfig);
-                    window.initializeHeader();
-                } else if (attempts >= maxAttempts) {
-                    console.warn('⏰ Config timeout after', maxAttempts, 'attempts, using defaults');
-                    clearInterval(checkConfig);
-                    // Initialize anyway with defaults
-                    window.initializeHeader();
-                }
-            }, 50); // Reduced interval
-        }
-    }
-    
-    // Config event listener - ÖNCE EKLE
-    window.addEventListener('configLoaded', function(e) {
-        console.log('📡 *** CONFIG LOADED EVENT ***');
-        setTimeout(() => {
-            window.initializeHeader();
-        }, 50);
-    });
-    
-    // DOM ready handling
-    if (document.readyState === 'loading') {
-        console.log('📋 Document loading, adding event listener...');
-        document.addEventListener('DOMContentLoaded', initializeWhenReady);
-    } else {
-        console.log('📋 Document ready, initializing...');
-        setTimeout(initializeWhenReady, 50); // Kısa delay ekle
-    }
-    
-    console.log('🎯 *** HEADER SCRIPT SETUP COMPLETE ***');
-})();
-
-/**
- * Logout function
- */
-function logout() {
-    console.log('🚪 Logout initiated...');
-    
-    try {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = 'login.html';
-        console.log('✅ Logout complete');
-    } catch (error) {
-        console.error('❌ Logout error:', error);
-        window.location.href = 'login.html';
-    }
-}
-
-console.log('🏁 Header script loaded (timestamp:', Date.now(), ')');
-</script>

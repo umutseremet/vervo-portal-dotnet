@@ -1,5 +1,5 @@
 // src/frontend/assets/js/aractakip.js
-// Araç Takip sayfası JavaScript fonksiyonları - DEBUG MODE İLE GÜNCELLENMİŞ
+// Araç Takip sayfası JavaScript fonksiyonları - DÜZELTILMIŞ
 
 // Sayfa yüklendiğinde çalışacak ana fonksiyon
 document.addEventListener('DOMContentLoaded', function() {
@@ -8,24 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Title'ı parametrik yap
     updatePageTitle();
     
-    // Auth kontrolü - DEBUG MODE İLE ESNEK
+    // Auth kontrolü - NORMAL AUTH KONTROL
     try {
         if (window.authService && !window.authService.isAuthenticated()) {
             console.log('Not authenticated, redirecting to login...');
-            // Debug modunda redirect yapma
-            if (!window.APP_CONFIG || !window.APP_CONFIG.DEBUG_MODE) {
-                window.location.href = '../index.html';
-                return;
-            } else {
-                console.log('Debug mode: Auth redirect prevented, continuing...');
-            }
+            window.location.href = '../index.html';
+            return;
         }
     } catch (error) {
         console.warn('Auth service error, continuing without auth check:', error);
-        // Development modunda auth hataları ignore edilir
-        if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
-            console.log('Debug mode: Auth error ignored, continuing...');
-        }
     }
 
     console.log('Authenticated, loading arac takip...');
@@ -148,7 +139,7 @@ function loadVehicles() {
     }
 }
 
-// Mock araç verileri
+// Mock araç verileri - 12 ARAÇ EKLENDI
 function getMockVehicles() {
     return [
         {
@@ -204,6 +195,83 @@ function getMockVehicles() {
             mileage: '41.200 km',
             consumption: '6.3 lt/100km',
             image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400',
+            status: 'active'
+        },
+        {
+            id: 6,
+            brand: 'BMW',
+            model: 'X3',
+            plate: '34 BMW 456',
+            year: 2023,
+            mileage: '15.200 km',
+            consumption: '8.1 lt/100km',
+            image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400',
+            status: 'active'
+        },
+        {
+            id: 7,
+            brand: 'Mercedes',
+            model: 'C200',
+            plate: '06 MRC 789',
+            year: 2022,
+            mileage: '28.340 km',
+            consumption: '7.8 lt/100km',
+            image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400',
+            status: 'active'
+        },
+        {
+            id: 8,
+            brand: 'Audi',
+            model: 'A4',
+            plate: '35 AUD 234',
+            year: 2021,
+            mileage: '33.680 km',
+            consumption: '7.5 lt/100km',
+            image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=400',
+            status: 'active'
+        },
+        {
+            id: 9,
+            brand: 'Peugeot',
+            model: '3008',
+            plate: '16 PGT 567',
+            year: 2020,
+            mileage: '45.920 km',
+            consumption: '6.9 lt/100km',
+            image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400',
+            status: 'maintenance'
+        },
+        {
+            id: 10,
+            brand: 'Nissan',
+            model: 'Qashqai',
+            plate: '34 NSN 890',
+            year: 2022,
+            mileage: '19.750 km',
+            consumption: '6.4 lt/100km',
+            image: 'https://images.unsplash.com/photo-1549399495-61893655107d?w=400',
+            status: 'active'
+        },
+        {
+            id: 11,
+            brand: 'Hyundai',
+            model: 'Tucson',
+            plate: '06 HYU 123',
+            year: 2023,
+            mileage: '8.500 km',
+            consumption: '7.2 lt/100km',
+            image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400',
+            status: 'active'
+        },
+        {
+            id: 12,
+            brand: 'Kia',
+            model: 'Sportage',
+            plate: '35 KIA 456',
+            year: 2021,
+            mileage: '32.100 km',
+            consumption: '7.0 lt/100km',
+            image: 'https://images.unsplash.com/photo-1605559911160-a3d95d213904?w=400',
             status: 'active'
         }
     ];
@@ -334,7 +402,7 @@ function updateModalContent(vehicle) {
     }
 }
 
-// Modal içerik HTML'i oluştur - GELİŞTİRİLMİŞ VERSİYON
+// Modal içerik HTML'i oluştur - DETAYLI MODAL
 function createModalContent(vehicle) {
     return `
         <div class="vehicle-card-modal">
@@ -359,7 +427,9 @@ function createModalContent(vehicle) {
                         </div>
                         <div class="detail-row">
                             <strong>Durum:</strong> 
-                            <span class="status-badge status-${vehicle.status}">Aktif</span>
+                            <span class="status-badge status-${vehicle.status}">
+                                ${vehicle.status === 'active' ? 'Aktif' : vehicle.status === 'maintenance' ? 'Bakımda' : 'Pasif'}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -369,18 +439,18 @@ function createModalContent(vehicle) {
             <div class="vehicle-detail-tabs mt-4">
                 <ul class="nav nav-tabs" id="vehicleDetailTabs">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#vehicleInfo">Araç Bilgileri</a>
+                        <a class="nav-link active" data-bs-toggle="tab" href="#vehicleInfo-${vehicle.id}">Araç Bilgileri</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#vehicleLocation">Konum</a>
+                        <a class="nav-link" data-bs-toggle="tab" href="#vehicleLocation-${vehicle.id}">Konum</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#vehicleHistory">Geçmiş</a>
+                        <a class="nav-link" data-bs-toggle="tab" href="#vehicleHistory-${vehicle.id}">Geçmiş</a>
                     </li>
                 </ul>
                 
                 <div class="tab-content mt-3">
-                    <div class="tab-pane fade show active" id="vehicleInfo">
+                    <div class="tab-pane fade show active" id="vehicleInfo-${vehicle.id}">
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>Ruhsat Bilgileri</h5>
@@ -407,7 +477,7 @@ function createModalContent(vehicle) {
                         </div>
                     </div>
                     
-                    <div class="tab-pane fade" id="vehicleLocation">
+                    <div class="tab-pane fade" id="vehicleLocation-${vehicle.id}">
                         <div class="location-info">
                             <h5>Güncel Konum</h5>
                             <p><i class="fas fa-map-marker-alt"></i> Beşiktaş, İstanbul</p>
@@ -417,7 +487,7 @@ function createModalContent(vehicle) {
                         </div>
                     </div>
                     
-                    <div class="tab-pane fade" id="vehicleHistory">
+                    <div class="tab-pane fade" id="vehicleHistory-${vehicle.id}">
                         <h5>Son Hareketler</h5>
                         <div class="timeline">
                             <div class="timeline-item">
@@ -427,6 +497,14 @@ function createModalContent(vehicle) {
                             <div class="timeline-item">
                                 <span class="timeline-time">13:45</span>
                                 <span class="timeline-content">Park edildi</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-time">12:20</span>
+                                <span class="timeline-content">Yakıt alındı</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-time">11:15</span>
+                                <span class="timeline-content">Servis durağı</span>
                             </div>
                         </div>
                     </div>
@@ -511,7 +589,7 @@ function showError(message) {
     }
 }
 
-// Global export for use in HTML - GENİŞLETİLMİŞ
+// Global export for use in HTML
 window.aracTakip = {
     toggleFilters,
     openVehicleModal,

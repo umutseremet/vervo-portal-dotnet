@@ -1,7 +1,7 @@
 // src/frontend/assets/js/dashboard.js
-// Dashboard sayfası JavaScript fonksiyonları - DEBUG MODE İLE GÜNCELLENMİŞ
+// Dashboard sayfası JavaScript fonksiyonları - AUTH KONTROLÜ AKTİF
 
-// Dashboard sayfası için auth kontrolü - DEBUG MODE İLE ESNEK
+// Dashboard sayfası için auth kontrolü
 function checkDashboardAuth() {
     console.log('🔐 Checking dashboard authentication...');
     
@@ -13,16 +13,9 @@ function checkDashboardAuth() {
                 return true;
             } else {
                 console.log('❌ User is not authenticated');
-                
-                // Debug modunda redirect yapma
-                if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
-                    console.log('🐛 Debug mode: Auth redirect prevented, continuing...');
-                    return true;
-                } else {
-                    console.log('🔄 Redirecting to login...');
-                    window.location.href = '../index.html';
-                    return false;
-                }
+                console.log('🔄 Redirecting to login...');
+                window.location.href = '../index.html';
+                return false;
             }
         }
         
@@ -32,24 +25,9 @@ function checkDashboardAuth() {
         
         if (!token || !user) {
             console.log('❌ No auth data found');
-            
-            // Debug modunda fake data oluştur
-            if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
-                console.log('🐛 Debug mode: Creating fake auth data...');
-                localStorage.setItem('authToken', 'fake-dev-token-' + Date.now());
-                localStorage.setItem('user', JSON.stringify({
-                    id: 'dev-user',
-                    name: 'Development User',
-                    fullname: 'Development User',
-                    firstName: 'Development',
-                    lastName: 'User'
-                }));
-                return true;
-            } else {
-                console.log('🔄 Redirecting to login...');
-                window.location.href = '../index.html';
-                return false;
-            }
+            console.log('🔄 Redirecting to login...');
+            window.location.href = '../index.html';
+            return false;
         }
         
         console.log('✅ Auth data found, user is authenticated');
@@ -57,16 +35,9 @@ function checkDashboardAuth() {
         
     } catch (error) {
         console.error('❌ Auth check error:', error);
-        
-        // Debug modunda hata ignore edilir
-        if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
-            console.log('🐛 Debug mode: Auth error ignored, continuing...');
-            return true;
-        } else {
-            console.log('🔄 Redirecting to login due to error...');
-            window.location.href = '../index.html';
-            return false;
-        }
+        console.log('🔄 Redirecting to login due to error...');
+        window.location.href = '../index.html';
+        return false;
     }
 }
 
@@ -243,7 +214,7 @@ function setupEventListeners() {
         quickActionButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
-                const actionName = this.querySelector('h4')?.textContent || 'Bu özellik';
+                const actionName = this.querySelector('h6')?.textContent || 'Bu özellik';
                 handleQuickAction(actionName);
             });
         });

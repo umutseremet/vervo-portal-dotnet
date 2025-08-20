@@ -1,5 +1,5 @@
 // src/frontend/assets/js/config.js
-// Uygulama konfigürasyon dosyası - DEBUG MODE İLE GÜNCELLENMİŞ
+// Uygulama konfigürasyon dosyası - AUTH KONTROLÜ AKTİF
 
 // Global konfigürasyon object'i
 window.APP_CONFIG = {
@@ -8,8 +8,8 @@ window.APP_CONFIG = {
     COMPANY_NAME: 'Vervo Portal',
     VERSION: '1.0.0',
     
-    // API ayarları
-    API_BASE_URL: 'http://127.0.0.1:5500/api', // Geliştirme ortamı
+    // API ayarları - BACKEND API URL
+    API_BASE_URL: 'http://localhost:5154/api', // Senin backend API URL'in
     API_TIMEOUT: 30000, // 30 saniye
     
     // Uygulama ayarları
@@ -29,8 +29,8 @@ window.APP_CONFIG = {
         INFO: 5000
     },
     
-    // Debug modu - DEVELOPMENT İÇİN AKTİF
-    DEBUG_MODE: true, // Bu true olduğunda auth kontrolleri bypass edilir
+    // Debug modu - AUTH KONTROLÜ İÇİN FALSE
+    DEBUG_MODE: false, // Bu false olduğunda auth kontrolleri aktif olur
     
     // Local storage keys
     STORAGE_KEYS: {

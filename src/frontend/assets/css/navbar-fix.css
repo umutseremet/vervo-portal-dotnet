@@ -1,236 +1,426 @@
-/* Navbar Fix CSS - Navbar sorunlarını çözer */
+/* src/frontend/assets/css/navbar-fix.css */
+/* NAVBAR ELEMANLARININ EKRAN ORTASINDA OLMA SORUNU ÇÖZÜMÜ - GÜNCELLENMİŞ */
 
-/* Navbar container düzenlemesi */
-.navbar .container-fluid {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    padding: 0 1rem;
-}
-
-/* Brand logo düzenlemesi */
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    margin-right: auto;
-    flex-shrink: 0;
-    text-decoration: none;
-    color: white !important;
-    font-weight: 700;
-    font-size: 1.25rem;
-    white-space: nowrap;
-    max-width: none;
-}
-
-.navbar-brand:hover,
-.navbar-brand:focus {
-    color: white !important;
-    text-decoration: none;
-}
-
-.navbar-brand img {
-    height: 30px;
-    width: auto;
-    margin-right: 0.5rem;
-    flex-shrink: 0;
-    filter: brightness(0) invert(1);
-}
-
-/* Navbar toggle button */
-.navbar-toggler {
-    border: none;
-    background: none;
-    padding: 0.25rem 0.5rem;
-    margin-left: 1rem;
-    order: 3;
-}
-
-.navbar-toggler:focus {
-    box-shadow: none;
-    outline: none;
-}
-
-/* Navbar collapse */
-.navbar-collapse {
-    flex-basis: 100%;
-    flex-grow: 1;
-    align-items: center;
-}
-
-/* Ana menü (sol taraf) */
-.navbar-nav.me-auto {
-    flex-direction: row;
-    margin-right: auto;
-    flex-grow: 1;
-}
-
-/* Kullanıcı menüsü (sağ taraf) */
-.navbar-nav.ms-auto {
-    flex-direction: row;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-/* Nav link'ler */
-.navbar-nav .nav-link {
-    padding: 0.5rem 0.75rem;
-    margin: 0 0.1rem;
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.9) !important;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Dropdown menü */
-.navbar-nav .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: auto;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    min-width: 180px;
-    margin-top: 0.5rem;
-    z-index: 1000;
-}
-
-.navbar-nav .dropdown-item {
-    padding: 0.5rem 1rem;
-    color: #495057;
-    transition: background-color 0.2s ease;
-}
-
-.navbar-nav .dropdown-item:hover {
-    background-color: #f8f9fa;
-    color: #495057;
-}
-
-/* User dropdown özel stilleri */
-#userDropdown {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-#userDropdown::after {
-    margin-left: 0.5rem;
-}
-
-/* Responsive düzenlemeler */
-@media (max-width: 991.98px) {
-    .navbar-collapse {
-        margin-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 1rem;
-    }
-    
-    .navbar-nav.me-auto,
-    .navbar-nav.ms-auto {
-        flex-direction: column;
-        width: 100%;
-        margin: 0;
-    }
-    
-    .navbar-nav .nav-item {
-        width: 100%;
-        text-align: center;
-    }
-    
-    .navbar-nav .nav-link {
-        padding: 0.75rem 1rem;
-        margin: 0.1rem 0;
-        border-radius: 6px;
-    }
-    
-    .navbar-nav .dropdown-menu {
-        position: static;
-        float: none;
-        width: 100%;
-        margin-top: 0;
-        border: none;
-        box-shadow: none;
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .navbar-nav .dropdown-item {
-        color: rgba(255, 255, 255, 0.9);
-        text-align: center;
-    }
-    
-    .navbar-nav .dropdown-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .navbar .container-fluid {
-        padding: 0 0.5rem;
-    }
-    
-    .navbar-brand {
-        font-size: 1.1rem;
-    }
-    
-    .navbar-brand img {
-        height: 25px;
-        margin-right: 0.3rem;
-    }
-}
-
-/* Layout shift önleme */
-.navbar-nav .nav-item,
-.navbar-nav .nav-link {
-    transition: none;
-}
-
-.navbar-nav .nav-link:hover {
-    transform: none !important;
-}
-
-/* Flexbox düzeltmeleri */
-.navbar > .container-fluid {
-    flex-wrap: nowrap;
-}
-
-.navbar-expand-lg .navbar-nav {
-    flex-direction: row;
-}
-
-.navbar-expand-lg .navbar-nav .dropdown-menu {
-    position: absolute;
-}
-
-/* Z-index düzenlemesi */
+/* Navbar genel ayarları - FORCED STYLES */
 .navbar {
-    z-index: 1030;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important; /* Viewport width zorla */
+    z-index: 1030 !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    min-height: 70px !important; /* Height artırıldı */
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Container düzeltmesi - FORCE FULL WIDTH */
+.navbar .container-fluid {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    height: 70px !important; /* Fixed height */
+    box-sizing: border-box !important;
+}
+
+/* Brand/Logo düzeltmesi */
+.navbar-brand {
+    margin-right: auto !important; /* Auto margin for spacing */
+    flex-shrink: 0 !important;
+    color: white !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    padding: 0.5rem 0 !important;
+    white-space: nowrap !important;
+}
+
+.navbar-brand:hover {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none !important;
+}
+
+/* Navigation container düzeltmesi */
+.navbar-collapse {
+    flex-grow: 1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+/* Left navigation items */
+.navbar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    align-items: center !important;
+}
+
+.navbar-nav.me-auto {
+    margin-right: auto !important;
+    margin-left: 1rem !important; /* Space from brand */
+}
+
+.navbar-nav.ms-auto {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* Nav items spacing */
+.nav-item {
+    margin: 0 0.25rem !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 5px !important;
+    transition: background-color 0.2s ease !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+}
+
+.nav-link:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    text-decoration: none !important;
+}
+
+.nav-link.active {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* RIGHT SIDE ELEMENTS - USER DROPDOWN FIX */
+.navbar-nav.ms-auto {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+/* User section düzeltmesi */
+.user-section {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+}
+
+/* Dropdown düzeltmesi - POSITION FIX */
+.dropdown {
+    position: relative !important;
+}
+
+.dropdown-toggle {
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem !important;
+    border-radius: 5px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+}
+
+.dropdown-toggle::after {
+    margin-left: 0.5rem !important;
+    border-top-color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .dropdown-menu {
-    z-index: 1000;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 1000 !important;
+    min-width: 200px !important;
+    margin: 0.125rem 0 0 !important;
+    background-color: white !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Logo ve text alignment */
-.navbar-brand span {
-    line-height: 1;
-    vertical-align: middle;
+.dropdown-item {
+    padding: 0.5rem 1rem !important;
+    color: #333 !important;
+    text-decoration: none !important;
+    display: block !important;
 }
 
-/* Navbar height consistency */
-.navbar {
-    min-height: 56px;
+.dropdown-item:hover {
+    background-color: #f8f9fa !important;
+    color: #667eea !important;
+    text-decoration: none !important;
 }
 
-.navbar-brand,
-.navbar-nav .nav-link {
-    line-height: 1.5;
+/* Notifications */
+.notification-icon {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 1.1rem !important;
+    padding: 0.5rem !important;
+    border-radius: 50% !important;
+    transition: background-color 0.2s ease !important;
+    position: relative !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.notification-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.notification-badge {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.7rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* User avatar */
+.user-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    margin-right: 0.5rem !important;
+}
+
+/* Mobile hamburger menu */
+.navbar-toggler {
+    border: none !important;
+    padding: 0.25rem 0.5rem !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin-left: auto !important; /* Push to right */
+}
+
+.navbar-toggler:focus {
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 991.98px) {
+    /* Hide desktop navigation on mobile */
+    .navbar-nav:not(.ms-auto) {
+        display: none !important;
+    }
+    
+    /* Show hamburger menu */
+    .navbar-toggler {
+        display: block !important;
+    }
+    
+    /* User dropdown stays visible on mobile */
+    .navbar-nav.ms-auto {
+        display: flex !important;
+    }
+}
+
+@media (min-width: 992px) {
+    /* Hide hamburger menu on desktop */
+    .navbar-toggler {
+        display: none !important;
+    }
+    
+    /* Show desktop navigation */
+    .navbar-nav {
+        display: flex !important;
+    }
+}
+
+/* FORCE OVERRIDE ANY CONFLICTING STYLES */
+.navbar * {
+    box-sizing: border-box !important;
+}
+
+/* Body padding for fixed navbar */
+body {
+    padding-top: 70px !important;
+}
+
+/* Main content adjustment */
+.main-content {
+    margin-top: 0 !important;
+    padding-top: 20px !important;
+}
+
+/* Dropdown animation */
+.dropdown-menu {
+    opacity: 0 !important;
+    transform: translateY(-10px) !important;
+    transition: opacity 0.15s ease, transform 0.15s ease !important;
+    pointer-events: none !important;
+}
+
+.dropdown-menu.show {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    pointer-events: auto !important;
+}
+
+/* FORCE FULL WIDTH FOR CONTAINERS */
+.container-fluid,
+.container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* OVERRIDE BOOTSTRAP NAVBAR DEFAULTS */
+.navbar-expand-lg .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto !important;
+}radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Mobile hamburger menu */
+.navbar-toggler {
+    border: none !important;
+    padding: 0.25rem 0.5rem !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Mobile sidebar */
+.mobile-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: -300px !important;
+    width: 300px !important;
+    height: 100vh !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    z-index: 1040 !important;
+    transition: left 0.3s ease !important;
+    overflow-y: auto !important;
+}
+
+.mobile-sidebar.show {
+    left: 0 !important;
+}
+
+.sidebar-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    z-index: 1035 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.sidebar-overlay.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Responsive fixes */
+@media (max-width: 991.98px) {
+    /* Desktop navigation items hide on mobile */
+    .navbar-nav:not(.mobile-only) {
+        display: none !important;
+    }
+    
+    /* Show hamburger menu */
+    .navbar-toggler {
+        display: block !important;
+    }
+}
+
+@media (min-width: 992px) {
+    /* Hide hamburger menu on desktop */
+    .navbar-toggler {
+        display: none !important;
+    }
+    
+    /* Show desktop navigation */
+    .navbar-nav {
+        display: flex !important;
+    }
+}
+
+/* Body padding to prevent content hiding under fixed navbar */
+body {
+    padding-top: 60px !important;
+}
+
+/* Override any conflicting styles */
+.navbar * {
+    box-sizing: border-box !important;
+}
+
+/* Fix for content jumping */
+.main-content {
+    padding-top: 20px !important;
+}
+
+/* Dropdown animation */
+.dropdown-menu {
+    opacity: 0 !important;
+    transform: translateY(-10px) !important;
+    transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+.dropdown-menu.show {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }

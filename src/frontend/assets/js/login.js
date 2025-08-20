@@ -1,5 +1,5 @@
-// Login Page JavaScript - COMPLETE WITH JWT TOKEN FIX
 // src/frontend/assets/js/login.js
+// Login Page JavaScript - COMPLETE WITH REAL API INTEGRATION
 
 $(document).ready(function() {
     console.log('🔐 Login script loaded');
@@ -104,7 +104,47 @@ function setupFormHandlers() {
 }
 
 /**
- * Handle login form submission - COMPLETE WITH REDIRECT FIX
+ * Setup input focus effects
+ */
+function setupInputFocusEffects() {
+    $('.form-floating input').on('focus', function() {
+        $(this).parent().addClass('focused');
+    }).on('blur', function() {
+        if (!$(this).val()) {
+            $(this).parent().removeClass('focused');
+        }
+    });
+}
+
+/**
+ * Check for URL messages (logout, session expired, etc.)
+ */
+function checkForUrlMessages() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    
+    if (message) {
+        switch (message) {
+            case 'logout':
+                showSuccessMessage('Güvenli çıkış yapıldı.');
+                break;
+            case 'session_expired':
+                showWarningMessage('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+                break;
+            case 'unauthorized':
+                showErrorMessage('Bu sayfaya erişim yetkiniz yok.');
+                break;
+            default:
+                console.log('Unknown URL message:', message);
+        }
+        
+        // Clear URL parameters
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
+/**
+ * Handle login form submission - COMPLETE WITH REAL API
  */
 async function handleLogin(event) {
     event.preventDefault();
@@ -128,29 +168,8 @@ async function handleLogin(event) {
         
         console.log('Attempting login with username:', username);
         
-        // API call - önce gerçek API dene, başarısız olursa mock kullan
-        let response;
-        try {
-            if (window.authService) {
-                response = await window.authService.login(username, password, rememberMe);
-            } else {
-                throw new Error('AuthService not available');
-            }
-        } catch (apiError) {
-            console.log('API login failed, using mock login:', apiError.message);
-            response = await mockLogin(username, password);
-            
-            // Mock login başarılıysa manuel olarak store et
-            if (response.success) {
-                const tokenKey = window.APP_CONFIG?.SECURITY?.TOKEN_STORAGE_KEY || 'vervo_auth_token';
-                const userKey = window.APP_CONFIG?.SECURITY?.USER_STORAGE_KEY || 'vervo_user_data';
-                const loginTimeKey = window.APP_CONFIG?.SECURITY?.LOGIN_TIME_KEY || 'vervo_login_time';
-                
-                localStorage.setItem(tokenKey, response.token);
-                localStorage.setItem(userKey, JSON.stringify(response.user));
-                localStorage.setItem(loginTimeKey, Date.now().toString());
-            }
-        }
+        // GERÇEK API CALL - REDMINE BACKEND
+        const response = await loginWithAPI(username, password);
         
         console.log('Login successful:', response);
         
@@ -164,13 +183,13 @@ async function handleLogin(event) {
         }
         
         // Success message
-        const successMessage = window.APP_CONFIG?.MESSAGES?.LOGIN_SUCCESS || 'Giriş başarılı! Portal\'a yönlendiriliyorsunez...';
+        const successMessage = window.APP_CONFIG?.MESSAGES?.LOGIN_SUCCESS || 'Giriş başarılı! Portal\'a yönlendiriliyorsunuz...';
         showSuccessMessage(successMessage);
         
         // Store login analytics
         storeLoginAnalytics(response.user || {});
         
-        // FIXED REDIRECT - URL yönlendirme sorunu çözümü
+        // Redirect to dashboard
         setTimeout(() => {
             console.log('=== LOGIN SUCCESS REDIRECT ===');
             console.log('Current location:', window.location.href);
@@ -221,58 +240,98 @@ async function handleLogin(event) {
 }
 
 /**
- * Mock login function - JWT FORMAT TOKEN
+ * Login with real API - REDMINE BACKEND BAĞLANTISI
  */
-async function mockLogin(username, password) {
-    console.log('🔄 Mock login for:', username);
+async function loginWithAPI(username, password) {
+    console.log('🔄 Real API login for:', username);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // API URL'ini config'den al
+    const apiBaseUrl = window.APP_CONFIG?.API?.BASE_URL || 'http://localhost:5154/api';
+    const loginUrl = `${apiBaseUrl}/auth/login`;
     
-    // Mock validation
-    const validCredentials = [
-        { username: 'admin', password: 'admin123' },
-        { username: 'test', password: 'test123' },
-        { username: 'user', password: 'user123' }
-    ];
+    console.log('API URL:', loginUrl);
     
-    const isValid = validCredentials.some(cred => 
-        cred.username === username && cred.password === password
-    );
-    
-    if (!isValid) {
-        throw new Error('Kullanıcı adı veya şifre hatalı.');
-    }
-    
-    // JWT benzeri token oluştur (header.payload.signature formatında)
-    const header = btoa(JSON.stringify({ typ: "JWT", alg: "HS256" }));
-    const payload = btoa(JSON.stringify({
-        sub: username,
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24), // 24 saat
-        username: username,
-        role: username === 'admin' ? 'admin' : 'user'
-    }));
-    const signature = btoa('mock-signature-' + Date.now());
-    
-    const jwtToken = `${header}.${payload}.${signature}`;
-    
-    console.log('✅ Mock login successful, JWT token created');
-    
-    // Return mock response
-    return {
-        success: true,
-        token: jwtToken,
-        user: {
-            id: 1,
-            username: username,
-            fullName: username === 'admin' ? 'Admin User' : 'Test User',
-            firstName: username === 'admin' ? 'Admin' : 'Test',
-            lastName: 'User',
-            email: `${username}@example.com`,
-            role: username === 'admin' ? 'Admin' : 'User'
+    try {
+        const response = await fetch(loginUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        
+        console.log('API Response status:', response.status);
+        
+        if (!response.ok) {
+            let errorMessage = 'Giriş işlemi başarısız oldu.';
+            
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorData.Message || errorMessage;
+            } catch (e) {
+                // JSON parse edilemezse default mesaj kullan
+                if (response.status === 401) {
+                    errorMessage = 'Kullanıcı adı veya şifre hatalı.';
+                } else if (response.status === 500) {
+                    errorMessage = 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.';
+                } else if (response.status === 404) {
+                    errorMessage = 'API endpoint\'i bulunamadı. Sistem yöneticisi ile iletişime geçin.';
+                }
+            }
+            
+            throw new Error(errorMessage);
         }
-    };
+        
+        const data = await response.json();
+        console.log('API Response data:', data);
+        
+        // Response'ta token ve user var mı kontrol et
+        if (!data.token) {
+            throw new Error('Sunucudan geçersiz yanıt alındı. Token bulunamadı.');
+        }
+        
+        if (!data.user) {
+            throw new Error('Sunucudan geçersiz yanıt alındı. Kullanıcı bilgileri bulunamadı.');
+        }
+        
+        // Token'ı ve user'ı localStorage'a kaydet
+        const tokenKey = window.APP_CONFIG?.SECURITY?.TOKEN_STORAGE_KEY || 'authToken';
+        const userKey = window.APP_CONFIG?.SECURITY?.USER_STORAGE_KEY || 'user';
+        const loginTimeKey = window.APP_CONFIG?.SECURITY?.LOGIN_TIME_KEY || 'vervo_login_time';
+        
+        localStorage.setItem(tokenKey, data.token);
+        localStorage.setItem(userKey, JSON.stringify(data.user));
+        localStorage.setItem(loginTimeKey, Date.now().toString());
+        
+        // Expiration time varsa kaydet
+        if (data.expiresAt) {
+            localStorage.setItem('tokenExpires', new Date(data.expiresAt).getTime().toString());
+        }
+        
+        console.log('✅ Real API login successful, data stored');
+        
+        return {
+            success: true,
+            token: data.token,
+            user: data.user,
+            expiresAt: data.expiresAt
+        };
+        
+    } catch (error) {
+        console.error('API Login error:', error);
+        
+        // Network error handling
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            throw new Error('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.');
+        }
+        
+        // API error'ları aynen fırlat
+        throw error;
+    }
 }
 
 /**
@@ -336,28 +395,12 @@ function setLoadingState(loading) {
 }
 
 /**
- * Add form shake effect for errors
+ * Add form shake effect for error
  */
 function addFormShakeEffect() {
     const form = $('#loginForm');
     form.addClass('shake');
-    
-    setTimeout(() => {
-        form.removeClass('shake');
-    }, 600);
-}
-
-/**
- * Setup input focus effects
- */
-function setupInputFocusEffects() {
-    $('.form-control').on('focus', function() {
-        $(this).closest('.form-floating').addClass('focused');
-    }).on('blur', function() {
-        if (!$(this).val()) {
-            $(this).closest('.form-floating').removeClass('focused');
-        }
-    });
+    setTimeout(() => form.removeClass('shake'), 500);
 }
 
 /**
@@ -365,14 +408,13 @@ function setupInputFocusEffects() {
  */
 function showSuccessMessage(message) {
     hideAllMessages();
-    
     const alertHtml = `
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>✅ Başarılı:</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <i class="fas fa-check-circle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     `;
-    
     $('#alertContainer').html(alertHtml);
 }
 
@@ -381,36 +423,29 @@ function showSuccessMessage(message) {
  */
 function showErrorMessage(message) {
     hideAllMessages();
-    
     const alertHtml = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>❌ Hata:</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     `;
-    
     $('#alertContainer').html(alertHtml);
 }
 
 /**
- * Show info message
+ * Show warning message
  */
-function showInfoMessage(message) {
+function showWarningMessage(message) {
     hideAllMessages();
-    
     const alertHtml = `
-        <div class="alert alert-info alert-dismissible fade show" role="alert">
-            <strong>ℹ️ Bilgi:</strong> ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     `;
-    
     $('#alertContainer').html(alertHtml);
-    
-    // Auto hide after 4 seconds
-    setTimeout(() => {
-        hideAllMessages();
-    }, 4000);
 }
 
 /**
@@ -421,42 +456,31 @@ function hideAllMessages() {
 }
 
 /**
- * Check for URL parameters with messages
- */
-function checkForUrlMessages() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
-    const message = urlParams.get('message');
-    
-    if (error) {
-        showErrorMessage(decodeURIComponent(error));
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (message) {
-        showInfoMessage(decodeURIComponent(message));
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-}
-
-/**
- * Store login analytics (optional)
+ * Store login analytics
  */
 function storeLoginAnalytics(user) {
     try {
         const analytics = {
             loginTime: new Date().toISOString(),
-            userId: user.id || 'unknown',
+            username: user.username || 'unknown',
             userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language
+            ip: 'client-side' // Gerçek IP server'dan gelir
         };
         
-        // Store in sessionStorage for this session
-        sessionStorage.setItem('vervo_login_analytics', JSON.stringify(analytics));
+        // Analytics localStorage'da sakla (optional)
+        localStorage.setItem('loginAnalytics', JSON.stringify(analytics));
         
-        console.log('📊 Login analytics stored');
+        console.log('Login analytics stored:', analytics);
     } catch (error) {
-        console.warn('Could not store login analytics:', error);
+        console.warn('Analytics store error:', error);
     }
 }
+
+/**
+ * Global functions for external access
+ */
+window.handleLogin = handleLogin;
+window.clearForm = clearForm;
+window.showSuccessMessage = showSuccessMessage;
+window.showErrorMessage = showErrorMessage;
+window.showWarningMessage = showWarningMessage;
