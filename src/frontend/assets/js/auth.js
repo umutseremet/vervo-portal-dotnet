@@ -1,675 +1,559 @@
-/**
- * Authentication Service - COMPLETE WITH JWT PARSE FIX
- * src/frontend/assets/js/auth.js
- * 
- * Bu dosya config.js'den ayarları alarak çalışır
- */
+// src/frontend/assets/js/auth.js
+// Complete Authentication Service for Vervo Portal - DEBUG MODE İLE GÜNCELLENMİŞ
 
-class AuthService {
-    constructor() {
-        // Config'ten ayarları al
-        this.initializeFromConfig();
+(function() {
+    'use strict';
 
-        console.log('🔒 AuthService initialized with config');
-    }
+    // Auth service object
+    const authService = {
+        // Storage keys
+        TOKEN_KEY: 'authToken',
+        USER_KEY: 'user',
+        REFRESH_TOKEN_KEY: 'refreshToken',
+        EXPIRES_KEY: 'tokenExpires',
 
-    /**
-     * Config'ten ayarları initialize et
-     */
-    initializeFromConfig() {
-        if (typeof window.APP_CONFIG === 'undefined') {
-            console.warn('APP_CONFIG not found, using default values');
-            // Fallback values
-            this.apiBaseUrl = 'http://localhost:5154/api';
-            this.tokenKey = 'vervo_auth_token';
-            this.userKey = 'vervo_user_data';
-            this.refreshTokenKey = 'vervo_refresh_token';
-            this.loginTimeKey = 'vervo_login_time';
-            this.rememberUsernameKey = 'vervo_remember_username';
-            this.loginRedirect = 'pages/dashboard.html';
-            this.logoutRedirect = 'pages/login.html';
-            this.showLogs = true;
-            return;
-        }
+        // API endpoints (will use config if available)
+        endpoints: {
+            login: '/auth/login',
+            logout: '/auth/logout',
+            refresh: '/auth/refresh',
+            verify: '/auth/verify'
+        },
 
-        const config = window.APP_CONFIG;
+        // Initialize auth service
+        init() {
+            this.setupAxiosInterceptors();
+            this.startTokenRefreshTimer();
+            this.log('Auth service initialized');
+        },
 
-        // API ayarları
-        this.apiBaseUrl = config.API.BASE_URL;
-        this.apiTimeout = config.API.TIMEOUT || 10000;
-        this.retryAttempts = config.API.RETRY_ATTEMPTS || 3;
+        // Check if user is authenticated - DEBUG MODE İLE GÜNCELLENMİŞ
+        isAuthenticated() {
+            try {
+                // Development modunda auth kontrolünü esnek yap
+                if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+                    this.log('Debug mode: Auth check bypassed for development');
+                    // Debug modunda token ve user var mı sadece kontrol et
+                    const token = this.getToken();
+                    const user = this.getUser();
+                    
+                    // Eğer hiç auth data yoksa fake data oluştur
+                    if (!token || !user) {
+                        this.createDevelopmentAuth();
+                        return true;
+                    }
+                    return true; // Debug modunda her zaman authenticated
+                }
 
-        // Storage anahtarları
-        this.tokenKey = config.SECURITY.TOKEN_STORAGE_KEY;
-        this.userKey = config.SECURITY.USER_STORAGE_KEY;
-        this.refreshTokenKey = config.SECURITY.REFRESH_TOKEN_KEY;
-        this.loginTimeKey = config.SECURITY.LOGIN_TIME_KEY;
-        this.rememberUsernameKey = config.SECURITY.REMEMBER_USERNAME_KEY;
+                const token = this.getToken();
+                const user = this.getUser();
+                
+                if (!token || !user) {
+                    this.log('No token or user found');
+                    return false;
+                }
 
-        // Güvenlik ayarları
-        this.autoLogoutMinutes = config.SECURITY.AUTO_LOGOUT_MINUTES || 60;
-
-        // Sayfa ayarları
-        this.loginRedirect = config.PAGES.LOGIN_REDIRECT;
-        this.logoutRedirect = config.PAGES.LOGOUT_REDIRECT;
-
-        // Özellik bayrakları
-        this.enableAutoRefresh = config.FEATURES.AUTO_REFRESH_TOKEN;
-        this.showLogs = config.FEATURES.SHOW_CONSOLE_LOGS;
-
-        // Mesajlar
-        this.messages = config.MESSAGES;
-    }
-
-    /**
- * Login işlemi - EN TEMİZ ÇÖZÜM
- */
-    async login(username, password, rememberMe = false) {
-        if (this.showLogs) {
-            console.log('🔐 Login attempt for username:', username);
-        }
-
-        try {
-            // Doğrudan fetch kullan - makeRequest'i bypass et
-            const url = `${this.apiBaseUrl}/auth/login`;
-
-            if (this.showLogs) {
-                console.log('📡 API URL:', url);
-            }
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            });
-
-            if (this.showLogs) {
-                console.log('📥 Response status:', response.status);
-                console.log('📥 Response ok:', response.ok);
-            }
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                const errorMessage = errorData.message || this.getErrorMessage(response.status);
-                throw new Error(errorMessage);
-            }
-
-            const data = await response.json();
-
-            if (this.showLogs) {
-                console.log('📦 API Response data:', data);
-            }
-
-            // Backend'ten gelen response kontrolü
-            const token = data.token || data.Token;
-            const user = data.user || data.User;
-
-            if (!token) {
-                throw new Error('Sunucudan geçersiz yanıt: Token bulunamadı');
-            }
-
-            if (!user) {
-                throw new Error('Sunucudan geçersiz yanıt: Kullanıcı bilgisi bulunamadı');
-            }
-
-            // Auth verilerini sakla
-            this.storeAuthData({
-                token: token,
-                user: user,
-                expiresAt: data.expiresAt || data.ExpiresAt
-            });
-
-            // Remember me
-            if (rememberMe) {
-                this.rememberUser(username);
-            } else {
-                this.clearRememberedUser();
-            }
-
-            if (this.showLogs) {
-                console.log('✅ Login successful - data stored');
-            }
-
-            // Frontend için normalize edilmiş response döndür
-            return {
-                success: true,
-                token: token,
-                user: user,
-                expiresAt: data.expiresAt || data.ExpiresAt,
-                message: data.message || data.Message || 'Giriş başarılı'
-            };
-
-        } catch (error) {
-            console.error('❌ Login error:', error);
-
-            // Network error kontrolü
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                throw new Error('Sunucuya bağlanılamıyor. Backend servisi çalışıyor mu?');
-            }
-
-            // CORS error kontrolü
-            if (error.message.includes('CORS')) {
-                throw new Error('CORS hatası. Backend CORS ayarlarını kontrol edin.');
-            }
-
-            throw error;
-        }
-    }
-
-    /**
-     * Make API request with error handling
-     */
-    async makeRequest(endpoint, options = {}) {
-        const url = `${this.apiBaseUrl}${endpoint}`;
-
-        const defaultOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: this.apiTimeout
-        };
-
-        const finalOptions = { ...defaultOptions, ...options };
-
-        // Add auth headers if token exists
-        const token = this.getToken();
-        if (token) {
-            finalOptions.headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        try {
-            const response = await fetch(url, finalOptions);
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    // Unauthorized - logout user
+                // Check if token is expired
+                if (this.isTokenExpired()) {
+                    this.log('Token is expired');
                     this.logout();
+                    return false;
                 }
 
-                const errorText = await response.text();
-                throw new Error(this.getErrorMessage(response.status) + (errorText ? `: ${errorText}` : ''));
-            }
-
-            return await response.json();
-
-        } catch (error) {
-            if (this.showLogs) {
-                console.error('API request failed:', error);
-            }
-            throw error;
-        }
-    }
-
-    /**
-     * Check if user is authenticated - MOCK TOKEN FIX
-     */
-    isAuthenticated() {
-        const token = localStorage.getItem(this.tokenKey);
-        const user = localStorage.getItem(this.userKey);
-
-        if (!token || !user) {
-            if (this.showLogs) {
-                console.log('❌ No token or user data found');
-            }
-            return false;
-        }
-
-        // Mock token kontrolü (gerçek JWT olmayan tokenlar için)
-        if (token.startsWith('mock-token-')) {
-            if (this.showLogs) {
-                console.log('✅ Mock token detected, skipping JWT validation');
-            }
-            return true;
-        }
-
-        // Gerçek JWT token kontrolü
-        try {
-            const payload = this.parseJWT(token);
-            const now = Math.floor(Date.now() / 1000);
-
-            if (payload.exp && payload.exp < now) {
-                if (this.showLogs) {
-                    console.log('❌ Token expired');
+                return true;
+            } catch (error) {
+                this.log('Auth check error:', error);
+                // Debug modunda hata olsa bile true döndür
+                if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+                    this.createDevelopmentAuth();
+                    return true;
                 }
-                this.logout();
                 return false;
             }
+        },
 
-            if (this.showLogs) {
-                console.log('✅ JWT token valid');
-            }
-            return true;
-
-        } catch (error) {
-            if (this.showLogs) {
-                console.warn('⚠️ JWT parse failed but token exists, allowing access:', error.message);
-            }
-
-            // JWT parse hatası durumunda da mock kontrolü yap
-            if (token && user) {
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    /**
-     * Store authentication data
-     */
-    storeAuthData(response) {
-        if (this.showLogs) {
-            console.log('💾 Storing auth data');
-        }
-
-        // Store token
-        if (response.token) {
-            localStorage.setItem(this.tokenKey, response.token);
-        }
-
-        // Store refresh token
-        if (response.refreshToken) {
-            localStorage.setItem(this.refreshTokenKey, response.refreshToken);
-        }
-
-        // Store user info
-        if (response.user) {
-            localStorage.setItem(this.userKey, JSON.stringify(response.user));
-        }
-
-        // Store login time
-        localStorage.setItem(this.loginTimeKey, Date.now().toString());
-
-        if (this.showLogs) {
-            console.log('✅ Auth data stored successfully');
-        }
-    }
-
-    /**
-     * Logout user - FIXED URL REDIRECT VERSION
-     */
-    logout() {
-        if (this.showLogs) {
-            console.log('🚪 Logging out user...');
-        }
-
-        // Clear all auth data
-        localStorage.removeItem(this.tokenKey);
-        localStorage.removeItem(this.userKey);
-        localStorage.removeItem(this.refreshTokenKey);
-        localStorage.removeItem(this.loginTimeKey);
-
-        if (this.showLogs) {
-            console.log('🧹 Auth data cleared, redirecting...');
-        }
-
-        // Redirect to appropriate page
-        this.redirectToLogin();
-    }
-
-    /**
-     * Redirect to login page - FIXED URL VERSION
-     */
-    redirectToLogin() {
-        const currentPath = window.location.pathname;
-        const currentPage = currentPath.split('/').pop();
-
-        if (this.showLogs) {
-            console.log('Current path:', currentPath);
-            console.log('Current page:', currentPage);
-        }
-
-        // Avoid redirect loop
-        if (currentPage === 'login.html' || currentPage === 'index.html') {
-            return;
-        }
-
-        // FIXED: Determine correct redirect path based on current location
-        let redirectPath;
-
-        if (currentPath.includes('/pages/')) {
-            // Pages klasöründeyiz, aynı klasördeki login'e git
-            redirectPath = 'login.html';
-        } else {
-            // Root klasördeyiz, pages klasörüne git
-            redirectPath = 'pages/login.html';
-        }
-
-        if (this.showLogs) {
-            console.log('🔄 Redirecting to login:', redirectPath);
-        }
-
-        window.location.href = redirectPath;
-    }
-
-    /**
-     * Redirect to dashboard - FIXED URL VERSION
-     */
-    redirectToDashboard() {
-        const currentPath = window.location.pathname;
-
-        if (this.showLogs) {
-            console.log('🔄 Redirecting to dashboard from:', currentPath);
-        }
-
-        // FIXED: Determine correct redirect path based on current location
-        let redirectPath;
-
-        if (currentPath.includes('/pages/')) {
-            // Pages klasöründeyiz, aynı klasördeki dashboard'a git
-            redirectPath = 'dashboard.html';
-        } else {
-            // Root klasördeyiz, pages klasörüne git
-            redirectPath = 'pages/dashboard.html';
-        }
-
-        if (this.showLogs) {
-            console.log('📊 Redirecting to dashboard:', redirectPath);
-        }
-
-        window.location.href = redirectPath;
-    }
-
-    /**
-     * Parse JWT token - IMPROVED VERSION
-     */
-    parseJWT(token) {
-        try {
-            // JWT formatı kontrol et (3 part olmalı)
-            const parts = token.split('.');
-            if (parts.length !== 3) {
-                throw new Error('Invalid JWT format');
-            }
-
-            const base64Url = parts[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-
-            return JSON.parse(jsonPayload);
-        } catch (error) {
-            if (this.showLogs) {
-                console.error('JWT parse error:', error);
-            }
-            throw error;
-        }
-    }
-
-    /**
-     * Remember username functionality
-     */
-    rememberUser(username) {
-        localStorage.setItem(this.rememberUsernameKey, username);
-    }
-
-    /**
-     * Get remembered username
-     */
-    getRememberedUsername() {
-        return localStorage.getItem(this.rememberUsernameKey);
-    }
-
-    /**
-     * Clear remembered username
-     */
-    clearRememberedUser() {
-        localStorage.removeItem(this.rememberUsernameKey);
-    }
-
-    /**
-     * Get error message for status code
-     */
-    getErrorMessage(status) {
-        const messages = {
-            400: 'Geçersiz istek. Lütfen bilgilerinizi kontrol edin.',
-            401: this.messages?.LOGIN_ERROR || 'Kullanıcı adı veya şifre hatalı.',
-            403: 'Bu işlem için yetkiniz bulunmuyor.',
-            404: 'İstenen kaynak bulunamadı.',
-            429: 'Çok fazla istek gönderdiniz. Lütfen bekleyin.',
-            500: 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.',
-            502: 'Sunucu geçici olarak kullanılamıyor.',
-            503: 'Servis geçici olarak kullanılamıyor.'
-        };
-
-        return messages[status] || `Bilinmeyen hata (${status})`;
-    }
-
-    /**
-     * Get login time information
-     */
-    getLoginTimeInfo() {
-        const loginTime = localStorage.getItem(this.loginTimeKey);
-        if (!loginTime) return null;
-
-        const loginDate = new Date(parseInt(loginTime));
-        const now = new Date();
-        const sessionDuration = now.getTime() - loginDate.getTime();
-
-        return {
-            loginTime: loginDate,
-            sessionDuration: sessionDuration,
-            sessionDurationMinutes: Math.floor(sessionDuration / 60000)
-        };
-    }
-
-    /**
-     * Get current user
-     */
-    getCurrentUser() {
-        const userJson = localStorage.getItem(this.userKey);
-        if (!userJson) return null;
-
-        try {
-            return JSON.parse(userJson);
-        } catch (error) {
-            console.error('Error parsing user data:', error);
-            return null;
-        }
-    }
-
-    /**
-     * Get auth token
-     */
-    getToken() {
-        return localStorage.getItem(this.tokenKey);
-    }
-
-    /**
-     * Get auth headers for API requests
-     */
-    getAuthHeaders() {
-        const token = this.getToken();
-        if (!token) return {};
-
-        return {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
-    }
-
-    /**
-     * Setup automatic token refresh
-     */
-    setupTokenRefresh() {
-        if (!this.enableAutoRefresh) {
-            return;
-        }
-
-        // Check token every 5 minutes
-        setInterval(() => {
-            this.checkAndRefreshToken();
-        }, 5 * 60 * 1000);
-    }
-
-    /**
-     * Check and refresh token if needed
-     */
-    async checkAndRefreshToken() {
-        if (!this.isAuthenticated()) {
-            return;
-        }
-
-        const token = this.getToken();
-
-        // Skip refresh for mock tokens
-        if (token && token.startsWith('mock-token-')) {
-            return;
-        }
-
-        try {
-            const payload = this.parseJWT(token);
-            const now = Math.floor(Date.now() / 1000);
-            const timeUntilExpiry = payload.exp - now;
-
-            // Refresh if less than 10 minutes remaining
-            if (timeUntilExpiry < 600) {
-                await this.refreshToken();
-            }
-
-        } catch (error) {
-            if (this.showLogs) {
-                console.error('Token refresh check failed:', error);
-            }
-        }
-    }
-
-    /**
-     * Refresh authentication token
-     */
-    async refreshToken() {
-        const refreshToken = localStorage.getItem(this.refreshTokenKey);
-
-        if (!refreshToken) {
-            if (this.showLogs) {
-                console.log('No refresh token available');
-            }
-            this.logout();
-            return;
-        }
-
-        try {
-            const response = await this.makeRequest('/auth/refresh', {
-                method: 'POST',
-                body: JSON.stringify({
-                    refreshToken: refreshToken
-                })
-            });
-
-            if (response.success && response.token) {
-                this.storeAuthData(response);
-
-                if (this.showLogs) {
-                    console.log('Token refreshed successfully');
-                }
-            } else {
-                throw new Error('Token refresh failed');
-            }
-
-        } catch (error) {
-            if (this.showLogs) {
-                console.error('Token refresh failed:', error);
-            }
-            this.logout();
-        }
-    }
-
-    /**
-     * Force logout with cleanup
-     */
-    forceLogout() {
-        console.log('🚨 Force logout initiated');
-
-        // Clear all possible auth data
-        const authKeys = [
-            this.tokenKey || 'vervo_auth_token',
-            this.userKey || 'vervo_user_data',
-            this.refreshTokenKey || 'vervo_refresh_token',
-            this.loginTimeKey || 'vervo_login_time'
-        ];
-
-        authKeys.forEach(key => {
+        // Development için fake auth data oluştur - YENİ METOD
+        createDevelopmentAuth() {
             try {
-                localStorage.removeItem(key);
+                const fakeToken = 'dev.fake.token.' + Date.now();
+                const fakeUser = {
+                    id: 'dev-user-1',
+                    name: 'Development User',
+                    fullname: 'Development User',
+                    firstName: 'Development',
+                    lastName: 'User',
+                    email: 'dev@example.com',
+                    roles: ['user', 'admin'],
+                    permissions: ['read', 'write']
+                };
+
+                localStorage.setItem(this.TOKEN_KEY, fakeToken);
+                localStorage.setItem(this.USER_KEY, JSON.stringify(fakeUser));
+                
+                // 1 saatlik expiration
+                const expiresAt = Math.floor(Date.now() / 1000) + 3600;
+                localStorage.setItem(this.EXPIRES_KEY, expiresAt.toString());
+                
+                this.log('Development auth data created');
             } catch (error) {
-                console.error('Error clearing', key, error);
+                this.log('Create development auth error:', error);
             }
-        });
+        },
 
-        // Redirect to appropriate page
-        const currentPath = window.location.pathname;
-        if (currentPath.includes('/pages/')) {
-            window.location.replace('login.html');
-        } else {
-            window.location.replace('pages/login.html');
-        }
-    }
-
-    /**
-     * Check if features are enabled
-     */
-    isFeatureEnabled(featureName) {
-        if (typeof window.APP_CONFIG === 'undefined') {
-            return false;
-        }
-        return window.APP_CONFIG.FEATURES[featureName] || false;
-    }
-
-    /**
-     * Get configuration value
-     */
-    getConfigValue(path) {
-        if (typeof window.APP_CONFIG === 'undefined') {
-            return null;
-        }
-
-        const keys = path.split('.');
-        let value = window.APP_CONFIG;
-
-        for (const key of keys) {
-            if (value && typeof value === 'object' && key in value) {
-                value = value[key];
-            } else {
+        // Get current user
+        getCurrentUser() {
+            try {
+                const userStr = localStorage.getItem(this.USER_KEY);
+                return userStr ? JSON.parse(userStr) : null;
+            } catch (error) {
+                this.log('Get user error:', error);
                 return null;
             }
-        }
+        },
 
-        return value;
-    }
-}
+        // Get user alias for getCurrentUser
+        getUser() {
+            return this.getCurrentUser();
+        },
 
-// Global auth service initialization
-window.addEventListener('DOMContentLoaded', function () {
-    // Wait for config to load
-    setTimeout(() => {
-        if (!window.authService) {
+        // Get auth token
+        getToken() {
             try {
-                window.authService = new AuthService();
-                console.log('✅ AuthService initialized globally');
+                return localStorage.getItem(this.TOKEN_KEY);
             } catch (error) {
-                console.error('❌ AuthService initialization error:', error);
+                this.log('Get token error:', error);
+                return null;
+            }
+        },
+
+        // Get refresh token
+        getRefreshToken() {
+            try {
+                return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+            } catch (error) {
+                this.log('Get refresh token error:', error);
+                return null;
+            }
+        },
+
+        // Check if token is expired
+        isTokenExpired() {
+            try {
+                const token = this.getToken();
+                if (!token) return true;
+
+                // Check stored expiration time first
+                const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+                if (expiresAt) {
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    return parseInt(expiresAt) <= currentTime;
+                }
+
+                // Parse JWT token
+                const tokenData = this.parseJWT(token);
+                if (tokenData && tokenData.exp) {
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    // Add 5 minute buffer before expiration
+                    return tokenData.exp <= (currentTime + 300);
+                }
+
+                return false;
+            } catch (error) {
+                this.log('Token expiration check error:', error);
+                return true;
+            }
+        },
+
+        // Parse JWT token
+        parseJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                    atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join('')
+                );
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                this.log('JWT parse error:', error);
+                return null;
+            }
+        },
+
+        // Login function
+        async login(credentials) {
+            try {
+                const apiUrl = this.getApiUrl(this.endpoints.login);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.token && data.user) {
+                    this.storeAuthData(data);
+                    this.log('Login successful');
+                    return { success: true, data };
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                this.log('Login error:', error);
+                return { success: false, error: error.message };
+            }
+        },
+
+        // Logout function
+        logout(skipApiCall = false) {
+            try {
+                // Call logout API if not skipping
+                if (!skipApiCall) {
+                    this.callLogoutAPI().catch(error => {
+                        this.log('Logout API error (ignored):', error);
+                    });
+                }
+
+                // Clear local storage
+                this.clearAuthData();
+                
+                // Stop refresh timer
+                this.stopTokenRefreshTimer();
+                
+                this.log('Logout completed');
+                
+                // Redirect to login page
+                this.redirectToLogin();
+            } catch (error) {
+                this.log('Logout error:', error);
+                // Force redirect even if logout fails
+                this.redirectToLogin();
+            }
+        },
+
+        // Call logout API
+        async callLogoutAPI() {
+            try {
+                const token = this.getToken();
+                if (!token) return;
+
+                const apiUrl = this.getApiUrl(this.endpoints.logout);
+                
+                await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            } catch (error) {
+                this.log('Logout API call error:', error);
+            }
+        },
+
+        // Store authentication data
+        storeAuthData(data) {
+            try {
+                // Store token
+                if (data.token) {
+                    localStorage.setItem(this.TOKEN_KEY, data.token);
+                }
+
+                // Store user
+                if (data.user) {
+                    localStorage.setItem(this.USER_KEY, JSON.stringify(data.user));
+                }
+
+                // Store refresh token
+                if (data.refreshToken) {
+                    localStorage.setItem(this.REFRESH_TOKEN_KEY, data.refreshToken);
+                }
+
+                // Store expiration time
+                if (data.expiresIn) {
+                    const expiresAt = Math.floor(Date.now() / 1000) + data.expiresIn;
+                    localStorage.setItem(this.EXPIRES_KEY, expiresAt.toString());
+                } else if (data.token) {
+                    // Try to get expiration from token
+                    const tokenData = this.parseJWT(data.token);
+                    if (tokenData && tokenData.exp) {
+                        localStorage.setItem(this.EXPIRES_KEY, tokenData.exp.toString());
+                    }
+                }
+
+                // Start refresh timer
+                this.startTokenRefreshTimer();
+            } catch (error) {
+                this.log('Store auth data error:', error);
+            }
+        },
+
+        // Clear authentication data
+        clearAuthData() {
+            try {
+                localStorage.removeItem(this.TOKEN_KEY);
+                localStorage.removeItem(this.USER_KEY);
+                localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+                localStorage.removeItem(this.EXPIRES_KEY);
+            } catch (error) {
+                this.log('Clear auth data error:', error);
+            }
+        },
+
+        // Get authorization header for API requests
+        getAuthHeader() {
+            const token = this.getToken();
+            return token ? { 'Authorization': `Bearer ${token}` } : {};
+        },
+
+        // Get all headers including auth
+        getHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                ...this.getAuthHeader()
+            };
+        },
+
+        // Refresh token
+        async refreshToken() {
+            try {
+                const refreshToken = this.getRefreshToken();
+                if (!refreshToken) {
+                    throw new Error('No refresh token available');
+                }
+
+                const apiUrl = this.getApiUrl(this.endpoints.refresh);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ refreshToken })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.token) {
+                    this.storeAuthData(data);
+                    this.log('Token refreshed successfully');
+                    return true;
+                } else {
+                    throw new Error('Invalid refresh response');
+                }
+            } catch (error) {
+                this.log('Token refresh error:', error);
+                this.logout(true); // Skip API call since refresh failed
+                return false;
+            }
+        },
+
+        // Start token refresh timer
+        startTokenRefreshTimer() {
+            this.stopTokenRefreshTimer(); // Clear existing timer
+
+            const checkInterval = 60000; // Check every minute
+            
+            this.refreshTimer = setInterval(() => {
+                if (this.isAuthenticated()) {
+                    const expiresAt = localStorage.getItem(this.EXPIRES_KEY);
+                    if (expiresAt) {
+                        const currentTime = Math.floor(Date.now() / 1000);
+                        const timeUntilExpiry = parseInt(expiresAt) - currentTime;
+                        
+                        // Refresh if token expires in less than 10 minutes
+                        if (timeUntilExpiry < 600 && timeUntilExpiry > 0) {
+                            this.log('Token expiring soon, refreshing...');
+                            this.refreshToken();
+                        }
+                    }
+                }
+            }, checkInterval);
+        },
+
+        // Stop token refresh timer
+        stopTokenRefreshTimer() {
+            if (this.refreshTimer) {
+                clearInterval(this.refreshTimer);
+                this.refreshTimer = null;
+            }
+        },
+
+        // Setup axios interceptors (if axios is available)
+        setupAxiosInterceptors() {
+            if (typeof axios !== 'undefined') {
+                // Request interceptor
+                axios.interceptors.request.use(
+                    (config) => {
+                        const token = this.getToken();
+                        if (token) {
+                            config.headers.Authorization = `Bearer ${token}`;
+                        }
+                        return config;
+                    },
+                    (error) => {
+                        return Promise.reject(error);
+                    }
+                );
+
+                // Response interceptor
+                axios.interceptors.response.use(
+                    (response) => {
+                        return response;
+                    },
+                    async (error) => {
+                        if (error.response && error.response.status === 401) {
+                            this.log('401 Unauthorized - logging out');
+                            this.logout();
+                        }
+                        return Promise.reject(error);
+                    }
+                );
+            }
+        },
+
+        // Get API URL
+        getApiUrl(endpoint) {
+            const baseUrl = (window.APP_CONFIG && window.APP_CONFIG.API_BASE_URL) || 
+                           window.API_BASE_URL || 
+                           'http://localhost:5000/api';
+            return baseUrl + endpoint;
+        },
+
+        // Redirect to login page - DEBUG MODE İLE GÜNCELLENMİŞ
+        redirectToLogin() {
+            // Development modunda redirect yapma
+            if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+                this.log('Debug mode: Login redirect prevented');
+                return;
+            }
+
+            const currentPath = window.location.pathname;
+            
+            // Don't redirect if already on login page
+            if (currentPath.includes('index.html') || currentPath.endsWith('/')) {
+                return;
+            }
+
+            // Determine login page path
+            let loginPath = '../index.html';
+            if (currentPath.includes('/pages/')) {
+                loginPath = '../index.html';
+            } else if (currentPath.includes('/src/frontend/')) {
+                loginPath = './index.html';
+            }
+
+            this.log('Redirecting to login:', loginPath);
+            setTimeout(() => {
+                window.location.href = loginPath;
+            }, 100);
+        },
+
+        // Verify token with server
+        async verifyToken() {
+            try {
+                const token = this.getToken();
+                if (!token) return false;
+
+                const apiUrl = this.getApiUrl(this.endpoints.verify);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: this.getHeaders()
+                });
+
+                return response.ok;
+            } catch (error) {
+                this.log('Token verification error:', error);
+                return false;
+            }
+        },
+
+        // Update user profile
+        updateUser(userData) {
+            try {
+                const currentUser = this.getCurrentUser();
+                if (currentUser) {
+                    const updatedUser = { ...currentUser, ...userData };
+                    localStorage.setItem(this.USER_KEY, JSON.stringify(updatedUser));
+                    this.log('User profile updated');
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                this.log('Update user error:', error);
+                return false;
+            }
+        },
+
+        // Check if user has specific role
+        hasRole(role) {
+            const user = this.getCurrentUser();
+            return user && user.roles && user.roles.includes(role);
+        },
+
+        // Check if user has specific permission
+        hasPermission(permission) {
+            const user = this.getCurrentUser();
+            return user && user.permissions && user.permissions.includes(permission);
+        },
+
+        // Logging function
+        log(message, data = null) {
+            if (window.debugLog) {
+                window.debugLog(`[AUTH] ${message}`, data);
+            } else if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+                console.log(`[AUTH] ${message}`, data || '');
             }
         }
-    }, 100);
-});
+    };
 
-// Immediate initialization if config is ready
-if (typeof window.APP_CONFIG !== 'undefined' && !window.authService) {
-    try {
-        window.authService = new AuthService();
-        console.log('✅ AuthService initialized immediately');
-    } catch (error) {
-        console.warn('⚠️ AuthService immediate initialization failed:', error);
-    }
-}
+    // Initialize auth service
+    authService.init();
 
-// Export for modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = AuthService;
-}
+    // Add to global scope
+    window.authService = authService;
+
+    // Backward compatibility - add individual functions to global scope
+    window.isAuthenticated = authService.isAuthenticated.bind(authService);
+    window.getCurrentUser = authService.getCurrentUser.bind(authService);
+    window.getToken = authService.getToken.bind(authService);
+    window.logout = authService.logout.bind(authService);
+    window.getAuthHeader = authService.getAuthHeader.bind(authService);
+    window.getHeaders = authService.getHeaders.bind(authService);
+
+    // Page visibility change listener - refresh token when page becomes visible
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && authService.isAuthenticated()) {
+            // Check if token needs refresh when page becomes visible
+            setTimeout(() => {
+                if (authService.isTokenExpired()) {
+                    authService.refreshToken();
+                }
+            }, 1000);
+        }
+    });
+
+    // Storage event listener - sync logout across tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === authService.TOKEN_KEY && !e.newValue) {
+            // Token was removed in another tab, logout this tab too
+            authService.logout(true); // Skip API call
+        }
+    });
+
+})();

@@ -1,114 +1,135 @@
-// Dashboard Page JavaScript - AUTH KONTROLÜ İLE
 // src/frontend/assets/js/dashboard.js
+// Dashboard sayfası JavaScript fonksiyonları - DEBUG MODE İLE GÜNCELLENMİŞ
 
-$(document).ready(function() {
-    console.log('🔒 Dashboard: Auth kontrolü başlatılıyor...');
+// Dashboard sayfası için auth kontrolü - DEBUG MODE İLE ESNEK
+function checkDashboardAuth() {
+    console.log('🔐 Checking dashboard authentication...');
     
-    // AUTH KONTROLÜ - ZORUNLU
-    enforceAuthentication().then(() => {
-        console.log('✅ Auth tamam, dashboard yükleniyor...');
-        initializeDashboard();
-    }).catch(() => {
-        console.log('❌ Auth başarısız, yönlendiriliyor...');
-    });
-});
-
-/**
- * Auth kontrolü - Her korumalı sayfa için
- */
-function enforceAuthentication() {
-    return new Promise((resolve, reject) => {
-        // Manual token kontrolü (AuthService olmasa da çalışır)
-        const token = localStorage.getItem('vervo_auth_token');
-        const user = localStorage.getItem('vervo_user_data');
-        
-        if (!token || !user) {
-            alert('Bu sayfaya erişim için giriş yapmanız gerekiyor.');
-            window.location.href = 'login.html';
-            reject(false);
-            return;
-        }
-        
-        // AuthService varsa onu da kontrol et
+    try {
+        // AuthService varsa kullan
         if (window.authService) {
             if (window.authService.isAuthenticated()) {
-                resolve(true);
+                console.log('✅ User is authenticated');
+                return true;
             } else {
-                alert('Oturum süresi dolmuş. Lütfen tekrar giriş yapın.');
-                window.location.href = 'login.html';
-                reject(false);
+                console.log('❌ User is not authenticated');
+                
+                // Debug modunda redirect yapma
+                if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+                    console.log('🐛 Debug mode: Auth redirect prevented, continuing...');
+                    return true;
+                } else {
+                    console.log('🔄 Redirecting to login...');
+                    window.location.href = '../index.html';
+                    return false;
+                }
             }
-        } else {
-            // AuthService yoksa manual kontrolle devam et
-            resolve(true);
         }
-    });
+        
+        // AuthService yoksa basit token kontrolü
+        const token = localStorage.getItem('authToken') || localStorage.getItem('vervo_auth_token');
+        const user = localStorage.getItem('user') || localStorage.getItem('vervo_user_data');
+        
+        if (!token || !user) {
+            console.log('❌ No auth data found');
+            
+            // Debug modunda fake data oluştur
+            if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+                console.log('🐛 Debug mode: Creating fake auth data...');
+                localStorage.setItem('authToken', 'fake-dev-token-' + Date.now());
+                localStorage.setItem('user', JSON.stringify({
+                    id: 'dev-user',
+                    name: 'Development User',
+                    fullname: 'Development User',
+                    firstName: 'Development',
+                    lastName: 'User'
+                }));
+                return true;
+            } else {
+                console.log('🔄 Redirecting to login...');
+                window.location.href = '../index.html';
+                return false;
+            }
+        }
+        
+        console.log('✅ Auth data found, user is authenticated');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Auth check error:', error);
+        
+        // Debug modunda hata ignore edilir
+        if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+            console.log('🐛 Debug mode: Auth error ignored, continuing...');
+            return true;
+        } else {
+            console.log('🔄 Redirecting to login due to error...');
+            window.location.href = '../index.html';
+            return false;
+        }
+    }
 }
 
-/**
- * Initialize dashboard
- */
-function initializeDashboard() {
-    console.log('🚀 Dashboard initialization starting...');
+// Dashboard initialization
+function initDashboard() {
+    console.log('📊 Initializing dashboard...');
     
-    // Config'ten title güncelle
+    // Auth kontrolü yap
+    if (!checkDashboardAuth()) {
+        return; // Auth fail olursa daha fazla işlem yapma
+    }
+    
+    console.log('✅ Dashboard authentication passed, continuing with initialization...');
+    
+    // Title güncelle
     updatePageTitle();
     
-    // Header component'ini yükle
-    loadHeaderComponent();
-    
-    // User bilgilerini yükle
-    loadUserInfo();
-    
-    // Chart'ı initialize et
-    initializeChart();
+    // Header'ı yükle
+    loadHeader();
     
     // Welcome mesajını güncelle
     updateWelcomeMessage();
     
-    // Animasyonları başlat
-    animateElements();
+    // Dashboard verilerini yükle
+    loadDashboardData();
     
-    console.log('✅ Dashboard initialization complete');
+    // Event listeners'ı setup et
+    setupEventListeners();
+    
+    console.log('✅ Dashboard initialized successfully');
 }
 
-/**
- * Update page title from config
- */
-function updatePageTitle() {
-    const checkConfig = () => {
-        if (window.APP_CONFIG) {
-            const titleElement = document.getElementById('pageTitle');
-            if (titleElement) {
-                titleElement.textContent = `Dashboard - ${window.APP_CONFIG.PORTAL_TITLE}`;
-            }
-            document.title = `Dashboard - ${window.APP_CONFIG.PORTAL_TITLE}`;
-        } else {
-            setTimeout(checkConfig, 100);
-        }
-    };
-    checkConfig();
-}
-
-/**
- * Load header component
- */
-async function loadHeaderComponent() {
-    console.log('📥 Loading header component...');
-    
+// Header component'ini yükle
+async function loadHeader() {
     try {
+        console.log('🔄 Loading header component...');
+        
         const response = await fetch('../components/header.html');
         if (response.ok) {
-            const headerHtml = await response.text();
-            document.getElementById('headerContainer').innerHTML = headerHtml;
-            console.log('✅ Header component loaded');
+            const html = await response.text();
+            const container = document.getElementById('headerContainer');
             
-            // Header initialize edilene kadar bekle
-            setTimeout(() => {
-                if (typeof window.initializeHeader === 'function') {
-                    window.initializeHeader();
-                }
-            }, 100);
+            if (container) {
+                container.innerHTML = html;
+                console.log('✅ Header component loaded');
+                
+                // Header initialization
+                setTimeout(() => {
+                    if (typeof window.initializeHeader === 'function') {
+                        window.initializeHeader();
+                    } else {
+                        console.log('⏳ Waiting for header initialization...');
+                        setTimeout(() => {
+                            if (typeof window.initializeHeader === 'function') {
+                                window.initializeHeader();
+                            }
+                        }, 100);
+                    }
+                }, 50);
+                
+            } else {
+                console.error('❌ Header container not found');
+            }
         } else {
             console.error('❌ Header component load failed:', response.status);
         }
@@ -117,200 +138,173 @@ async function loadHeaderComponent() {
     }
 }
 
-/**
- * Load user information and update UI
- */
-function loadUserInfo() {
+// Page title'ı güncelle
+function updatePageTitle() {
+    if (window.APP_CONFIG && window.APP_CONFIG.PORTAL_TITLE) {
+        document.title = `Dashboard - ${window.APP_CONFIG.PORTAL_TITLE}`;
+    }
+}
+
+// Welcome message'ı güncelle
+function updateWelcomeMessage() {
     try {
-        const userStr = localStorage.getItem('vervo_user_data');
+        const userStr = localStorage.getItem('user') || localStorage.getItem('vervo_user_data');
         if (userStr) {
             const user = JSON.parse(userStr);
+            const userName = user.name || user.fullname || user.firstName || 'Kullanıcı';
             
-            // Welcome message'ı güncelle
-            const welcomeUserName = document.getElementById('welcomeUserName');
-            if (welcomeUserName) {
-                const displayName = user.fullName || user.firstName || user.username || 'Kullanıcı';
-                welcomeUserName.textContent = displayName;
+            const welcomeUserNameEl = document.getElementById('welcomeUserName');
+            if (welcomeUserNameEl) {
+                welcomeUserNameEl.textContent = userName;
             }
             
-            console.log('✅ User info loaded:', user.username || 'Unknown');
-        } else {
-            console.warn('⚠️ No user data found');
+            console.log('✅ Welcome message updated for:', userName);
         }
-    } catch (error) {
-        console.error('❌ Error loading user info:', error);
-    }
-}
-
-/**
- * Initialize chart
- */
-function initializeChart() {
-    const ctx = document.getElementById('usageChart');
-    if (!ctx) {
-        console.warn('Chart canvas not found');
-        return;
-    }
-    
-    try {
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
-                datasets: [{
-                    label: 'Araç Kullanımı',
-                    data: [12, 19, 15, 25, 22, 30],
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(0,0,0,0.1)'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
-        });
         
-        console.log('✅ Chart initialized');
+        // Update welcome message with portal title
+        if (window.APP_CONFIG && window.APP_CONFIG.PORTAL_TITLE) {
+            const welcomeMessageEl = document.getElementById('welcomeMessage');
+            if (welcomeMessageEl) {
+                welcomeMessageEl.textContent = `${window.APP_CONFIG.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.`;
+            }
+        }
     } catch (error) {
-        console.error('❌ Chart initialization failed:', error);
+        console.warn('⚠️ Welcome message update error:', error);
     }
 }
 
-/**
- * Update welcome message from config
- */
-function updateWelcomeMessage() {
-    const checkConfig = () => {
-        if (window.APP_CONFIG) {
-            const welcomeMessage = document.getElementById('welcomeMessage');
-            if (welcomeMessage) {
-                welcomeMessage.textContent = `${window.APP_CONFIG.PORTAL_TITLE}'a hoş geldiniz. Buradan tüm sistemlerinizi yönetebilir, raporlarınızı görüntüleyebilir ve araç takip sistemini kullanabilirsiniz.`;
-            }
-        } else {
-            setTimeout(checkConfig, 100);
-        }
-    };
-    checkConfig();
+// Dashboard verilerini yükle
+function loadDashboardData() {
+    try {
+        console.log('📊 Loading dashboard data...');
+        
+        // Mock data ile stats'ları güncelle
+        updateDashboardStats();
+        
+        // Chart'ları yükle
+        loadCharts();
+        
+        console.log('✅ Dashboard data loaded');
+    } catch (error) {
+        console.error('❌ Dashboard data load error:', error);
+    }
 }
 
-/**
- * Add animations to elements
- */
-function animateElements() {
-    // Fade-in animasyonları için class ekle
-    const elements = document.querySelectorAll('.fade-in');
-    elements.forEach((el, index) => {
-        setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
-        }, index * 100);
+// Dashboard istatistiklerini güncelle
+function updateDashboardStats() {
+    const stats = {
+        totalVehicles: 15,
+        activeVehicles: 12,
+        totalDistance: '1,250 km',
+        fuelConsumption: '8.5 lt/100km'
+    };
+    
+    // Stats kartlarını güncelle
+    const statElements = {
+        'totalVehicles': document.querySelector('[data-stat="totalVehicles"]'),
+        'activeVehicles': document.querySelector('[data-stat="activeVehicles"]'),
+        'totalDistance': document.querySelector('[data-stat="totalDistance"]'),
+        'fuelConsumption': document.querySelector('[data-stat="fuelConsumption"]')
+    };
+    
+    Object.keys(stats).forEach(key => {
+        const element = statElements[key];
+        if (element) {
+            element.textContent = stats[key];
+        }
     });
 }
 
-/**
- * Handle quick action clicks
- */
+// Chart'ları yükle
+function loadCharts() {
+    try {
+        const chartContainer = document.getElementById('chartContainer');
+        if (chartContainer) {
+            chartContainer.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #6c757d;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-chart-line fa-3x mb-3"></i>
+                        <h5>Grafik Yükleniyor...</h5>
+                        <p>Araç performans verileri hazırlanıyor</p>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('❌ Chart load error:', error);
+    }
+}
+
+// Event listeners'ı setup et
+function setupEventListeners() {
+    try {
+        // Quick action button'ları
+        const quickActionButtons = document.querySelectorAll('.quick-action');
+        quickActionButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const actionName = this.querySelector('h4')?.textContent || 'Bu özellik';
+                handleQuickAction(actionName);
+            });
+        });
+        
+        console.log('✅ Event listeners setup completed');
+    } catch (error) {
+        console.error('❌ Event listeners setup error:', error);
+    }
+}
+
+// Quick action click handler
 function handleQuickAction(actionName) {
     console.log('🔗 Quick action clicked:', actionName);
     
-    switch(actionName) {
-        case 'Yeni Araç Ekle':
-            alert('Yeni Araç Ekleme özelliği yakında aktif olacak!');
-            break;
-        case 'Rapor Oluştur':
-            alert('Rapor Oluşturma özelliği yakında aktif olacak!');
-            break;
-        case 'Sistem Ayarları':
-            alert('Sistem Ayarları özelliği yakında aktif olacak!');
-            break;
-        default:
-            alert(`${actionName} özelliği yakında aktif olacak!`);
+    if (typeof window.showAlert === 'function') {
+        window.showAlert(`${actionName} özelliği yakında aktif olacak!`, 'info');
+    } else {
+        alert(`${actionName} özelliği yakında aktif olacak!`);
     }
 }
 
-/**
- * Global logout function
- */
+// Global logout function
 function logout() {
     console.log('🚪 Logout from dashboard...');
     
-    if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-        try {
-            // Clear all auth data
+    try {
+        // Auth service varsa kullan
+        if (window.authService && typeof window.authService.logout === 'function') {
+            window.authService.logout();
+        } else {
+            // Manual logout
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
             localStorage.removeItem('vervo_auth_token');
             localStorage.removeItem('vervo_user_data');
-            localStorage.removeItem('vervo_login_time');
-            localStorage.removeItem('vervo_refresh_token');
-            
-            console.log('✅ Auth data cleared');
-            
-            // Redirect to login
-            window.location.href = 'login.html';
-        } catch (error) {
-            console.error('❌ Logout error:', error);
-            window.location.href = 'login.html';
+            window.location.href = '../index.html';
         }
+    } catch (error) {
+        console.error('❌ Logout error:', error);
+        // Force redirect
+        window.location.href = '../index.html';
     }
 }
 
-/**
- * Periodic updates
- */
-function startPeriodicUpdates() {
-    // Her 5 dakikada bir auth kontrolü yap
-    setInterval(() => {
-        const token = localStorage.getItem('vervo_auth_token');
-        if (!token) {
-            console.log('⚠️ Token bulunamadı, login\'e yönlendiriliyor...');
-            alert('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
-            window.location.href = 'login.html';
-        }
-    }, 5 * 60 * 1000); // 5 dakika
-}
-
-/**
- * Page visibility change handler
- */
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        // Sayfa görünür olduğunda auth kontrolü yap
-        const token = localStorage.getItem('vervo_auth_token');
-        if (!token) {
-            console.log('⚠️ Sayfa odaklandığında token bulunamadı');
-            window.location.href = 'login.html';
-        }
+// Page load event
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 Dashboard page loaded');
+    
+    // Config yüklenene kadar bekle
+    if (window.APP_CONFIG) {
+        initDashboard();
+    } else {
+        // Config henüz yüklenmemişse biraz bekle
+        setTimeout(() => {
+            initDashboard();
+        }, 100);
     }
 });
 
-// Global fonksiyonları export et
-window.dashboardUtils = {
-    handleQuickAction,
-    logout,
-    loadUserInfo,
-    initializeChart,
-    updateWelcomeMessage
-};
-
-// Periodic updates'i başlat
-setTimeout(startPeriodicUpdates, 1000);
+// Global fonksiyonları window object'ine ekle
+window.handleQuickAction = handleQuickAction;
+window.logout = logout;
+window.initDashboard = initDashboard;
+window.checkDashboardAuth = checkDashboardAuth;

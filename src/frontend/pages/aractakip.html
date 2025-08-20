@@ -334,7 +334,7 @@
 
         <!-- Filter Section -->
         <div class="filter-section">
-            <div class="filter-header" onclick="window.aracTakip.toggleFilters()">
+            <div class="filter-header" onclick="toggleFilters()">
                 <h3><i class="fas fa-filter me-2"></i>Filtreler</h3>
                 <button class="filter-toggle-btn" id="filterToggleIcon">
                     <i class="fas fa-chevron-down"></i>
@@ -375,7 +375,7 @@
                     </div>
                     <div class="filter-group">
                         <label for="searchInput">Arama</label>
-                        <input type="text" id="searchInput" placeholder="Plaka, marka veya model..." onkeyup="window.aracTakip.searchVehicles()">
+                        <input type="text" id="searchInput" placeholder="Plaka, marka veya model..." onkeyup="searchVehicles()">
                     </div>
                 </div>
             </div>
@@ -396,7 +396,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Araç Detayları</h2>
-                <button class="close-btn" onclick="window.aracTakip.closeModal()">&times;</button>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <!-- Modal içeriği JavaScript ile doldurulacak -->
@@ -404,14 +404,58 @@
         </div>
     </div>
 
-    <!-- Edit Ruhsat Modal (Placeholder) -->
-    <div id="editRuhsatModal" class="modal">
-        <!-- Modal içeriği -->
+    <!-- Edit Ruhsat Modal -->
+    <div id="editRuhsatModal" class="edit-modal">
+        <div class="edit-modal-content">
+            <h3>Ruhsat Bilgilerini Düzenle</h3>
+            <form>
+                <div class="form-group">
+                    <label for="editPlaka">Plaka</label>
+                    <input type="text" id="editPlaka" name="plaka">
+                </div>
+                <div class="form-group">
+                    <label for="editVin">VIN</label>
+                    <input type="text" id="editVin" name="vin">
+                </div>
+                <div class="form-group">
+                    <label for="editMarka">Marka</label>
+                    <input type="text" id="editMarka" name="marka">
+                </div>
+                <div class="form-group">
+                    <label for="editModel">Model</label>
+                    <input type="text" id="editModel" name="model">
+                </div>
+                <div class="form-group">
+                    <label for="editYil">Yıl</label>
+                    <input type="number" id="editYil" name="yil">
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditRuhsatModal()">İptal</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Edit Kullanici Modal (Placeholder) -->
-    <div id="editKullaniciModal" class="modal">
-        <!-- Modal içeriği -->
+    <!-- Edit Kullanici Modal -->
+    <div id="editKullaniciModal" class="edit-modal">
+        <div class="edit-modal-content">
+            <h3>Kullanıcı Bilgilerini Düzenle</h3>
+            <form>
+                <div class="form-group">
+                    <label for="editKullaniciAdi">Kullanıcı Adı</label>
+                    <input type="text" id="editKullaniciAdi" name="kullaniciAdi">
+                </div>
+                <div class="form-group">
+                    <label for="editKullaniciTelefon">Telefon</label>
+                    <input type="tel" id="editKullaniciTelefon" name="kullaniciTelefon">
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditKullaniciModal()">İptal</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Edit Arac Bilgileri Modal (Placeholder) -->
@@ -426,7 +470,8 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-    <!-- Common JS files -->
+    <!-- Common JS files - Sıralama önemli -->
+    <script src="../assets/js/config.js"></script>
     <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/alert.js"></script>
     <script src="../assets/js/header.js"></script>

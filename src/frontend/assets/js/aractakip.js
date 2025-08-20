@@ -1,5 +1,5 @@
 // src/frontend/assets/js/aractakip.js
-// Araç Takip sayfası JavaScript fonksiyonları
+// Araç Takip sayfası JavaScript fonksiyonları - DEBUG MODE İLE GÜNCELLENMİŞ
 
 // Sayfa yüklendiğinde çalışacak ana fonksiyon
 document.addEventListener('DOMContentLoaded', function() {
@@ -8,15 +8,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Title'ı parametrik yap
     updatePageTitle();
     
-    // Auth kontrolü
+    // Auth kontrolü - DEBUG MODE İLE ESNEK
     try {
         if (window.authService && !window.authService.isAuthenticated()) {
             console.log('Not authenticated, redirecting to login...');
-            window.location.href = '../index.html';
-            return;
+            // Debug modunda redirect yapma
+            if (!window.APP_CONFIG || !window.APP_CONFIG.DEBUG_MODE) {
+                window.location.href = '../index.html';
+                return;
+            } else {
+                console.log('Debug mode: Auth redirect prevented, continuing...');
+            }
         }
     } catch (error) {
         console.warn('Auth service error, continuing without auth check:', error);
+        // Development modunda auth hataları ignore edilir
+        if (window.APP_CONFIG && window.APP_CONFIG.DEBUG_MODE) {
+            console.log('Debug mode: Auth error ignored, continuing...');
+        }
     }
 
     console.log('Authenticated, loading arac takip...');
@@ -65,13 +74,65 @@ async function loadHeader() {
             container.innerHTML = html;
             await new Promise(resolve => setTimeout(resolve, 200));
             
+            // Hamburger menu setup for arac takip
+            setupHamburgerMenuForAracTakip();
+            
             // Header initialization
-            if (typeof initializeHeader === 'function') {
-                initializeHeader();
+            if (typeof window.initializeHeader === 'function') {
+                try {
+                    window.initializeHeader();
+                } catch (error) {
+                    console.warn('initializeHeader error:', error);
+                }
             }
         }
     } catch (error) {
         console.error('Header load error:', error);
+    }
+}
+
+// Hamburger menu setup - ARAC TAKİP İÇİN
+function setupHamburgerMenuForAracTakip() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('mobileSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const sidebarClose = document.getElementById('sidebarClose');
+    
+    if (!sidebarToggle || !sidebar || !overlay) {
+        console.warn('Sidebar elements not found');
+        return;
+    }
+    
+    sidebarToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Hamburger clicked on arac takip');
+        sidebar.classList.add('show');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    });
+    
+    if (sidebarClose) {
+        sidebarClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            closeSidebar();
+        });
+    }
+    
+    overlay.addEventListener('click', function(e) {
+        closeSidebar();
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+            closeSidebar();
+        }
+    });
+    
+    function closeSidebar() {
+        sidebar.classList.remove('show');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
     }
 }
 
@@ -273,7 +334,7 @@ function updateModalContent(vehicle) {
     }
 }
 
-// Modal içerik HTML'i oluştur
+// Modal içerik HTML'i oluştur - GELİŞTİRİLMİŞ VERSİYON
 function createModalContent(vehicle) {
     return `
         <div class="vehicle-card-modal">
@@ -303,8 +364,101 @@ function createModalContent(vehicle) {
                     </div>
                 </div>
             </div>
+            
+            <!-- Modal içindeki araç detay sayfası -->
+            <div class="vehicle-detail-tabs mt-4">
+                <ul class="nav nav-tabs" id="vehicleDetailTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#vehicleInfo">Araç Bilgileri</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#vehicleLocation">Konum</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#vehicleHistory">Geçmiş</a>
+                    </li>
+                </ul>
+                
+                <div class="tab-content mt-3">
+                    <div class="tab-pane fade show active" id="vehicleInfo">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Ruhsat Bilgileri</h5>
+                                <table class="table table-borderless">
+                                    <tr><td><strong>Plaka:</strong></td><td>${vehicle.plate}</td></tr>
+                                    <tr><td><strong>Marka:</strong></td><td>${vehicle.brand}</td></tr>
+                                    <tr><td><strong>Model:</strong></td><td>${vehicle.model}</td></tr>
+                                    <tr><td><strong>Yıl:</strong></td><td>${vehicle.year}</td></tr>
+                                </table>
+                                <button class="btn btn-outline-primary btn-sm" onclick="openEditRuhsatModal(${vehicle.id})">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Kullanıcı Bilgileri</h5>
+                                <table class="table table-borderless">
+                                    <tr><td><strong>Sürücü:</strong></td><td>Ahmet Yılmaz</td></tr>
+                                    <tr><td><strong>Telefon:</strong></td><td>+90 532 123 45 67</td></tr>
+                                </table>
+                                <button class="btn btn-outline-primary btn-sm" onclick="openEditKullaniciModal(${vehicle.id})">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="vehicleLocation">
+                        <div class="location-info">
+                            <h5>Güncel Konum</h5>
+                            <p><i class="fas fa-map-marker-alt"></i> Beşiktaş, İstanbul</p>
+                            <div id="vehicleMap" style="height: 300px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <span class="text-muted">Harita yükleniyor...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="vehicleHistory">
+                        <h5>Son Hareketler</h5>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <span class="timeline-time">14:30</span>
+                                <span class="timeline-content">Araç hareket başladı</span>
+                            </div>
+                            <div class="timeline-item">
+                                <span class="timeline-time">13:45</span>
+                                <span class="timeline-content">Park edildi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
+}
+
+// Edit modal fonksiyonları
+function openEditRuhsatModal(vehicleId) {
+    const modal = document.getElementById('editRuhsatModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function openEditKullaniciModal(vehicleId) {
+    const modal = document.getElementById('editKullaniciModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function openEditAracBilgileriModal(vehicleId) {
+    const modal = document.getElementById('editAracBilgileriModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
 }
 
 // Modal event listeners setup
@@ -347,7 +501,9 @@ function searchVehicles() {
 // Hata mesajı göster
 function showError(message) {
     const alertContainer = document.getElementById('alertContainer');
-    if (alertContainer && typeof showAlert === 'function') {
+    if (alertContainer && typeof window.showAlert === 'function') {
+        window.showAlert(message, 'danger');
+    } else if (typeof showAlert === 'function') {
         showAlert(message, 'danger');
     } else {
         console.error(message);
@@ -355,7 +511,7 @@ function showError(message) {
     }
 }
 
-// Global export for use in HTML
+// Global export for use in HTML - GENİŞLETİLMİŞ
 window.aracTakip = {
     toggleFilters,
     openVehicleModal,
@@ -365,3 +521,15 @@ window.aracTakip = {
     closeEditAracBilgileriModal,
     searchVehicles
 };
+
+// Global fonksiyonları window object'ine ekle (eski HTML ile uyumluluk için)
+window.toggleFilters = toggleFilters;
+window.openVehicleModal = openVehicleModal;
+window.closeModal = closeModal;
+window.closeEditRuhsatModal = closeEditRuhsatModal;
+window.closeEditKullaniciModal = closeEditKullaniciModal;
+window.closeEditAracBilgileriModal = closeEditAracBilgileriModal;
+window.openEditRuhsatModal = openEditRuhsatModal;
+window.openEditKullaniciModal = openEditKullaniciModal;
+window.openEditAracBilgileriModal = openEditAracBilgileriModal;
+window.searchVehicles = searchVehicles;
