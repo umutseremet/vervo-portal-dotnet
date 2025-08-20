@@ -11,7 +11,7 @@
     <script src="../assets/js/config.js"></script>
     
     <style>
-        /* Login page specific styles - ESKİ RENK TEMASI (Dashboard ile aynı) */
+        /* Login page specific styles - DASHBOARD RENK TEMASI */
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -69,85 +69,97 @@
             }
         }
         
-        .login-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.2);
-        }
-        
+        /* Header */
         .login-header {
-            background: transparent;
-            color: #495057;
+            background: var(--primary-gradient);
+            padding: 40px 30px;
             text-align: center;
-            padding: 40px 30px 20px 30px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
         }
         
-        .login-logo {
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .login-header .logo {
             width: 80px;
             height: 80px;
-            background: var(--primary-gradient);
+            margin: 0 auto 20px;
+            background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 2;
         }
         
-        .login-logo img {
-            max-width: 50px;
-            max-height: 50px;
-            filter: brightness(0) invert(1);
+        .login-header .logo i {
+            font-size: 36px;
+            color: #667eea;
         }
         
-        .login-logo i {
-            font-size: 2.5rem;
+        .login-header h1 {
             color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            position: relative;
+            z-index: 2;
         }
         
-        .login-title {
-            font-size: 1.8rem;
-            font-weight: 600;
+        .login-header p {
+            color: rgba(255, 255, 255, 0.9);
             margin: 0;
-            color: #495057;
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            z-index: 2;
         }
         
-        .login-body {
-            padding: 30px;
+        /* Form Section */
+        .login-form {
+            padding: 40px 30px 30px;
         }
         
-        /* Form Styles */
         .form-floating {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .form-floating > .form-control {
-            height: 58px;
+            height: 65px;
             border: 2px solid #e9ecef;
             border-radius: 12px;
             font-size: 16px;
-            padding: 20px 15px 8px 15px;
-            background-color: #f8f9fa;
             transition: all 0.3s ease;
+            background-color: #fafafa;
         }
         
         .form-floating > .form-control:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
             background-color: white;
-            transform: translateY(-1px);
         }
         
         .form-floating > label {
-            padding: 16px 15px;
-            color: #6c757d;
-            font-size: 14px;
+            padding: 1rem 1.25rem;
             font-weight: 500;
+            color: #6c757d;
+            transition: all 0.3s ease;
         }
         
         .form-floating > .form-control:focus ~ label,
         .form-floating > .form-control:not(:placeholder-shown) ~ label {
-            opacity: 0.65;
+            opacity: 0.75;
             transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
             color: #667eea;
         }
@@ -172,7 +184,7 @@
             font-weight: 500;
         }
         
-        /* Login Button - ESKİ TEMA */
+        /* Login Button - DASHBOARD TEMASI */
         .btn-login {
             width: 100%;
             height: 55px;
@@ -241,121 +253,100 @@
             color: #667eea;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .login-footer a:hover {
-            color: #5a6fd8;
+            color: #764ba2;
             text-decoration: underline;
         }
         
-        /* Developer Helper */
-        .dev-helper {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .dev-helper h6 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .dev-helper p {
-            color: #495057;
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        
-        /* Alert styles */
+        /* Alert Styles */
         .alert {
             border-radius: 12px;
             border: none;
             font-weight: 500;
-            margin-bottom: 20px;
-            animation: slideInDown 0.3s ease;
-        }
-        
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-bottom: 25px;
         }
         
         .alert-danger {
-            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-            color: #721c24;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
         }
         
         .alert-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            color: white;
         }
         
         /* Responsive Design */
         @media (max-width: 576px) {
             .login-container {
-                padding: 0 15px;
+                margin: 0 15px;
+                max-width: none;
             }
             
             .login-header {
-                padding: 30px 20px 15px 20px;
+                padding: 30px 20px;
             }
             
-            .login-body {
-                padding: 20px;
+            .login-header h1 {
+                font-size: 24px;
+            }
+            
+            .login-form {
+                padding: 30px 20px 20px;
             }
             
             .login-footer {
                 padding: 15px 20px;
             }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn-login:hover {
+                transform: none;
+            }
             
-            .login-title {
-                font-size: 1.5rem;
+            .form-floating > .form-control {
+                font-size: 16px; /* Prevent zoom on iOS */
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <!-- Alert Container -->
-        <div id="alertContainer"></div>
-        
-        <div class="card login-card">
+        <div class="login-card">
             <!-- Header -->
             <div class="login-header">
-                <div class="login-logo">
-                    <img id="loginLogo" src="../assets/images/logo.png" alt="Logo" style="display: none;" 
-                         onerror="this.style.display='none'; this.parentNode.querySelector('i').style.display='block';">
-                    <i class="fas fa-car" style="display: block;"></i>
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
                 </div>
-                <h3 class="login-title" id="loginTitle">Portal</h3>
-                <p class="text-muted mb-0">Lütfen giriş yapın</p>
+                <h1 id="loginTitle">Portal Girişi</h1>
+                <p id="loginSubtitle">Sisteme giriş yapmak için bilgilerinizi girin</p>
             </div>
             
-            <!-- Body -->
-            <div class="login-body">
-                <form id="loginForm" novalidate>
+            <!-- Form -->
+            <div class="login-form">
+                <!-- Alert container -->
+                <div id="alertContainer"></div>
+                
+                <form id="loginForm">
                     <!-- Username -->
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="username" name="username" 
-                               placeholder="Kullanıcı Adı" required autocomplete="username">
-                        <label for="username">Kullanıcı Adı</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Kullanıcı Adı" required>
+                        <label for="username">
+                            <i class="fas fa-user me-2"></i>Kullanıcı Adı
+                        </label>
                     </div>
                     
                     <!-- Password -->
                     <div class="form-floating">
-                        <input type="password" class="form-control" id="password" name="password" 
-                               placeholder="Şifre" required autocomplete="current-password">
-                        <label for="password">Şifre</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Şifre" required>
+                        <label for="password">
+                            <i class="fas fa-lock me-2"></i>Şifre
+                        </label>
                     </div>
                     
                     <!-- Remember Me -->
@@ -368,44 +359,30 @@
                     
                     <!-- Login Button -->
                     <button type="submit" class="btn btn-login" id="loginBtn">
-                        <span class="btn-text">Giriş Yap</span>
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Giriş Yap
                     </button>
                 </form>
             </div>
             
             <!-- Footer -->
             <div class="login-footer">
-                <a href="#" onclick="handleForgotPassword()">Şifremi Unuttum</a>
+                <small class="text-muted">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Güvenli bağlantı ile korunmaktadır
+                </small>
             </div>
-        </div>
-        
-        <!-- Developer Helper -->
-        <div class="dev-helper">
-            <h6><i class="fas fa-code"></i> Geliştirici Test</h6>
-            <p><strong>Kullanıcı:</strong> admin</p>
-            <p><strong>Şifre:</strong> admin123</p>
-            <p class="mb-0"><small>Test için kullanabilirsiniz</small></p>
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-        <div class="text-center">
-            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-3">Giriş yapılıyor...</p>
         </div>
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/auth.js"></script>
     <script src="../assets/js/login.js"></script>
     
     <script>
-        // Login page initialization - DÜZELTİLMİŞ VERSİYON
+        // Login page initialization - CONFIG'TEN PARAMETRİK YÜKLEME
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Login page initializing...');
             
@@ -413,7 +390,10 @@
             updateLoginPageFromConfig();
             
             // Focus on username field
-            document.getElementById('username').focus();
+            const usernameField = document.getElementById('username');
+            if (usernameField) {
+                usernameField.focus();
+            }
             
             // Load remembered username
             loadRememberedUsername();
@@ -429,16 +409,22 @@
          */
         function updateLoginPageFromConfig() {
             if (window.APP_CONFIG) {
-                // Update page title
+                // Update page title (head title)
                 const pageTitle = document.getElementById('pageTitle');
                 if (pageTitle) {
                     pageTitle.textContent = `${window.APP_CONFIG.PORTAL_TITLE} - Giriş`;
                 }
                 
-                // Update login title
+                // Update login title (header başlığı)
                 const loginTitle = document.getElementById('loginTitle');
                 if (loginTitle) {
                     loginTitle.textContent = window.APP_CONFIG.PORTAL_TITLE;
+                }
+                
+                // Update login subtitle (header alt yazısı)
+                const loginSubtitle = document.getElementById('loginSubtitle');
+                if (loginSubtitle) {
+                    loginSubtitle.textContent = `${window.APP_CONFIG.PORTAL_TITLE} sistemine giriş yapmak için bilgilerinizi girin`;
                 }
                 
                 // Update document title
@@ -457,11 +443,17 @@
          * Load remembered username
          */
         function loadRememberedUsername() {
-            const rememberedUsername = localStorage.getItem('vervo_remember_username');
-            if (rememberedUsername) {
-                document.getElementById('username').value = rememberedUsername;
-                document.getElementById('rememberMe').checked = true;
-                document.getElementById('password').focus();
+            if (window.APP_CONFIG && window.APP_CONFIG.SECURITY) {
+                const rememberedUsername = localStorage.getItem(window.APP_CONFIG.SECURITY.REMEMBER_USERNAME_KEY);
+                if (rememberedUsername) {
+                    const usernameField = document.getElementById('username');
+                    const rememberCheckbox = document.getElementById('rememberMe');
+                    const passwordField = document.getElementById('password');
+                    
+                    if (usernameField) usernameField.value = rememberedUsername;
+                    if (rememberCheckbox) rememberCheckbox.checked = true;
+                    if (passwordField) passwordField.focus();
+                }
             }
         }
         
@@ -470,17 +462,19 @@
          */
         function setupLoginForm() {
             const loginForm = document.getElementById('loginForm');
-            loginForm.addEventListener('submit', handleLogin);
-            
-            // Enter key handling
-            document.querySelectorAll('.form-control').forEach(input => {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleLogin(e);
-                    }
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+                
+                // Enter key handling
+                document.querySelectorAll('.form-control').forEach(input => {
+                    input.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleLogin(e);
+                        }
+                    });
                 });
-            });
+            }
         }
         
         /**
@@ -500,116 +494,91 @@
                 return;
             }
             
+            // Show loading state
+            setLoginButtonLoading(true);
+            
             try {
-                // Set loading state
-                setLoadingState(true);
-                hideAllAlerts();
+                // API call would go here
+                console.log('Login data:', { username, rememberMe });
                 
-                console.log('🔍 Attempting login with username:', username);
+                // Simulate API call for demo
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
-                // Simulate API call (replace with actual auth service)
-                const loginSuccess = await simulateLogin(username, password);
-                
-                if (loginSuccess) {
-                    // Handle remember me
+                // Handle remember me
+                if (window.APP_CONFIG && window.APP_CONFIG.SECURITY) {
                     if (rememberMe) {
-                        localStorage.setItem('vervo_remember_username', username);
+                        localStorage.setItem(window.APP_CONFIG.SECURITY.REMEMBER_USERNAME_KEY, username);
                     } else {
-                        localStorage.removeItem('vervo_remember_username');
+                        localStorage.removeItem(window.APP_CONFIG.SECURITY.REMEMBER_USERNAME_KEY);
                     }
-                    
-                    // Store user data
-                    const userData = {
-                        name: username === 'admin' ? 'Admin User' : username,
-                        username: username,
-                        email: 'user@aslangroup.com'
-                    };
-                    
-                    localStorage.setItem('token', 'sample_jwt_token');
-                    localStorage.setItem('user', JSON.stringify(userData));
-                    
-                    // Success message
-                    showAlert('Giriş başarılı! Portal\'a yönlendiriliyorsunuz...', 'success');
-                    
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-                    
-                } else {
-                    throw new Error('Invalid credentials');
                 }
                 
+                // Success message from config
+                const successMessage = window.APP_CONFIG?.MESSAGES?.LOGIN_SUCCESS || 'Giriş başarılı!';
+                showAlert(successMessage, 'success');
+                
+                // Redirect after delay
+                setTimeout(() => {
+                    const redirectPage = window.APP_CONFIG?.PAGES?.LOGIN_REDIRECT || 'dashboard.html';
+                    window.location.href = redirectPage;
+                }, 1500);
+                
             } catch (error) {
-                console.error('❌ Login error:', error);
-                showAlert('Kullanıcı adı veya şifre hatalı.', 'danger');
-                setLoadingState(false);
-            }
-        }
-        
-        /**
-         * Simulate login API call
-         */
-        async function simulateLogin(username, password) {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Simple validation (replace with actual API call)
-            return (username === 'admin' && password === 'admin123') || 
-                   (username === 'test' && password === 'test123');
-        }
-        
-        /**
-         * Set loading state
-         */
-        function setLoadingState(loading) {
-            const loginBtn = document.getElementById('loginBtn');
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            
-            if (loading) {
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Giriş yapılıyor...';
-                loadingOverlay.classList.remove('d-none');
-            } else {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<span class="btn-text">Giriş Yap</span>';
-                loadingOverlay.classList.add('d-none');
+                console.error('Login error:', error);
+                const errorMessage = window.APP_CONFIG?.MESSAGES?.LOGIN_ERROR || 'Giriş sırasında hata oluştu.';
+                showAlert(errorMessage, 'danger');
+            } finally {
+                setLoginButtonLoading(false);
             }
         }
         
         /**
          * Show alert message
          */
-        function showAlert(message, type) {
+        function showAlert(message, type = 'info') {
             const alertContainer = document.getElementById('alertContainer');
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            alertContainer.innerHTML = alertHtml;
+            if (!alertContainer) return;
             
-            // Auto-hide success alerts
-            if (type === 'success') {
-                setTimeout(() => {
-                    hideAllAlerts();
-                }, 3000);
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            
+            // Auto dismiss after delay
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        /**
+         * Set login button loading state
+         */
+        function setLoginButtonLoading(loading) {
+            const loginBtn = document.getElementById('loginBtn');
+            if (!loginBtn) return;
+            
+            if (loading) {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Giriş yapılıyor...
+                `;
+                loginBtn.classList.add('btn-loading');
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = `
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Giriş Yap
+                `;
+                loginBtn.classList.remove('btn-loading');
             }
-        }
-        
-        /**
-         * Hide all alerts
-         */
-        function hideAllAlerts() {
-            document.getElementById('alertContainer').innerHTML = '';
-        }
-        
-        /**
-         * Handle forgot password
-         */
-        function handleForgotPassword() {
-            showAlert('Şifre sıfırlama özelliği yakında aktif olacak!', 'info');
         }
     </script>
 </body>

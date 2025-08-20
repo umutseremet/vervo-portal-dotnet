@@ -70,7 +70,7 @@ window.APP_CONFIG = {
     
     // Mesajlar
     MESSAGES: {
-        WELCOME: 'Vervo Portal - Aslan Group Portal\'a hoş geldiniz',
+        WELCOME: 'Vervo Portal\'a hoş geldiniz',
         LOGIN_SUCCESS: 'Giriş başarılı! Portal\'a yönlendiriliyorsunuz...',
         LOGIN_ERROR: 'Kullanıcı adı veya şifre hatalı.',
         LOGOUT_MESSAGE: 'Güvenli çıkış yapıldı.',
